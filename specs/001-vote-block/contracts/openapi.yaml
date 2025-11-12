@@ -1,0 +1,185 @@
+openapi: 3.0.3
+info:
+  title: Content Vote API
+  version: 1.0.0
+  description: REST API contract for vote block feature (namespace content-vote/v1)
+servers:
+  - url: https://example.com/wp-json/content-vote/v1
+paths:
+  /blocks/{postId}:
+    get:
+      summary: List vote blocks for a post
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/VoteBlock'
+  /block/{blockId}/results:
+    get:
+      summary: Get aggregated results for a vote block
+      parameters:
+        - in: path
+          name: blockId
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoteAggregate'
+        '404':
+          description: Not found
+  /block/{blockId}/vote:
+    post:
+      summary: Submit a vote for a block
+      parameters:
+        - in: path
+          name: blockId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                optionIndex:
+                  type: integer
+                  minimum: 0
+              required: [optionIndex]
+      responses:
+        '201':
+          description: Vote accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VoteAggregate'
+        '400':
+          description: Invalid input or duplicate vote
+        '403':
+          description: Not allowed (nonce/capability failed)
+        '404':
+          description: Block not found
+  /suggest/{postId}:
+    get:
+      summary: Generate heuristic AI suggestions for a post
+      parameters:
+        - in: path
+          name: postId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AISuggestion'
+        '403':
+          description: Not allowed (capability required)
+  /admin/stats:
+    get:
+      summary: Global stats summary
+      parameters: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  blocks:
+                    type: integer
+                  totalVotes:
+                    type: integer
+                  topBlocks:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BlockStats'
+components:
+  schemas:
+    VoteBlock:
+      type: object
+      properties:
+        id:
+          type: string
+        postId:
+          type: integer
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        status:
+          type: string
+          enum: [active, closed]
+        aiSuggested:
+          type: boolean
+    VoteAggregate:
+      type: object
+      properties:
+        blockId:
+          type: string
+        totalVotes:
+          type: integer
+        counts:
+          type: array
+          items: { type: integer }
+        percentages:
+          type: array
+          items: { type: number }
+    AISuggestion:
+      type: object
+      properties:
+        id:
+          type: string
+        postId:
+          type: integer
+        question:
+          type: string
+        options:
+          type: array
+          items:
+            type: string
+        source:
+            type: string
+            enum: [heuristic, external]
+    BlockStats:
+      type: object
+      properties:
+        blockId:
+          type: string
+        postId:
+          type: integer
+        question:
+          type: string
+        totalVotes:
+          type: integer
+        topOptionIndex:
+          type: integer
+security:
+  - nonceAuth: []
+components:
+  securitySchemes:
+    nonceAuth:
+      type: apiKey
+      in: header
+      name: X-WP-Nonce
