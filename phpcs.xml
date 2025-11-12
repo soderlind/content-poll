@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<ruleset name="Content Vote Plugin">
+  <description>PHPCS configuration for Content Vote plugin (PSR12 + basic WordPress overrides)</description>
+  <rule ref="PSR12"/>
+  <!-- Placeholder: WordPress standard could be added if package installed -->
+  <file>src/php</file>
+  <exclude-pattern>vendor/*</exclude-pattern>
+</ruleset>

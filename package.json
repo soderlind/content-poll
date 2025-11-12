@@ -1,0 +1,24 @@
+{
+	"name": "content-vote",
+	"version": "0.1.0",
+	"private": true,
+	"description": "WordPress content vote block plugin (2–6 options).",
+	"author": "Your Name",
+	"license": "GPL-2.0-or-later",
+	"engines": {
+		"node": ">=18"
+	},
+	"scripts": {
+		"build": "wp-scripts build",
+		"start": "wp-scripts start",
+		"lint:js": "wp-scripts lint-js .",
+		"lint:pkg": "wp-scripts lint-pkg-json",
+		"test:js": "vitest run",
+		"test:unit": "wp-scripts test-unit-js --watchAll=false",
+		"test": "npm run lint:js && npm run test:js"
+	},
+	"devDependencies": {
+		"@wordpress/scripts": "^27.3.0",
+		"vitest": "^1.4.0"
+	}
+}

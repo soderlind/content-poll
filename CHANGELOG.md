@@ -1,0 +1,80 @@
+# Changelog
+
+All notable changes to the Content Vote plugin will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+### Added
+- Support for Anthropic Claude AI provider (claude-3-5-sonnet, claude-3-opus, claude-3-sonnet)
+- Support for Google Gemini AI provider (gemini-1.5-flash, gemini-1.5-pro) with free tier
+- Support for Ollama self-hosted AI models (llama3.2, mistral, etc.)
+- Dynamic field visibility in settings: API key and model fields hidden when Heuristic AI selected
+- Comprehensive AI provider documentation (see docs/AI-PROVIDERS.md)
+- Smart settings UI that adapts based on selected AI provider
+
+### Changed
+- Settings page now supports 5 AI providers: Heuristic (default), OpenAI, Azure OpenAI, Anthropic Claude, Google Gemini, Ollama
+- API Key field label changes dynamically based on provider (e.g., "Anthropic API Key" for Claude)
+- Model field adapts its meaning per provider (deployment name for Azure, model name for others)
+- Extended sanitization for new provider settings
+
+## [0.2.0] - 2025-11-12
+
+### Added
+- Admin settings page (Settings → Content Vote) for configuring AI suggestion service
+- Support for OpenAI and Azure OpenAI for AI-powered vote suggestions
+- OpenAI integration with configurable model selection (gpt-3.5-turbo, gpt-4, etc.)
+- Azure OpenAI Service integration with deployment and endpoint configuration
+- Debug mode features when WP_DEBUG is enabled:
+  - Reset button to clear votes for testing
+  - Always show all vote options in results (including 0 votes)
+  - Console logging for troubleshooting
+- Display actual option text in results instead of generic "Option N" labels
+- Vote persistence: returning voters see "Thank you for voting!" with results
+- Page load check for existing votes to show appropriate state
+
+### Changed
+- Improved result display to show meaningful option labels (e.g., "Architectural: 5 votes" instead of "Option 1: 5 votes")
+- Enhanced JavaScript to handle associative array responses from PHP (counts and percentages)
+- Settings page dynamically shows/hides fields based on AI provider selection
+- Heuristic AI remains default (no API calls, no costs) unless explicitly configured
+
+### Fixed
+- Nonce verification for REST API endpoints (changed from 'content_vote' to 'wp_rest' action)
+- Block rendering on frontend by ensuring VoteBlock class is always instantiated
+- CSP (Content Security Policy) compliance by removing inline scripts
+- JavaScript error when processing vote results (forEach on object instead of array)
+- Script enqueuing timing issues resolved with viewScript in block.json
+
+### Security
+- Enhanced nonce verification for WordPress REST API compatibility
+- Secure cookie handling with SameSite=Lax attribute
+- Atomic vote deduplication with INSERT IGNORE to prevent race conditions
+- API keys stored securely in WordPress options
+
+## [0.1.0] - 2025-11-01
+
+### Added
+- Initial release with Gutenberg vote block
+- Dynamic option count (2–6) with configurable question
+- Anonymous deduplicated voting system using hashed tokens
+- REST API endpoints for voting, results, nonce, and suggestions
+- Heuristic AI suggestion for auto-generating questions and options
+- Custom database table for vote storage
+- Aggregate results with counts and percentages
+- i18n ready with text domain 'content-vote'
+- Basic accessibility with ARIA attributes
+- Uninstall script to clean up database table
+
+### Features
+- Block editor interface for creating vote blocks
+- Frontend voting with semantic HTML
+- Results hidden until first vote cast
+- Vote lock after submission to prevent duplicate votes
+- Editor-only AI suggestions based on post content
+
+[0.2.0]: https://github.com/yourusername/content-vote/compare/v0.1.0...v0.2.0
+[0.1.0]: https://github.com/yourusername/content-vote/releases/tag/v0.1.0

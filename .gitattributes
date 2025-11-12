@@ -1,0 +1,50 @@
+# .gitattributes for packaging Content Vote plugin
+# WordPress.org and release archives will exclude files marked export-ignore.
+# Keep ONLY runtime PHP, block build assets, translations, and primary docs.
+
+# Core runtime (kept):
+#  - content-vote.php
+#  - uninstall.php
+#  - build/ (compiled block assets)
+#  - src/php/ (plugin PHP source)
+#  - languages/ (i18n)
+#  - readme.txt (WP.org)
+#  - LICENSE (if added later)
+
+# Development / tooling directories (exclude)
+/.github                export-ignore
+/.vscode                export-ignore
+/node_modules           export-ignore
+/tests                  export-ignore
+/docs                   export-ignore
+/specs                  export-ignore
+/vendor                 export-ignore
+
+# Source JS/CSS (optional exclude if you only ship built assets)
+# Uncomment next line if you do NOT want to ship raw block source.
+# /src/block             export-ignore
+
+# Composer & npm metadata (not needed at runtime)
+/composer.json          export-ignore
+/composer.lock          export-ignore
+/package.json           export-ignore
+/package-lock.json      export-ignore
+
+# Build / config / tooling files
+/CHANGELOG.md           export-ignore
+/README.md              export-ignore
+/phpunit.xml.dist       export-ignore
+/phpcs.xml              export-ignore
+/vitest.config.js       export-ignore
+/.editorconfig          export-ignore
+/.eslintignore          export-ignore
+/.eslintrc.js           export-ignore
+/.gitignore             export-ignore
+/.gitattributes         export-ignore
+/webpack.config.js      export-ignore
+
+# Ignore any miscellaneous local environment files
+*.log                   export-ignore
+*.md                    export-ignore
+# Allow readme.txt specifically
+!readme.txt
