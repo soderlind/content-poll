@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.5.0
+Stable tag: 0.5.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,6 +166,13 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.5.1 - 2025-11-13 =
+* Added: Regenerated translation template (`content-poll.pot`) after workflow & branding adjustments.
+* Added: Ensured `readme.txt` retained in production zip (adjusted workflow exclusions).
+* Changed: Refined zip exclusion list for cleaner distribution while keeping `uninstall.php` and essential metadata.
+* Internal: Minor housekeeping ahead of analytics/export roadmap.
+* Fixed: None.
+
 = 0.5.0 - 2025-11-13 =
 * Added: GitHub-based automatic update support via `GitHubPluginUpdater` class (plugin-update-checker integration)
 * Added: Archive content verification step in release workflows (lists packaged files pre-publish)
@@ -216,6 +223,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.5.1 =
+Refined packaging (readme.txt ensured in release) and refreshed translations. Safe maintenance update; no manual action required.
 
 = 0.5.0 =
 Adds GitHub-based updater support and refined release packaging. No action required; existing installs will see future update prompts.
