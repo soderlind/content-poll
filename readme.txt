@@ -153,11 +153,11 @@ Yes! Enable debug mode:
 The plugin inherits from your theme automatically, but you can add custom CSS:
 
 `
-.content-vote__option {
+.content-poll__option {
     border-radius: 12px; /* Rounder cards */
 }
 
-.content-vote__result-fill {
+.content-poll__result-fill {
     background: linear-gradient(90deg, #667eea, #764ba2); /* Custom gradient */
 }
 `
@@ -272,15 +272,15 @@ The plugin does NOT collect:
 
 Need help? Have feature requests?
 
-* Documentation: https://github.com/yourusername/content-vote
-* Issues: https://github.com/yourusername/content-vote/issues
-* Support Forum: https://wordpress.org/support/plugin/content-vote/
+* Documentation: https://github.com/soderlind/content-poll
+* Issues: https://github.com/soderlind/content-poll/issues
+
 
 == Development ==
 
 Content Vote is open source! Contributions welcome.
 
-**Repository**: https://github.com/yourusername/content-vote
+**Repository**: https://github.com/soderlind/content-poll
 
 **Development Setup**:
 ```
