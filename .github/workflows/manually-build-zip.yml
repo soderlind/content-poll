@@ -29,10 +29,10 @@ jobs:
           type: 'zip'
           filename: 'content-poll.zip'
           exclusions: >-
-            *.git* /*.github/* /*.vscode/* /*.specify/* /*node_modules/* /*tests/* /*docs/* /*specs/* 
+            *.git* /*.github/* /*.vscode/* /*.specify/* /*.phpunit.cache/* /*node_modules/* /*tests/* /*docs/* /*specs/* 
             composer.json composer.lock package.json package-lock.json
             CHANGELOG.md README.md phpunit.xml phpunit.xml.dist build/phpunit.xml phpcs.xml vitest.config.js
-            .editorconfig .eslintignore .eslintrc.js .gitignore .gitattributes webpack.config.js
+            .editorconfig .eslintignore .phpunit.result.cache .eslintrc.js .gitignore .gitattributes webpack.config.js
             *.log *.md
             !readme.txt
 
