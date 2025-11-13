@@ -186,7 +186,8 @@ class VoteAnalyticsService {
 	 * @return array Array of objects with post_id, post_title, poll_count, total_votes, last_vote.
 	 */
 	public function get_posts_summary(): array {
-		$db    = $this->db;
+		$db = $this->db;
+
 		$posts = $db->get_results( "SELECT ID, post_title, post_content FROM {$db->posts} WHERE post_status IN ('publish','draft','future') AND post_type IN ('post','page') AND post_content LIKE '%content-poll/vote-block%'" );
 		if ( empty( $posts ) ) {
 			return [];
@@ -300,6 +301,8 @@ class VoteAnalyticsService {
 		$affected = $db->query( $db->prepare( "DELETE FROM {$this->table} WHERE block_id = %s", $block_id ) );
 		return (int) $affected;
 	}
+
+	/**
 
 	/**
 	 * Explicit cache invalidation helper.
