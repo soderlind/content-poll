@@ -15,28 +15,28 @@ msgstr ""
 "X-Domain: content-poll\n"
 
 #. Plugin Name of the plugin
-#: content-vote.php
-#: src/php/Admin/SettingsPage.php:36
+#: content-poll.php
+#: src/php/Admin/SettingsPage.php:35
 msgid "ContentPoll AI"
 msgstr ""
 
 #. Plugin URI of the plugin
-#: content-vote.php
+#: content-poll.php
 msgid "https://github.com/soderlind/content-poll"
 msgstr ""
 
 #. Description of the plugin
-#: content-vote.php
+#: content-poll.php
 msgid "AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results."
 msgstr ""
 
 #. Author of the plugin
-#: content-vote.php
+#: content-poll.php
 msgid "Per Soderlind"
 msgstr ""
 
 #. Author URI of the plugin
-#: content-vote.php
+#: content-poll.php
 msgid "https://soderlind.no"
 msgstr ""
 
@@ -201,7 +201,7 @@ msgstr ""
 
 #: src/block/vote-block/block.json
 msgctxt "block title"
-msgid "ContentPoll Poll"
+msgid "ContentPoll AI"
 msgstr ""
 
 #: src/block/vote-block/block.json
