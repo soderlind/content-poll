@@ -14,24 +14,22 @@
  */
 
 declare(strict_types=1);
-// Composer autoload (optional until "composer install" is run).
-if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
-	require __DIR__ . '/vendor/autoload.php';
-}
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Direct requires (can be removed once full composer autoload adopted for these classes).
-$cv_base = __DIR__ . '/src/php';
+// Composer autoload.
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require __DIR__ . '/vendor/autoload.php';
+}
 
-// Activation: create custom table.
+
+// Activation: create custom table (guard for static analysis environments outside WP).
 if ( function_exists( 'register_activation_hook' ) ) {
 	register_activation_hook( __FILE__, function () {
 		global $wpdb;
-		$table = $wpdb->prefix . 'vote_block_submissions';
-		// Only create if not exists.
+		$table  = $wpdb->prefix . 'vote_block_submissions';
 		$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
 		if ( $exists !== $table ) {
 			$charset = $wpdb->get_charset_collate();
@@ -80,35 +78,20 @@ if ( function_exists( 'add_filter' ) ) {
 	}, 10, 3 );
 }
 
-// Basic vote storage service placeholder.
-require_once $cv_base . '/Services/VoteStorageService.php';
-require_once $cv_base . '/Security/SecurityHelper.php';
-require_once $cv_base . '/REST/VoteController.php';
-require_once $cv_base . '/REST/NonceController.php';
-require_once $cv_base . '/REST/ResultsController.php';
-require_once $cv_base . '/Services/AISuggestionService.php';
-require_once $cv_base . '/REST/SuggestionController.php';
-require_once $cv_base . '/Blocks/VoteBlock.php';
-require_once $cv_base . '/Admin/SettingsPage.php';
-
 if ( function_exists( 'add_action' ) ) {
 	add_action( 'plugins_loaded', function () {
-		// Load translations.
 		if ( function_exists( 'load_plugin_textdomain' ) && function_exists( 'plugin_basename' ) ) {
 			load_plugin_textdomain( 'content-vote', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 		}
-		// Register REST routes.
 		( new \ContentVote\REST\VoteController() )->register();
 		( new \ContentVote\REST\NonceController() )->register();
 		( new \ContentVote\REST\ResultsController() )->register();
 		( new \ContentVote\REST\SuggestionController() )->register();
-		// Register block with VoteBlock class for proper render callback and script enqueuing
 		( new \ContentVote\Blocks\VoteBlock() )->register();
-		// Initialize settings page (constructor hooks into WordPress actions)
 		new \ContentVote\Admin\SettingsPage();
 	} );
-	// Removed inline localization to comply with strict CSP (no inline scripts).
-	// Block editor JS now derives postId via wp.data.select('core/editor').getCurrentPostId()
-	// and nonce from wpApiSettings.nonce (core REST setup) without plugin-added inline script.
 }
+// Removed inline localization to comply with strict CSP (no inline scripts).
+// Block editor JS now derives postId via wp.data.select('core/editor').getCurrentPostId()
+// and nonce from wpApiSettings.nonce (core REST setup) without plugin-added inline script.
 
