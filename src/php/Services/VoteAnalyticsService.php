@@ -186,20 +186,22 @@ class VoteAnalyticsService {
 	 * @return array Array of objects with post_id, post_title, poll_count, total_votes, last_vote.
 	 */
 	public function get_posts_summary(): array {
+		// Attempt cached summary first (built data for all posts)
+		$cached = get_transient( 'content_poll_posts_summary' );
+		if ( $cached !== false && is_array( $cached ) ) {
+			return $cached;
+		}
 		$db = $this->db;
-		// Fetch candidate posts containing poll blocks (limit scope)
 		$posts = $db->get_results( "SELECT ID, post_title, post_content FROM {$db->posts} WHERE post_status IN ('publish','draft','future') AND post_type IN ('post','page') AND post_content LIKE '%content-poll/vote-block%'" );
 		if ( empty( $posts ) ) {
 			return [];
 		}
-		// Aggregate non-legacy votes (post_id > 0)
 		$non_legacy = $db->get_results( "SELECT post_id, block_id, COUNT(*) cnt, MAX(created_at) last_vote FROM {$this->table} WHERE post_id > 0 GROUP BY post_id, block_id" );
 		$non_map    = [];
 		foreach ( $non_legacy as $row ) {
 			$key             = (int) $row->post_id . '|' . $row->block_id;
 			$non_map[ $key ] = [ 'cnt' => (int) $row->cnt, 'last' => $row->last_vote ];
 		}
-		// Aggregate legacy votes (post_id = 0)
 		$legacy     = $db->get_results( "SELECT block_id, COUNT(*) cnt, MAX(created_at) last_vote FROM {$this->table} WHERE post_id = 0 GROUP BY block_id" );
 		$legacy_map = [];
 		foreach ( $legacy as $row ) {
@@ -207,16 +209,11 @@ class VoteAnalyticsService {
 		}
 		$summary = [];
 		foreach ( $posts as $p ) {
-			// Attempt cached summary first for performance (legacy + current votes aggregation is expensive).
-			$cached = get_transient( 'content_poll_posts_summary' );
-			if ( $cached !== false && is_array( $cached ) ) {
-				return $cached;
-			}
 			$blocks    = parse_blocks( $p->post_content );
 			$block_ids = [];
 			foreach ( $blocks as $b ) {
-				if ( isset( $b[ 'blockName' ] ) && $b[ 'blockName' ] === 'content-poll/vote-block' && isset( $b[ 'attrs' ][ 'blockId' ] ) ) {
-					$block_ids[] = $b[ 'attrs' ][ 'blockId' ];
+				if ( isset( $b['blockName'] ) && $b['blockName'] === 'content-poll/vote-block' && isset( $b['attrs']['blockId'] ) ) {
+					$block_ids[] = $b['attrs']['blockId'];
 				}
 			}
 			$block_ids = array_unique( $block_ids );
@@ -228,15 +225,15 @@ class VoteAnalyticsService {
 			foreach ( $block_ids as $bid ) {
 				$key = (int) $p->ID . '|' . $bid;
 				if ( isset( $non_map[ $key ] ) ) {
-					$total_votes += $non_map[ $key ][ 'cnt' ];
-					if ( ! $last_vote || $non_map[ $key ][ 'last' ] > $last_vote ) {
-						$last_vote = $non_map[ $key ][ 'last' ];
+					$total_votes += $non_map[ $key ]['cnt'];
+					if ( ! $last_vote || $non_map[ $key ]['last'] > $last_vote ) {
+						$last_vote = $non_map[ $key ]['last'];
 					}
 				}
 				if ( isset( $legacy_map[ $bid ] ) ) {
-					$total_votes += $legacy_map[ $bid ][ 'cnt' ];
-					if ( ! $last_vote || $legacy_map[ $bid ][ 'last' ] > $last_vote ) {
-						$last_vote = $legacy_map[ $bid ][ 'last' ];
+					$total_votes += $legacy_map[ $bid ]['cnt'];
+					if ( ! $last_vote || $legacy_map[ $bid ]['last'] > $last_vote ) {
+						$last_vote = $legacy_map[ $bid ]['last'];
 					}
 				}
 			}
@@ -248,10 +245,11 @@ class VoteAnalyticsService {
 				'last_vote'   => $last_vote,
 			];
 		}
-		// Order by total_votes DESC (PHP sort for combined data)
 		usort( $summary, function ( $a, $b ) {
 			return $b->total_votes <=> $a->total_votes;
 		} );
+		$ttl = defined( 'MINUTE_IN_SECONDS' ) ? 5 * MINUTE_IN_SECONDS : 300;
+		set_transient( 'content_poll_posts_summary', $summary, $ttl );
 		return $summary;
 	}
 
@@ -269,7 +267,6 @@ class VoteAnalyticsService {
 
 		$blocks = parse_blocks( $post->post_content );
 		$map    = [];
-		set_transient( 'content_poll_posts_summary', $summary, 5 * MINUTE_IN_SECONDS );
 
 		foreach ( $blocks as $block ) {
 			if ( $block[ 'blockName' ] === 'content-poll/vote-block' && isset( $block[ 'attrs' ] ) ) {
