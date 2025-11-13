@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.5.1
+Stable tag: 0.6.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,6 +166,20 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+
+= 0.6.0 - 2025-11-13 =
+* Added: Admin Analytics dashboard list now uses `WP_List_Table` with pagination & sortable columns.
+* Added: Screen Option to control posts-per-page for poll analytics.
+* Added: Orphan poll detection & one-click data deletion (legacy block IDs with removed blocks).
+* Added: Transient caching for poll post summary (5‑minute TTL) + automated invalidation on vote/post save.
+* Added: PHPUnit tests for caching invalidation (vote + manual helper) with transient stubs.
+* Changed: Refactored posts summary rendering to scalable list table instead of manual HTML table.
+* Changed: Fallback logic for legacy votes (`post_id = 0`) seamlessly merges into per‑post tallies.
+* Performance: Reduced repeated parsing cost via short-lived cached summary; invalidated on change.
+* Internal: Clean separation between storage and analytics services; cache helper method added.
+* Fixed: Ensured list table headers display (column header setup) & stable pagination.
+* Security: Orphan deletion action protected by nonce; no schema migrations needed for legacy vote handling.
+
 = 0.5.1 - 2025-11-13 =
 * Added: Regenerated translation template (`content-poll.pot`) after workflow & branding adjustments.
 * Added: Ensured `readme.txt` retained in production zip (adjusted workflow exclusions).
@@ -223,6 +237,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.6.0 =
+New analytics list table (pagination, sorting), orphan poll cleanup, and performance caching. Safe upgrade; no manual steps required.
 
 = 0.5.1 =
 Refined packaging (readme.txt ensured in release) and refreshed translations. Safe maintenance update; no manual action required.

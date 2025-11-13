@@ -47,5 +47,39 @@ if ( is_dir( $wpRoot ) && file_exists( $wpRoot . '/wp-load.php' ) ) {
 			return $text;
 		}
 	}
+	// Simple transient emulation for caching tests.
+	if ( ! function_exists( 'set_transient' ) ) {
+		function set_transient( $key, $value, $expiration ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+			global $content_poll_test_transients;
+			if ( ! is_array( $content_poll_test_transients ) ) {
+				$content_poll_test_transients = [];
+			}
+			$content_poll_test_transients[ $key ] = [ 'value' => $value, 'expires' => time() + (int) $expiration ];
+			return true;
+		}
+	}
+	if ( ! function_exists( 'get_transient' ) ) {
+		function get_transient( $key ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+			global $content_poll_test_transients;
+			if ( empty( $content_poll_test_transients[ $key ] ) ) {
+				return false;
+			}
+			$entry = $content_poll_test_transients[ $key ];
+			if ( $entry[ 'expires' ] < time() ) {
+				unset( $content_poll_test_transients[ $key ] );
+				return false;
+			}
+			return $entry[ 'value' ];
+		}
+	}
+	if ( ! function_exists( 'delete_transient' ) ) {
+		function delete_transient( $key ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
+			global $content_poll_test_transients;
+			if ( isset( $content_poll_test_transients[ $key ] ) ) {
+				unset( $content_poll_test_transients[ $key ] );
+			}
+			return true;
+		}
+	}
 }
 

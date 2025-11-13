@@ -37,8 +37,12 @@ class VoteBlock {
 		$question_raw = $attributes[ 'question' ] ?? 'Your opinion?';
 		$question     = esc_html( $question_raw ); // Question text sanitized.
 		$options      = $attributes[ 'options' ] ?? [ 'A', 'B', 'C', 'D' ];
-		$nonce        = SecurityHelper::create_nonce();
-		$opts_html    = '';
+		// Capture current post ID for accurate analytics linkage.
+		global $post;
+		$post_id   = $post ? (int) $post->ID : 0;
+		$postIdEsc = esc_attr( $post_id );
+		$nonce     = SecurityHelper::create_nonce();
+		$opts_html = '';
 		foreach ( $options as $i => $label ) {
 			$labelEsc   = esc_html( $label ); // Each option label escaped.
 			$aria       = 'Vote for option ' . ( $i + 1 );
@@ -62,7 +66,7 @@ class VoteBlock {
 			$debugAttr   = ' data-debug="true"';
 		}
 
-		return '<div class="content-poll" data-block-id="' . $blockIdEsc . '" data-nonce="' . $nonceEsc . '" data-i18n-thank-you="' . $thankYouEsc . '" data-i18n-network-error="' . $networkEsc . '"' . $debugAttr . '>' .
+		return '<div class="content-poll" data-block-id="' . $blockIdEsc . '" data-post-id="' . $postIdEsc . '" data-nonce="' . $nonceEsc . '" data-i18n-thank-you="' . $thankYouEsc . '" data-i18n-network-error="' . $networkEsc . '"' . $debugAttr . '>' .
 			'<p class="content-poll__question">' . $question . '</p>' .
 			'<ul class="content-poll__options" role="list">' . $opts_html . '</ul>' .
 			'<div class="content-poll__message" aria-live="polite"></div>' .

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace ContentPoll\Admin;
 
+use ContentPoll\Services\VoteAnalyticsService;
+use ContentPoll\Admin\PollsListTable;
+
 class SettingsPage {
 	private string $option_group = 'content_poll_settings';
 	private string $option_name = 'content_poll_options';
@@ -13,6 +16,20 @@ class SettingsPage {
 		$this->option_name  = 'content_poll_options';
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_action( 'load-settings_page_content-poll-settings', [ $this, 'add_screen_options' ] );
+		add_filter( 'set-screen-option', [ $this, 'set_screen_option' ], 10, 3 );
+
+		// Add admin columns
+		// Add list table columns for Posts and Pages
+		// Primary dynamic filters for columns
+		add_filter( 'manage_edit-post_columns', [ $this, 'add_votes_column' ] );
+		add_filter( 'manage_edit-page_columns', [ $this, 'add_votes_column' ] );
+		// Fallback legacy filters (ensure compatibility)
+		add_filter( 'manage_posts_columns', [ $this, 'add_votes_column' ] );
+		add_filter( 'manage_pages_columns', [ $this, 'add_votes_column' ] );
+		// Row rendering actions
+		add_action( 'manage_posts_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
+		add_action( 'manage_pages_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
 	}
 	public function add_settings_page(): void {
 		add_options_page(
@@ -22,6 +39,21 @@ class SettingsPage {
 			'content-poll-settings',
 			[ $this, 'render_settings_page' ]
 		);
+	}
+
+	public function add_screen_options(): void {
+		add_screen_option( 'per_page', [
+			'label'   => __( 'Poll Posts per page', 'content-poll' ),
+			'default' => 20,
+			'option'  => 'content_poll_polls_per_page',
+		] );
+	}
+
+	public function set_screen_option( $status, $option, $value ) {
+		if ( $option === 'content_poll_polls_per_page' ) {
+			return (int) $value;
+		}
+		return $status;
 	}
 
 	public function register_settings(): void {
@@ -342,16 +374,281 @@ class SettingsPage {
 			return;
 		}
 
+		// Determine active tab
+		$active_tab = isset( $_GET[ 'tab' ] ) ? sanitize_text_field( $_GET[ 'tab' ] ) : 'analytics';
+		$valid_tabs = [ 'analytics', 'settings' ];
+		if ( ! in_array( $active_tab, $valid_tabs, true ) ) {
+			$active_tab = 'analytics';
+		}
+
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			<form action="options.php" method="post">
-				<?php
-				settings_fields( $this->option_group );
-				do_settings_sections( 'content-poll-settings' );
-				submit_button( __( 'Save Settings', 'content-poll' ) );
-				?>
-			</form>
+
+			<h2 class="nav-tab-wrapper">
+				<a href="?page=content-poll-settings&tab=analytics"
+					class="nav-tab <?php echo $active_tab === 'analytics' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'Analytics', 'content-poll' ); ?>
+				</a>
+				<a href="?page=content-poll-settings&tab=settings"
+					class="nav-tab <?php echo $active_tab === 'settings' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'AI Settings', 'content-poll' ); ?>
+				</a>
+			</h2>
+
+			<?php if ( $active_tab === 'analytics' ) : ?>
+				<?php $this->render_analytics_tab(); ?>
+			<?php elseif ( $active_tab === 'settings' ) : ?>
+				<form action="options.php" method="post">
+					<?php
+					settings_fields( $this->option_group );
+					do_settings_sections( 'content-poll-settings' );
+					submit_button( __( 'Save Settings', 'content-poll' ) );
+					?>
+				</form>
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	private function render_analytics_tab(): void {
+		$analytics = new VoteAnalyticsService();
+		$list_table = null;
+		if ( class_exists( '\\ContentPoll\\Admin\\PollsListTable' ) ) {
+			$list_table = new PollsListTable( $analytics );
+		}
+
+		// Handle orphan poll deletion request.
+		if ( isset( $_GET['content_poll_delete_orphan'] ) && current_user_can( 'manage_options' ) ) {
+			$block_to_delete = sanitize_text_field( (string) $_GET['content_poll_delete_orphan'] );
+			$nonce           = $_GET['_wpnonce'] ?? '';
+			if ( $block_to_delete && $nonce && wp_verify_nonce( $nonce, 'content_poll_delete_orphan_' . $block_to_delete ) ) {
+				$deleted = $analytics->delete_block_votes( $block_to_delete );
+				if ( $deleted > 0 ) {
+					add_settings_error(
+						'content_poll_messages',
+						'content_poll_orphan_deleted',
+						/* translators: %d: number of rows deleted */
+						sprintf( __( 'Deleted %d orphan vote record(s).', 'content-poll' ), $deleted ),
+						'success'
+					);
+				} else {
+					add_settings_error(
+						'content_poll_messages',
+						'content_poll_orphan_none',
+						__( 'No orphan records matched for deletion.', 'content-poll' ),
+						'info'
+					);
+				}
+			}
+		}
+		// Display any settings messages (for deletion feedback).
+		settings_errors( 'content_poll_messages' );
+
+		// Handle post detail view
+		$viewing_post_id = isset( $_GET[ 'post_id' ] ) ? absint( $_GET[ 'post_id' ] ) : 0;
+
+		if ( $viewing_post_id > 0 ) {
+			$this->render_post_detail( $analytics, $viewing_post_id );
+			return;
+		}
+
+		// Summary metrics
+		$total_votes   = $analytics->get_total_votes();
+		$total_polls   = $analytics->get_total_polls();
+		$avg_votes     = $analytics->get_average_votes_per_poll();
+		$top_polls     = $analytics->get_top_polls( 5 );
+		$recent        = $analytics->get_recent_activity( 5 );
+		$posts_summary = $analytics->get_posts_summary();
+
+		?>
+		<div class="content-poll-analytics" style="margin-top: 20px;">
+
+			<!-- Summary Cards -->
+			<div
+				style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+				<div class="postbox" style="padding: 20px;">
+					<h3 style="margin-top: 0;"><?php esc_html_e( 'Total Votes', 'content-poll' ); ?></h3>
+					<p style="font-size: 32px; font-weight: bold; margin: 0;">
+						<?php echo esc_html( number_format_i18n( $total_votes ) ); ?></p>
+				</div>
+				<div class="postbox" style="padding: 20px;">
+					<h3 style="margin-top: 0;"><?php esc_html_e( 'Total Polls', 'content-poll' ); ?></h3>
+					<p style="font-size: 32px; font-weight: bold; margin: 0;">
+						<?php echo esc_html( number_format_i18n( $total_polls ) ); ?></p>
+				</div>
+				<div class="postbox" style="padding: 20px;">
+					<h3 style="margin-top: 0;"><?php esc_html_e( 'Average Votes/Poll', 'content-poll' ); ?></h3>
+					<p style="font-size: 32px; font-weight: bold; margin: 0;">
+						<?php echo esc_html( number_format_i18n( $avg_votes, 1 ) ); ?></p>
+				</div>
+			</div>
+
+			<?php if ( empty( $posts_summary ) ) : ?>
+				<div class="notice notice-info">
+					<p><?php esc_html_e( 'No votes recorded yet. Add poll blocks to your posts and pages to start collecting votes.', 'content-poll' ); ?>
+					</p>
+				</div>
+			<?php else : ?>
+
+				<!-- Posts Summary List Table -->
+				<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
+					<h2 style="margin-top: 0;"><?php esc_html_e( 'Posts with Polls', 'content-poll' ); ?></h2>
+					<?php if ( $list_table ) : ?>
+						<form method="get">
+							<input type="hidden" name="page" value="content-poll-settings" />
+							<input type="hidden" name="tab" value="analytics" />
+							<?php $list_table->prepare_items(); $list_table->display(); ?>
+						</form>
+					<?php else : ?>
+						<p><?php esc_html_e( 'List table unavailable.', 'content-poll' ); ?></p>
+					<?php endif; ?>
+				</div>
+
+				<!-- Top Polls -->
+				<?php if ( ! empty( $top_polls ) ) : ?>
+					<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
+						<h2 style="margin-top: 0;"><?php esc_html_e( 'Top Polls by Votes', 'content-poll' ); ?></h2>
+						<table class="wp-list-table widefat fixed striped">
+							<thead>
+								<tr>
+									<th><?php esc_html_e( 'Poll Question', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Total Votes', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Last Vote', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Actions', 'content-poll' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $top_polls as $poll ) :
+									$attrs    = $analytics->get_block_attributes( (int) $poll->post_id, $poll->block_id );
+									$is_orphan = ! $attrs;
+									$question = $attrs ? $attrs[ 'question' ] : __( 'Orphan Poll (block removed)', 'content-poll' );
+									$short_id = substr( $poll->block_id, 0, 8 ) . '...';
+									?>
+									<tr>
+										<td>
+											<strong><?php echo esc_html( $question ); ?></strong>
+											<br><small><?php echo esc_html( sprintf( __( 'Block ID: %s', 'content-poll' ), $short_id ) ); ?><?php if ( $is_orphan ) : ?> • <span style="color:#d63638; font-weight:600;"><?php esc_html_e( 'Orphan', 'content-poll' ); ?></span><?php endif; ?></small>
+										</td>
+										<td><?php echo esc_html( number_format_i18n( (int) $poll->total_votes ) ); ?></td>
+										<td><?php echo esc_html( $poll->last_vote ? human_time_diff( strtotime( $poll->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
+										</td>
+										<td>
+											<?php if ( $is_orphan ) : ?>
+												<a href="<?php echo esc_url( wp_nonce_url( '?page=content-poll-settings&tab=analytics&content_poll_delete_orphan=' . urlencode( $poll->block_id ), 'content_poll_delete_orphan_' . $poll->block_id ) ); ?>" class="button button-small" onclick="return confirm('<?php esc_attr_e( 'Delete all vote records for this orphan poll? This cannot be undone.', 'content-poll' ); ?>');">
+													<?php esc_html_e( 'Delete Data', 'content-poll' ); ?>
+												</a>
+											<?php else : ?>
+												<a href="<?php echo esc_url( '?page=content-poll-settings&tab=analytics&post_id=' . (int) $poll->post_id ); ?>" class="button button-small">
+													<?php esc_html_e( 'View Post', 'content-poll' ); ?>
+												</a>
+											<?php endif; ?>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php endif; ?>
+
+			<?php endif; ?>
+		</div>
+		<?php
+	}
+
+	private function render_post_detail( VoteAnalyticsService $analytics, int $post_id ): void {
+		$post = get_post( $post_id );
+		if ( ! $post ) {
+			?>
+			<div class="notice notice-error">
+				<p><?php esc_html_e( 'Post not found.', 'content-poll' ); ?></p>
+			</div>
+			<p>
+				<a href="?page=content-poll-settings&tab=analytics" class="button">
+					<?php esc_html_e( '← Back to Analytics', 'content-poll' ); ?>
+				</a>
+			</p>
+			<?php
+			return;
+		}
+
+		$blocks      = $analytics->get_post_block_totals( $post_id );
+		$block_attrs = $analytics->get_post_block_attributes( $post_id );
+
+		?>
+		<div class="content-poll-post-detail" style="margin-top: 20px;">
+			<p>
+				<a href="?page=content-poll-settings&tab=analytics" class="button">
+					<?php esc_html_e( '← Back to Analytics', 'content-poll' ); ?>
+				</a>
+			</p>
+
+			<h2>
+				<?php echo esc_html( $post->post_title ?: __( '(No title)', 'content-poll' ) ); ?>
+				<a href="<?php echo esc_url( get_edit_post_link( $post_id ) ); ?>" class="button button-small"
+					style="margin-left: 10px;">
+					<?php esc_html_e( 'Edit Post', 'content-poll' ); ?>
+				</a>
+			</h2>
+
+			<?php if ( empty( $blocks ) ) : ?>
+				<div class="notice notice-info">
+					<p><?php esc_html_e( 'No votes recorded for polls on this post yet.', 'content-poll' ); ?></p>
+				</div>
+			<?php else : ?>
+				<?php foreach ( $blocks as $block ) :
+					$attrs     = $block_attrs[ $block->block_id ] ?? null;
+					$question  = $attrs ? $attrs[ 'question' ] : __( 'Untitled Poll', 'content-poll' );
+					$options   = $attrs ? $attrs[ 'options' ] : [];
+					$breakdown = $analytics->get_block_option_breakdown( $block->block_id );
+					?>
+					<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
+						<h3 style="margin-top: 0;"><?php echo esc_html( $question ); ?></h3>
+						<p>
+							<strong><?php esc_html_e( 'Total Votes:', 'content-poll' ); ?></strong>
+							<?php echo esc_html( number_format_i18n( (int) $block->total_votes ) ); ?>
+							&nbsp;|&nbsp;
+							<strong><?php esc_html_e( 'Last Vote:', 'content-poll' ); ?></strong>
+							<?php echo esc_html( $block->last_vote ? human_time_diff( strtotime( $block->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
+						</p>
+
+						<table class="wp-list-table widefat fixed striped" style="margin-top: 15px;">
+							<thead>
+								<tr>
+									<th style="width: 50%;"><?php esc_html_e( 'Option', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Votes', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Percentage', 'content-poll' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php
+								$option_count = count( $options );
+								for ( $i = 0; $i < $option_count; $i++ ) :
+									$label = $options[ $i ] ?? __( 'Option', 'content-poll' ) . ' ' . ( $i + 1 );
+									$votes = $breakdown[ 'counts' ][ $i ] ?? 0;
+									$pct   = $breakdown[ 'percentages' ][ $i ] ?? 0;
+									?>
+									<tr>
+										<td>
+											<strong><?php echo esc_html( chr( 65 + $i ) ); ?>.</strong>
+											<?php echo esc_html( $label ); ?>
+										</td>
+										<td><?php echo esc_html( number_format_i18n( $votes ) ); ?></td>
+										<td>
+											<?php echo esc_html( number_format_i18n( $pct, 1 ) . '%' ); ?>
+											<div
+												style="background: #ddd; height: 20px; border-radius: 3px; overflow: hidden; margin-top: 5px;">
+												<div style="background: #2271b1; height: 100%; width: <?php echo esc_attr( $pct ); ?>%;">
+												</div>
+											</div>
+										</td>
+									</tr>
+								<?php endfor; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php endforeach; ?>
+			<?php endif; ?>
 		</div>
 		<?php
 	}
@@ -598,5 +895,55 @@ class SettingsPage {
 	public static function get_ollama_model(): string {
 		$options = get_option( 'content_poll_options', [ 'ollama_model' => 'llama3.2' ] );
 		return $options[ 'ollama_model' ] ?? 'llama3.2';
+	}
+
+	/**
+	 * Add votes column to post/page admin list.
+	 *
+	 * @param array $columns Existing columns.
+	 * @return array Modified columns.
+	 */
+	public function add_votes_column( array $columns ): array {
+		// Insert before comments column if it exists, otherwise append
+		$new_columns = [];
+		foreach ( $columns as $key => $label ) {
+			if ( $key === 'comments' ) {
+				$new_columns[ 'content_poll_votes' ] = __( 'Poll Votes', 'content-poll' );
+			}
+			$new_columns[ $key ] = $label;
+		}
+		// If comments column doesn't exist, append
+		if ( ! isset( $new_columns[ 'content_poll_votes' ] ) ) {
+			$new_columns[ 'content_poll_votes' ] = __( 'Poll Votes', 'content-poll' );
+		}
+		return $new_columns;
+	}
+
+	/**
+	 * Render votes column content.
+	 *
+	 * @param string $column_name Column identifier.
+	 * @param int    $post_id     Post ID.
+	 */
+	public function render_votes_column( string $column_name, int $post_id ): void {
+		if ( $column_name !== 'content_poll_votes' ) {
+			return;
+		}
+
+		$analytics   = new VoteAnalyticsService();
+		$total_votes = $analytics->get_post_total_votes( $post_id );
+
+		if ( $total_votes > 0 ) {
+			?>
+			<strong><?php echo esc_html( number_format_i18n( $total_votes ) ); ?></strong>
+			<br>
+			<a
+				href="<?php echo esc_url( admin_url( 'options-general.php?page=content-poll-settings&tab=analytics&post_id=' . $post_id ) ); ?>">
+				<?php esc_html_e( 'View Analytics', 'content-poll' ); ?>
+			</a>
+			<?php
+		} else {
+			echo '<span style="color: #999;">—</span>';
+		}
 	}
 }

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ContentPoll AI
  * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results.
- * Version: 0.5.1
+ * Version: 0.6.0
  * Author: Per Soderlind
  * Author URI: https://soderlind.no
  * Plugin URI: https://github.com/soderlind/content-poll
@@ -111,7 +111,20 @@ add_action( 'plugins_loaded', function () {
 	// Register dynamic block (server-rendered markup) and admin settings.
 	( new \ContentPoll\Blocks\VoteBlock() )->register();
 	new \ContentPoll\Admin\SettingsPage();
+
+	// Invalidate cached analytics summary when posts are saved (content changes may add/remove poll blocks).
+	add_action( 'save_post', function ( $post_id ) {
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+		if ( function_exists( 'delete_transient' ) ) {
+			delete_transient( 'content_poll_posts_summary' );
+		}
+	}, 10, 1 );
 } );
+
+// One-time migration: backfill missing post_id for early votes stored before post_id capture was added.
+// Removed legacy migration logic in favor of runtime fallback counting for post_id = 0 records.
 // Removed inline localization to comply with strict CSP (no inline scripts).
 // Block editor JS now derives postId via wp.data.select('core/editor').getCurrentPostId()
 // and nonce from wpApiSettings.nonce (core REST setup) without plugin-added inline script.
