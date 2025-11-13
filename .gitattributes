@@ -3,7 +3,7 @@
 # Keep ONLY runtime PHP, block build assets, translations, and primary docs.
 
 # Core runtime (kept):
-#  - content-vote.php
+#  - content-poll.php
 #  - uninstall.php
 #  - build/ (compiled block assets)
 #  - src/php/ (plugin PHP source)
@@ -18,7 +18,6 @@
 /tests                  export-ignore
 /docs                   export-ignore
 /specs                  export-ignore
-/vendor                 export-ignore
 
 # Source JS/CSS (optional exclude if you only ship built assets)
 # Uncomment next line if you do NOT want to ship raw block source.
@@ -46,5 +45,4 @@
 # Ignore any miscellaneous local environment files
 *.log                   export-ignore
 *.md                    export-ignore
-# Allow readme.txt specifically
-!readme.txt
+
