@@ -398,15 +398,13 @@ class AISuggestionService {
 		arsort( $freq );
 		$top = array_slice( array_keys( $freq ), 0, 6 );
 		if ( empty( $top ) ) {
-			$questionFallback = 'What is your opinion of this content?';
-			$questionText     = ( function_exists( '__' ) ) ? __( 'What is your opinion of this content?', 'content-vote' ) : $questionFallback;
 			return [
-				'question' => $questionText,
+				'question' => __( 'What is your opinion of this content?', 'content-vote' ),
 				'options'  => [ 'Great', 'Informative', 'Neutral', 'Confusing' ],
 			];
 		}
 		$stem             = $top[ 0 ];
-		$questionTemplate = ( function_exists( '__' ) ) ? __( 'Your view on "%s"?', 'content-vote' ) : 'Your view on "%s"?';
+		$questionTemplate = __( 'Your view on "%s"?', 'content-vote' );
 		$question         = sprintf( $questionTemplate, ucfirst( $stem ) );
 		// Build option phrases.
 		$options = [];
@@ -415,8 +413,7 @@ class AISuggestionService {
 		}
 		$count = count( $options );
 		if ( $count < 2 ) {
-			$unsure    = ( function_exists( '__' ) ) ? __( 'Unsure', 'content-vote' ) : 'Unsure';
-			$options[] = $unsure;
+			$options[] = __( 'Unsure', 'content-vote' );
 		}
 		if ( $count > 6 ) {
 			$options = array_slice( $options, 0, 6 );

@@ -7,18 +7,22 @@ namespace ContentVote\REST;
 use ContentVote\Services\VoteStorageService;
 use ContentVote\Security\SecurityHelper;
 
+/**
+ * REST controller for vote submission and debug reset.
+ * Registers endpoints on rest_api_init.
+ */
 class VoteController {
 	private string $namespace = 'content-vote/v1';
 
+	/**
+	 * Register REST routes for voting and debug reset.
+	 */
 	public function register(): void {
-		if ( ! function_exists( 'register_rest_route' ) ) {
-			return; // Non-WordPress execution safety.
-		}
 		add_action( 'rest_api_init', function () {
 			register_rest_route( $this->namespace, '/block/(?P<blockId>[a-zA-Z0-9_-]+)/vote', [
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle_vote' ],
-				'permission_callback' => '__return_true', // Public vote, but we enforce nonce below.
+				'permission_callback' => '__return_true', // Nonce required for actual vote acceptance.
 				'args'                => [
 					'optionIndex' => [
 						'type'              => 'integer',
@@ -30,7 +34,7 @@ class VoteController {
 					],
 				],
 			] );
-			// Debug-only reset endpoint
+			// Debug-only reset endpoint for clearing the user vote cookie.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
 				register_rest_route( $this->namespace, '/block/(?P<blockId>[a-zA-Z0-9_-]+)/reset', [
 					'methods'             => 'POST',
@@ -47,6 +51,19 @@ class VoteController {
 	 * @param \WP_REST_Request $request REST request object
 	 * @return array|\WP_Error Vote results or error
 	 */
+	/**
+	 * Process an incoming vote request.
+	 *
+	 * Steps:
+	 * - Nonce validation for CSRF protection.
+	 * - AUTH_KEY presence check for secure hashing.
+	 * - Block ID + option validation.
+	 * - Persistent token hashing & storage.
+	 * - Returns aggregate results including userVote.
+	 *
+	 * @param \WP_REST_Request $request Request instance.
+	 * @return array|\WP_Error
+	 */
 	public function handle_vote( $request ) {
 		$nonce = $request->get_header( 'X-WP-Nonce' );
 		if ( ! SecurityHelper::verify_nonce( $nonce ) ) {
@@ -56,7 +73,7 @@ class VoteController {
 		if ( ! defined( 'AUTH_KEY' ) || AUTH_KEY === 'put your unique phrase here' || empty( AUTH_KEY ) ) {
 			return $this->error( 'config_error', 'WordPress AUTH_KEY must be configured for vote security.', 500 );
 		}
-		$block_id = sanitize_text_field( $request[ 'blockId' ] );
+		$block_id = sanitize_text_field( (string) $request->get_param( 'blockId' ) );
 		// Validate block ID length (UUIDs are 36 chars; allow some flexibility).
 		if ( strlen( $block_id ) > 64 || strlen( $block_id ) < 8 ) {
 			return $this->error( 'invalid_block_id', 'Block ID format invalid.', 400 );
@@ -80,6 +97,11 @@ class VoteController {
 	 * Get or create anonymous voter token with secure cookie.
 	 * 
 	 * @return string Unique voter token
+	 */
+	/**
+	 * Retrieve or generate the anonymous user token stored as a secure cookie.
+	 *
+	 * @return string Token value (non-hashed).
 	 */
 	private function get_or_create_token(): string {
 		if ( isset( $_COOKIE[ 'content_vote_token' ] ) ) {
@@ -112,6 +134,12 @@ class VoteController {
 	 * @param \WP_REST_Request $request REST request object
 	 * @return array Reset confirmation
 	 */
+	/**
+	 * Debug-only endpoint handler to clear the vote token allowing a re-vote.
+	 *
+	 * @param \WP_REST_Request $request Request instance.
+	 * @return array Confirmation payload.
+	 */
 	public function handle_reset( $request ) {
 		if ( ! defined( 'WP_DEBUG' ) || ! WP_DEBUG ) {
 			return $this->error( 'forbidden', 'Reset only available in debug mode', 403 );
@@ -133,6 +161,14 @@ class VoteController {
 		return [ 'success' => true, 'message' => 'Vote reset successfully' ];
 	}
 
+	/**
+	 * Normalize error responses supporting both WP_Error and plain array fallback.
+	 *
+	 * @param string $code    Error code.
+	 * @param string $message Human-readable message.
+	 * @param int    $status  HTTP status code.
+	 * @return \WP_Error|array
+	 */
 	private function error( string $code, string $message, int $status ) {
 		if ( class_exists( 'WP_Error' ) ) {
 			return new \WP_Error( $code, $message, [ 'status' => $status ] );
