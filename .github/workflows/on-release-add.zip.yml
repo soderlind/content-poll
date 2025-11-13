@@ -26,9 +26,10 @@ jobs:
           exclusions: >-
             .git/* .github/* .vscode/* .specify/* node_modules/* tests/* docs/* specs/* 
             composer.json composer.lock package.json package-lock.json
-            CHANGELOG.md README.md  phpunit.xml phpunit.xml.dist build/phpunit.xml phpcs.xml vitest.config.js
+            CHANGELOG.md README.md phpunit.xml phpunit.xml.dist build/phpunit.xml phpcs.xml vitest.config.js
             .editorconfig .eslintignore .eslintrc.js .gitignore .gitattributes webpack.config.js
             *.log *.md
+            !readme.txt
       
       - name: Verify Archive Contents
         run: |

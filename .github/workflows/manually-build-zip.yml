@@ -34,6 +34,7 @@ jobs:
             CHANGELOG.md README.md phpunit.xml phpunit.xml.dist build/phpunit.xml phpcs.xml vitest.config.js
             .editorconfig .eslintignore .eslintrc.js .gitignore .gitattributes webpack.config.js
             *.log *.md
+            !readme.txt
 
       - name: Verify Archive Contents
         run: |
