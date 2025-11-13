@@ -13,22 +13,6 @@ class SettingsPage {
 		$this->option_name  = 'content_poll_options';
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
-		add_action( 'admin_notices', [ $this, 'display_ai_error_notices' ] );
-	}
-
-	public function display_ai_error_notices(): void {
-		$error = get_transient( 'content_poll_ai_error' );
-		if ( $error && current_user_can( 'manage_options' ) ) {
-			?>
-			<div class="notice notice-error is-dismissible">
-				<p><strong><?php esc_html_e( 'ContentPoll AI Error:', 'content-poll' ); ?></strong>
-					<?php echo esc_html( $error ); ?></p>
-				<p><?php esc_html_e( 'Please check your AI provider settings (model name, API key, endpoint) and try again.', 'content-poll' ); ?>
-				</p>
-			</div>
-			<?php
-			delete_transient( 'content_poll_ai_error' );
-		}
 	}
 	public function add_settings_page(): void {
 		add_options_page(
@@ -183,6 +167,13 @@ class SettingsPage {
 		}
 
 		if ( $error ) {
+			// Dedupe: ensure we only add this error once per request.
+			$existing = get_settings_errors();
+			foreach ( $existing as $ex ) {
+				if ( isset( $ex[ 'code' ] ) && $ex[ 'code' ] === 'ai_validation_error' ) {
+					return;
+				}
+			}
 			add_settings_error(
 				'content_poll_messages',
 				'ai_validation_error',

@@ -147,7 +147,7 @@ function Edit( props ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-						title={ __( 'Settings', 'content-poll' ) }
+					title={ __( 'Settings', 'content-poll' ) }
 					initialOpen={ true }
 				>
 					<RangeControl
@@ -170,7 +170,10 @@ function Edit( props ) {
 					</Button>
 					{ locked && (
 						<Notice status="info" isDismissible={ false }>
-							{ __( 'Options locked after votes', 'content-poll' ) }
+							{ __(
+								'Options locked after votes',
+								'content-poll'
+							) }
 						</Notice>
 					) }
 					{ suggestError && (
@@ -195,14 +198,14 @@ function Edit( props ) {
 							<RichText
 								tagName="span"
 								value={ opt }
-									placeholder={
-										__( 'Option', 'content-poll' ) +
+								placeholder={
+									__( 'Option', 'content-poll' ) +
 									' ' +
 									( i + 1 )
 								}
 								onChange={ ( v ) => updateOption( v, i ) }
 								allowedFormats={ [] }
-									className="content-poll-option"
+								className="content-poll-option"
 							/>
 						</li>
 					) ) }
