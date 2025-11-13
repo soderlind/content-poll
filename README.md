@@ -10,9 +10,9 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 
 
-<div align=center>
+
 https://github.com/user-attachments/assets/c4ca3d5c-614f-4486-aa0c-36c35c15ce38
-</div>
+
 
 
 
