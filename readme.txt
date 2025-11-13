@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.6.2
+Stable tag: 0.6.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,6 +166,11 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.6.3 - 2025-11-14 =
+* Changed: AI providers now infer post language from content and generate poll questions/options in the same language in a single request.
+* Changed: Simplified AISuggestionService by removing custom PHP language heuristic in favor of model-based detection.
+* Notes: Patch release focused on localization behavior of AI suggestions; no schema changes.
+
 = 0.6.2 - 2025-11-13 =
 * Added: Results-only view for returning visitors (options hidden; only aggregated results remain).
 * Changed: Front-end script and styles add `content-poll--results-only` class; debug reset restores visibility.
@@ -249,6 +254,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.6.3 =
+Improved AI localization: language is inferred from content and polls are generated in that language. Safe upgrade; no manual steps.
 
 = 0.6.2 =
 Returning visitors now see a results-only view (options hidden) for cleaner display. Safe upgrade; no manual steps.

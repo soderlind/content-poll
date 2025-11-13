@@ -15,19 +15,21 @@ class AISuggestionService {
 	 */
 	public function suggest( string $content ): array {
 		$provider = SettingsPage::get_ai_provider();
+		$text     = strip_tags( $content );
+		$text     = mb_substr( $text, 0, 1000 ); // Limit to first 1000 chars
 
 		switch ( $provider ) {
 			case 'openai':
-				$result = $this->suggest_openai( $content );
+				$result = $this->suggest_openai( $text );
 				break;
 			case 'anthropic':
-				$result = $this->suggest_anthropic( $content );
+				$result = $this->suggest_anthropic( $text );
 				break;
 			case 'gemini':
-				$result = $this->suggest_gemini( $content );
+				$result = $this->suggest_gemini( $text );
 				break;
 			case 'ollama':
-				$result = $this->suggest_ollama( $content );
+				$result = $this->suggest_ollama( $text );
 				break;
 			default:
 				$result = [];
@@ -75,7 +77,7 @@ class AISuggestionService {
 	 * @param string $content Raw post content.
 	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
 	 */
-	private function suggest_openai( string $content ): array {
+	private function suggest_openai( string $text ): array {
 		$api_key = SettingsPage::get_openai_key();
 		$model   = SettingsPage::get_openai_model();
 		$type    = SettingsPage::get_openai_type();
@@ -84,9 +86,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$text   = strip_tags( $content );
-		$text   = mb_substr( $text, 0, 1000 ); // Limit to first 1000 chars
-		$prompt = "Based on the following content, suggest one poll question and 4-6 voting options. Return JSON format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}.\n\nContent:\n" . $text;
+		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
 
 		// Build request based on type (OpenAI or Azure)
 		if ( $type === 'azure' ) {
@@ -192,7 +192,7 @@ class AISuggestionService {
 	 * @param string $content Raw post content.
 	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
 	 */
-	private function suggest_anthropic( string $content ): array {
+	private function suggest_anthropic( string $text ): array {
 		$api_key = SettingsPage::get_anthropic_key();
 		$model   = SettingsPage::get_anthropic_model();
 
@@ -200,9 +200,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$text   = strip_tags( $content );
-		$text   = mb_substr( $text, 0, 1000 );
-		$prompt = "Based on the following content, suggest one poll question and 4-6 voting options. Return JSON format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}.\n\nContent:\n" . $text;
+		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
 
 		$response = wp_remote_post( 'https://api.anthropic.com/v1/messages', [
 			'headers' => [
@@ -267,7 +265,7 @@ class AISuggestionService {
 	 * @param string $content Raw post content.
 	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
 	 */
-	private function suggest_gemini( string $content ): array {
+	private function suggest_gemini( string $text ): array {
 		$api_key = SettingsPage::get_gemini_key();
 		$model   = SettingsPage::get_gemini_model();
 
@@ -275,9 +273,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$text   = strip_tags( $content );
-		$text   = mb_substr( $text, 0, 1000 );
-		$prompt = "Based on the following content, suggest one poll question and 4-6 voting options. Return JSON format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}.\n\nContent:\n" . $text;
+		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
 
 		$url = 'https://generativelanguage.googleapis.com/v1beta/models/' . $model . ':generateContent?key=' . $api_key;
 
@@ -343,7 +339,7 @@ class AISuggestionService {
 	 * @param string $content Raw post content.
 	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
 	 */
-	private function suggest_ollama( string $content ): array {
+	private function suggest_ollama( string $text ): array {
 		$endpoint = SettingsPage::get_ollama_endpoint();
 		$model    = SettingsPage::get_ollama_model();
 
@@ -351,9 +347,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$text   = strip_tags( $content );
-		$text   = mb_substr( $text, 0, 1000 );
-		$prompt = "Based on the following content, suggest one poll question and 4-6 voting options. Return JSON format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}.\n\nContent:\n" . $text;
+		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
 
 		$url = rtrim( $endpoint, '/' ) . '/api/generate';
 
