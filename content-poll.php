@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ContentPoll AI
  * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results.
- * Version: 0.4.0
+ * Version: 0.5.0
  * Author: Per Soderlind
  * Author URI: https://soderlind.no
  * Plugin URI: https://github.com/soderlind/content-poll
@@ -28,6 +28,7 @@
  */
 
 declare(strict_types=1);
+use ContentPoll\Update\GitHubPluginUpdater;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -93,6 +94,14 @@ add_action( 'plugins_loaded', function () {
 	// Load translations. Domain path declared in header.
 	load_plugin_textdomain( 'content-poll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
+	// Update checker via GitHub releases.
+	GitHubPluginUpdater::create_with_assets(
+		'https://github.com/soderlind/content-poll',
+		__FILE__,
+		'content-poll',
+		'/content-poll\.zip/',
+		'main'
+	);
 	// Register REST endpoints for voting, nonce, results, AI suggestion.
 	( new \ContentPoll\REST\VoteController() )->register();
 	( new \ContentPoll\REST\NonceController() )->register();

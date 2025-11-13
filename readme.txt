@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.4.0
+Stable tag: 0.5.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -181,6 +181,14 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.5.0 - 2025-11-13 =
+* Added: GitHub-based automatic update support via `GitHubPluginUpdater` class (plugin-update-checker integration)
+* Added: Archive content verification step in release workflows (lists packaged files pre-publish)
+* Changed: Release workflows now align exclusions with `.gitattributes` (lighter production zip)
+* Changed: Improved packaging consistency; ensures dev/test/docs are excluded uniformly
+* Testing: Added PHPUnit coverage for updater logic (constructor, hook registration, release assets flag)
+* Internal: Preparation for future analytics/export feature set
+
 = 0.4.0 - 2025-11-13 =
 * Renamed plugin branding from "Content Vote" to "ContentPoll AI"
 * Updated language files and documentation wording
@@ -223,6 +231,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.5.0 =
+Adds GitHub-based updater support and refined release packaging. No action required; existing installs will see future update prompts.
 
 = 0.4.0 =
 Rename release: Plugin name changed from "Content Vote" to "ContentPoll AI". No action required; existing blocks and settings continue working.
