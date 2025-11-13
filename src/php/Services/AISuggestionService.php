@@ -49,24 +49,24 @@ class AISuggestionService {
 	 * @return array{question:string,options:array<int,string>}
 	 */
 	private function normalize_suggestion( array $data, string $content ): array {
-		if ( ! isset( $data['question'] ) || ! is_string( $data['question'] ) ) {
+		if ( ! isset( $data[ 'question' ] ) || ! is_string( $data[ 'question' ] ) ) {
 			// Regenerate via heuristic to guarantee a question.
 			$data = $this->suggest_heuristic( $content );
 		}
-		if ( ! isset( $data['options'] ) || ! is_array( $data['options'] ) ) {
-			$data['options'] = $this->suggest_heuristic( $content )['options'];
+		if ( ! isset( $data[ 'options' ] ) || ! is_array( $data[ 'options' ] ) ) {
+			$data[ 'options' ] = $this->suggest_heuristic( $content )[ 'options' ];
 		}
 		// Enforce min 2, max 6 options.
-		$data['options'] = array_values( array_filter( $data['options'], fn( $o ) => is_string( $o ) && $o !== '' ) );
-		if ( count( $data['options'] ) < 2 ) {
-			$data['options'][] = 'Option';
+		$data[ 'options' ] = array_values( array_filter( $data[ 'options' ], fn( $o ) => is_string( $o ) && $o !== '' ) );
+		if ( count( $data[ 'options' ] ) < 2 ) {
+			$data[ 'options' ][] = 'Option';
 		}
-		if ( count( $data['options'] ) > 6 ) {
-			$data['options'] = array_slice( $data['options'], 0, 6 );
+		if ( count( $data[ 'options' ] ) > 6 ) {
+			$data[ 'options' ] = array_slice( $data[ 'options' ], 0, 6 );
 		}
 		return [
-			'question' => $data['question'],
-			'options'  => $data['options'],
+			'question' => $data[ 'question' ],
+			'options'  => $data[ 'options' ],
 		];
 	}
 

@@ -191,7 +191,7 @@ class VoteAnalyticsService {
 		if ( $cached !== false && is_array( $cached ) ) {
 			return $cached;
 		}
-		$db = $this->db;
+		$db    = $this->db;
 		$posts = $db->get_results( "SELECT ID, post_title, post_content FROM {$db->posts} WHERE post_status IN ('publish','draft','future') AND post_type IN ('post','page') AND post_content LIKE '%content-poll/vote-block%'" );
 		if ( empty( $posts ) ) {
 			return [];
@@ -212,8 +212,8 @@ class VoteAnalyticsService {
 			$blocks    = parse_blocks( $p->post_content );
 			$block_ids = [];
 			foreach ( $blocks as $b ) {
-				if ( isset( $b['blockName'] ) && $b['blockName'] === 'content-poll/vote-block' && isset( $b['attrs']['blockId'] ) ) {
-					$block_ids[] = $b['attrs']['blockId'];
+				if ( isset( $b[ 'blockName' ] ) && $b[ 'blockName' ] === 'content-poll/vote-block' && isset( $b[ 'attrs' ][ 'blockId' ] ) ) {
+					$block_ids[] = $b[ 'attrs' ][ 'blockId' ];
 				}
 			}
 			$block_ids = array_unique( $block_ids );
@@ -225,15 +225,15 @@ class VoteAnalyticsService {
 			foreach ( $block_ids as $bid ) {
 				$key = (int) $p->ID . '|' . $bid;
 				if ( isset( $non_map[ $key ] ) ) {
-					$total_votes += $non_map[ $key ]['cnt'];
-					if ( ! $last_vote || $non_map[ $key ]['last'] > $last_vote ) {
-						$last_vote = $non_map[ $key ]['last'];
+					$total_votes += $non_map[ $key ][ 'cnt' ];
+					if ( ! $last_vote || $non_map[ $key ][ 'last' ] > $last_vote ) {
+						$last_vote = $non_map[ $key ][ 'last' ];
 					}
 				}
 				if ( isset( $legacy_map[ $bid ] ) ) {
-					$total_votes += $legacy_map[ $bid ]['cnt'];
-					if ( ! $last_vote || $legacy_map[ $bid ]['last'] > $last_vote ) {
-						$last_vote = $legacy_map[ $bid ]['last'];
+					$total_votes += $legacy_map[ $bid ][ 'cnt' ];
+					if ( ! $last_vote || $legacy_map[ $bid ][ 'last' ] > $last_vote ) {
+						$last_vote = $legacy_map[ $bid ][ 'last' ];
 					}
 				}
 			}
