@@ -328,3 +328,44 @@ msgstr ""
 msgctxt "block description"
 msgid "Allow visitors to cast a single vote on a question with 2–6 options."
 msgstr ""
+
+#: src/php/Admin/SettingsPage.php:120
+msgid "Poll Posts per page"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:436
+msgid "List table unavailable."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:474
+msgid "Top Polls by Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:489
+msgid "Orphan Poll (block removed)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:494
+msgid "Orphan"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:506
+msgid "Delete Data"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:501
+msgid "View Post"
+msgstr ""
+
+#. translators: %d: number of rows deleted
+#: src/php/Admin/SettingsPage.php:409
+msgid "Deleted %d orphan vote record(s)."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:417
+msgid "No orphan records matched for deletion."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:504
+msgid "Delete all vote records for this orphan poll? This cannot be undone."
+msgstr ""

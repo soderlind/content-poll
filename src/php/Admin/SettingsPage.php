@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace ContentPoll\Admin;
 
 use ContentPoll\Services\VoteAnalyticsService;
+use ContentPoll\Admin\PollsListTable;
 
 class SettingsPage {
 	private string $option_group = 'content_poll_settings';
@@ -15,6 +16,8 @@ class SettingsPage {
 		$this->option_name  = 'content_poll_options';
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
+		add_action( 'load-settings_page_content-poll-settings', [ $this, 'add_screen_options' ] );
+		add_filter( 'set-screen-option', [ $this, 'set_screen_option' ], 10, 3 );
 
 		// Add admin columns
 		// Add list table columns for Posts and Pages
@@ -36,6 +39,21 @@ class SettingsPage {
 			'content-poll-settings',
 			[ $this, 'render_settings_page' ]
 		);
+	}
+
+	public function add_screen_options(): void {
+		add_screen_option( 'per_page', [
+			'label'   => __( 'Poll Posts per page', 'content-poll' ),
+			'default' => 20,
+			'option'  => 'content_poll_polls_per_page',
+		] );
+	}
+
+	public function set_screen_option( $status, $option, $value ) {
+		if ( $option === 'content_poll_polls_per_page' ) {
+			return (int) $value;
+		}
+		return $status;
 	}
 
 	public function register_settings(): void {
@@ -395,6 +413,10 @@ class SettingsPage {
 
 	private function render_analytics_tab(): void {
 		$analytics = new VoteAnalyticsService();
+		$list_table = null;
+		if ( class_exists( '\\ContentPoll\\Admin\\PollsListTable' ) ) {
+			$list_table = new PollsListTable( $analytics );
+		}
 
 		// Handle orphan poll deletion request.
 		if ( isset( $_GET['content_poll_delete_orphan'] ) && current_user_can( 'manage_options' ) ) {
@@ -469,43 +491,18 @@ class SettingsPage {
 				</div>
 			<?php else : ?>
 
-				<!-- Posts Summary Table -->
+				<!-- Posts Summary List Table -->
 				<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
 					<h2 style="margin-top: 0;"><?php esc_html_e( 'Posts with Polls', 'content-poll' ); ?></h2>
-					<table class="wp-list-table widefat fixed striped">
-						<thead>
-							<tr>
-								<th><?php esc_html_e( 'Post Title', 'content-poll' ); ?></th>
-								<th><?php esc_html_e( 'Polls', 'content-poll' ); ?></th>
-								<th><?php esc_html_e( 'Total Votes', 'content-poll' ); ?></th>
-								<th><?php esc_html_e( 'Last Activity', 'content-poll' ); ?></th>
-								<th><?php esc_html_e( 'Actions', 'content-poll' ); ?></th>
-							</tr>
-						</thead>
-						<tbody>
-							<?php foreach ( $posts_summary as $row ) : ?>
-								<tr>
-									<td>
-										<strong>
-											<a href="<?php echo esc_url( get_edit_post_link( $row->post_id ) ); ?>">
-												<?php echo esc_html( $row->post_title ?: __( '(No title)', 'content-poll' ) ); ?>
-											</a>
-										</strong>
-									</td>
-									<td><?php echo esc_html( number_format_i18n( (int) $row->poll_count ) ); ?></td>
-									<td><?php echo esc_html( number_format_i18n( (int) $row->total_votes ) ); ?></td>
-									<td><?php echo esc_html( $row->last_vote ? human_time_diff( strtotime( $row->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
-									</td>
-									<td>
-										<a href="?page=content-poll-settings&tab=analytics&post_id=<?php echo esc_attr( $row->post_id ); ?>"
-											class="button button-small">
-											<?php esc_html_e( 'View Details', 'content-poll' ); ?>
-										</a>
-									</td>
-								</tr>
-							<?php endforeach; ?>
-						</tbody>
-					</table>
+					<?php if ( $list_table ) : ?>
+						<form method="get">
+							<input type="hidden" name="page" value="content-poll-settings" />
+							<input type="hidden" name="tab" value="analytics" />
+							<?php $list_table->prepare_items(); $list_table->display(); ?>
+						</form>
+					<?php else : ?>
+						<p><?php esc_html_e( 'List table unavailable.', 'content-poll' ); ?></p>
+					<?php endif; ?>
 				</div>
 
 				<!-- Top Polls -->
