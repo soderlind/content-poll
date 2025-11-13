@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.6.1
+Stable tag: 0.6.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,6 +166,12 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.6.2 - 2025-11-13 =
+* Added: Results-only view for returning visitors (options hidden; only aggregated results remain).
+* Changed: Front-end script and styles add `content-poll--results-only` class; debug reset restores visibility.
+* Internal: Minor JS formatting (Prettier) and asset rebuild.
+* Notes: Patch UX improvement; no database changes.
+
 = 0.6.1 - 2025-11-13 =
 * Fixed: Analytics summary transient regression causing reset/overwrite during summary build.
 * Added: AI suggestion normalization guaranteeing question + options array (prevents empty suggestion tests).
@@ -243,6 +249,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.6.2 =
+Returning visitors now see a results-only view (options hidden) for cleaner display. Safe upgrade; no manual steps.
 
 = 0.6.1 =
 Stability patch: fixes analytics caching regression and ensures consistent AI suggestions. Safe upgrade; no manual steps.

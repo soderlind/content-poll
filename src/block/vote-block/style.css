@@ -233,6 +233,16 @@
 	box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* Results-only state: hide interactive options list after user has voted */
+.content-poll--results-only .content-poll__options,
+.content-poll--results-only .content-poll__option {
+	display: none !important;
+}
+
+.content-poll--results-only .content-poll__message {
+	display: none !important;
+}
+
 /* Editor styles */
 .content-poll-editor h4 {
 	font-weight: 600;
