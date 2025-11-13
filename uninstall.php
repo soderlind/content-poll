@@ -27,6 +27,4 @@ if ( method_exists( $wpdb, 'prepare' ) && version_compare( $GLOBALS[ 'wp_version
 }
 
 // Clean up any stored options (none currently, but留 for future use)
-if ( function_exists( 'delete_option' ) ) {
-	delete_option( 'content_vote_settings' );
-}
+delete_option( 'content_vote_settings' );

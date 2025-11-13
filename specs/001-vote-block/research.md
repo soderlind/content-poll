@@ -72,7 +72,7 @@ Each decision includes rationale and considered alternatives.
 - Hard-coded English only: Non-compliant.
 
 ## 10. REST API Versioning
-**Decision**: Namespace `content-vote/v1`; future changes requiring breaking fields introduce `v2` while keeping `v1` stable.
+**Decision**: Namespace `content-poll/v1`; future changes requiring breaking fields introduce `v2` while keeping `v1` stable.
 **Rationale**: Standard WordPress pattern; supports backward compatibility.
 **Alternatives Considered**:
 - Unversioned: Harder to evolve safely.

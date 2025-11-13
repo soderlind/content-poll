@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use ContentVote\Services\VoteStorageService;
+use ContentPoll\Services\VoteStorageService;
 
 final class VoteStorageServiceTest extends TestCase {
 	private function makeStubDb(): object {

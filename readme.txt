@@ -1,9 +1,9 @@
-=== Content Vote ===
+=== ContentPoll AI ===
 Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.3.0
+Stable tag: 0.4.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -13,15 +13,16 @@ Ask readers questions about your content. AI suggests relevant questions by anal
 
 **Engage readers with questions about the content they're viewing.**
 
-Content Vote lets you add voting questions to any post or page. The plugin's AI reads your content and suggests relevant questions, making it easy to create polls that relate directly to what visitors are reading.
+ContentPoll AI lets you add voting questions to any post or page. The plugin's AI reads your content and suggests relevant questions, making it easy to create polls that relate directly to what visitors are reading.
 
-**Example**: Write a blog post about "10 Photography Tips". Add a Content Vote block, click "Generate Suggestions", and AI might suggest: "Which photography technique would you like to learn more about?" with options like "Portrait Lighting", "Landscape Composition", "Photo Editing", "Equipment Selection".
+**Example**: Write a blog post about "10 Photography Tips". Add a ContentPoll AI block, click "Generate Suggestions", and AI might suggest: "Which photography technique would you like to learn more about?" with options like "Portrait Lighting", "Landscape Composition", "Photo Editing", "Equipment Selection".
 
 Visitors vote once, then see beautiful progress bars showing how others voted. Perfect for blog posts, product pages, tutorials, reviews, and any content where you want to know what interests your audience most.
 
-= Why Content Vote? =
+| Previous Name: Content Vote |
+= Why ContentPoll AI? =
 
-Unlike generic poll plugins, Content Vote is designed for **content-driven voting**. AI analyzes your page to suggest questions that match what readers just consumed, making voting more relevant and increasing engagement.
+Unlike generic poll plugins, ContentPoll AI is designed for **content-driven voting**. AI analyzes your page to suggest questions that match what readers just consumed, making voting more relevant and increasing engagement.
 
 = Perfect For =
 
@@ -52,7 +53,7 @@ AI reads your page content and generates contextually relevant questions and opt
 * **Azure OpenAI**: Enterprise Azure OpenAI Service
 * **Ollama**: Self-hosted local models (process content privately)
 
-Configure once at Settings → Content Vote. Then in any post, write your content, add the vote block, and click "Generate Suggestions". AI suggests a question relevant to what readers just read.
+Configure once at Settings → ContentPoll AI. Then in any post, write your content, add the vote block, and click "Generate Suggestions". AI suggests a question relevant to what readers just read.
 
 = Anonymous & Secure =
 
@@ -76,7 +77,7 @@ Configure once at Settings → Content Vote. Then in any post, write your conten
 = Automatic Installation =
 
 1. Go to Plugins → Add New
-2. Search for "Content Vote"
+2. Search for "ContentPoll AI" (formerly Content Vote)
 3. Click Install Now
 4. Click Activate
 
@@ -180,6 +181,12 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.4.0 - 2025-11-13 =
+* Renamed plugin branding from "Content Vote" to "ContentPoll AI"
+* Updated language files and documentation wording
+* Version synchronization and maintenance groundwork for upcoming analytics/export features
+* Changed: Consolidated AI configuration validation notices (removed transient-based admin notice; single standardized settings warning)
+
 = 0.3.0 - 2025-11-12 =
 * Added: 3 new AI providers (Anthropic Claude, Google Gemini, Ollama)
 * Added: Modern card-style interface (removed buttons)
@@ -216,6 +223,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.4.0 =
+Rename release: Plugin name changed from "Content Vote" to "ContentPoll AI". No action required; existing blocks and settings continue working.
 
 = 0.3.0 =
 Major design update! Beautiful card-style interface with A-D labels and progress bars. Added 3 new AI providers (Claude, Gemini, Ollama). Improved theme integration and user experience.

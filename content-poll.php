@@ -1,0 +1,109 @@
+<?php
+/**
+ * Plugin Name: ContentPoll AI
+ * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results.
+ * Version: 0.4.0
+ * Author: Per Soderlind
+ * Author URI: https://soderlind.no
+ * Plugin URI: https://github.com/soderlind/content-poll
+ * License: GPL v2 or later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
+ * Requires at least: 6.8
+ * Requires PHP: 8.3
+ * Text Domain: content-poll
+ */
+
+/**
+ * Bootstrap file for the ContentPoll AI plugin.
+ *
+ * Responsibilities:
+ * - Load Composer autoload (dependencies).
+ * - Create the custom submissions table on activation.
+ * - Inject CSP nonce into script tags (for strict CSP setups).
+ * - Load text domain for translations.
+ * - Register REST controllers and block on plugins_loaded.
+ *
+ * This file intentionally uses core WordPress APIs directly (no function_exists
+ * guards) under the assumption it runs inside a fully loaded WP environment.
+ */
+
+declare(strict_types=1);
+
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+// Composer autoload.
+if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
+	require __DIR__ . '/vendor/autoload.php';
+}
+
+
+// Activation: create custom table.
+register_activation_hook( __FILE__, function () {
+	global $wpdb;
+	$table  = $wpdb->prefix . 'vote_block_submissions';
+	$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
+	// Only create when absent. Using minimal schema for atomic vote storage.
+	if ( $exists !== $table ) {
+		$charset = $wpdb->get_charset_collate();
+		$sql     = "CREATE TABLE $table (
+			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+			block_id VARCHAR(64) NOT NULL,
+			post_id BIGINT UNSIGNED NOT NULL,
+			option_index TINYINT UNSIGNED NOT NULL,
+			hashed_token CHAR(64) NOT NULL,
+			created_at DATETIME NOT NULL,
+			PRIMARY KEY (id),
+			UNIQUE KEY uniq_block_token (block_id, hashed_token),
+			KEY idx_block_option (block_id, option_index)
+		) $charset";
+		$wpdb->query( $sql );
+	}
+} );
+
+// Inject CSP nonce attribute into enqueued script tags if a server-provided nonce is available.
+// This helps satisfy strict Content Security Policy configurations that require a nonce on every script tag.
+// You can expose a nonce via:
+// 1. Setting $_SERVER['CONTENT_SECURITY_POLICY_NONCE'] in your mu-plugin or server layer.
+// 2. Defining a constant CONTENT_POLL_CSP_NONCE.
+// 3. Adding a filter: add_filter('content_poll_csp_nonce', fn() => 'your-nonce');
+add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
+	// Skip if nonce already present.
+	if ( strpos( $tag, ' nonce=' ) !== false ) {
+		return $tag;
+	}
+	$csp_nonce = '';
+	if ( isset( $_SERVER[ 'CONTENT_SECURITY_POLICY_NONCE' ] ) ) {
+		$csp_nonce = (string) $_SERVER[ 'CONTENT_SECURITY_POLICY_NONCE' ];
+	}
+	if ( ! $csp_nonce && defined( 'CONTENT_POLL_CSP_NONCE' ) ) {
+		$csp_nonce = (string) CONTENT_POLL_CSP_NONCE;
+	}
+	// Allow integrators to override / provide nonce value.
+	$csp_nonce = apply_filters( 'content_poll_csp_nonce', $csp_nonce, $handle, $src );
+	if ( $csp_nonce ) {
+		$escaped = esc_attr( $csp_nonce ); // Standard attribute escaping.
+		$tag     = preg_replace( '/<script\b/', '<script nonce="' . $escaped . '"', $tag, 1 );
+	}
+	return $tag;
+}, 10, 3 );
+
+add_action( 'plugins_loaded', function () {
+	// Load translations. Domain path declared in header.
+	load_plugin_textdomain( 'content-poll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+	// Register REST endpoints for voting, nonce, results, AI suggestion.
+	( new \ContentPoll\REST\VoteController() )->register();
+	( new \ContentPoll\REST\NonceController() )->register();
+	( new \ContentPoll\REST\ResultsController() )->register();
+	( new \ContentPoll\REST\SuggestionController() )->register();
+
+	// Register dynamic block (server-rendered markup) and admin settings.
+	( new \ContentPoll\Blocks\VoteBlock() )->register();
+	new \ContentPoll\Admin\SettingsPage();
+} );
+// Removed inline localization to comply with strict CSP (no inline scripts).
+// Block editor JS now derives postId via wp.data.select('core/editor').getCurrentPostId()
+// and nonce from wpApiSettings.nonce (core REST setup) without plugin-added inline script.
+

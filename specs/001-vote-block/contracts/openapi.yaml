@@ -2,9 +2,9 @@ openapi: 3.0.3
 info:
   title: Content Vote API
   version: 1.0.0
-  description: REST API contract for vote block feature (namespace content-vote/v1)
+  description: REST API contract for vote block feature (namespace content-poll/v1)
 servers:
-  - url: https://example.com/wp-json/content-vote/v1
+  - url: https://example.com/wp-json/content-poll/v1
 paths:
   /blocks/{postId}:
     get:

@@ -1,8 +1,10 @@
-# Content Vote Plugin
+# ContentPoll AI
 
-**A modern, accessible voting block that lets visitors vote on questions about your content, with beautiful card-style options.**
+**A modern, accessible polling block that lets visitors vote on questions about your content, with beautiful card-style options and optional AI suggestions.**
 
-Engage your audience by asking them to vote on aspects of the page they're reading. AI analyzes your content and suggests relevant voting questions, or create your own. Visitors vote once anonymously, then see real-time results with visual progress bars.
+
+
+Engage your audience by asking them to vote on aspects of the page they're reading. AI analyzes your content and suggests relevant polling questions, or create your own. Visitors vote once anonymously, then see real-time results with visual progress bars.
 
 **Perfect for**: Blog posts, product pages, documentation, news articles, tutorials, reviews – any content where you want to gauge reader opinions or preferences.
 
@@ -15,12 +17,12 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 - **One Vote Per Visitor**: Secure token prevents duplicate voting
 - **Visual Results**: Progress bars with percentages and vote counts
 - **Theme Adaptive**: Automatically matches your WordPress theme colors
-- **Persistent Selection**: Returns voters see their previously selected option checked
+- **Persistent Selection**: Returning voters see their previously selected option checked
 
 ### AI-Powered Suggestions (6 Providers)
-AI reads your page content and generates contextually relevant vote questions:
+AI reads your page content and generates contextually relevant poll questions:
 - **Heuristic** (Default) - Built-in keyword extraction from your content, no API required
-- **OpenAI** - GPT-3.5-Turbo, GPT-4 analyze your content for smart suggestions
+- **OpenAI** - GPT models analyze your content for smart suggestions
 - **Azure OpenAI** - Enterprise Azure OpenAI Service
 - **Anthropic Claude** - Claude 3.5 Sonnet analyzes content context
 - **Google Gemini** - Gemini 1.5 Flash (free tier available)
@@ -29,7 +31,7 @@ AI reads your page content and generates contextually relevant vote questions:
 **Example**: On a blog post about photography tips, AI might suggest: "Which photography technique interests you most?" with options like "Composition", "Lighting", "Editing", "Equipment".
 
 ### Admin Features
-- **Settings Page**: Configure AI provider, API keys, and models at Settings → Content Vote
+- **Settings Page**: Configure AI provider, API keys, and models at Settings → ContentPoll AI
 - **Flexible Options**: Choose 2-6 voting options per block
 - **Lock on First Vote**: Options become immutable after the first vote to preserve data integrity
 - **Debug Mode**: Test reset functionality when WP_DEBUG is enabled
@@ -45,9 +47,9 @@ AI reads your page content and generates contextually relevant vote questions:
 ## 📦 Installation
 
 ### Quick Install
-1. Copy `content-vote` folder to `wp-content/plugins/`
+1. Copy `content-poll` folder to `wp-content/plugins/` (slug unchanged)
 2. Activate via WordPress Admin → Plugins
-3. (Optional) Configure AI at Settings → Content Vote
+3. (Optional) Configure AI at Settings → ContentPoll AI
 
 ### Development Install
 ```bash
@@ -65,17 +67,17 @@ npm run start
 ## 🚀 Usage
 
 ### Basic Usage
-1. **Add Block**: In the editor, insert the "Content Vote" block into your post/page
+1. **Add Block**: In the editor, insert the "ContentPoll AI" block (display name may appear as ContentPoll) into your post/page
 2. **Set Question**: Enter a question about your content (or use AI to generate one)
 3. **Configure Options**: Add 2-6 answer options related to your content
 4. **Publish**: Visitors reading that page can now vote on your question and see results
 
 ### AI Suggestions (Content-Aware)
-1. Go to **Settings → Content Vote**
+1. Go to **Settings → ContentPoll AI**
 2. Select an AI provider (OpenAI, Anthropic, Gemini, Ollama, or Azure)
 3. Enter your API key/endpoint
 4. **Write your post content first** (AI needs content to analyze)
-5. Add the Content Vote block
+5. Add the ContentPoll AI block
 6. Click **Generate Suggestions** - AI reads the page content and suggests a relevant question
 7. Review and adjust the AI-generated question and options
 
@@ -115,7 +117,7 @@ composer test        # PHPUnit tests
 
 ### Project Structure
 ```
-content-vote/
+content-poll/
 ├── src/
 │   ├── block/vote-block/      # Gutenberg block (JS + CSS)
 │   └── php/                    # Backend logic
@@ -154,14 +156,14 @@ content-vote/
 
 ### Vote
 ```
-POST /wp-json/content-vote/v1/block/{blockId}/vote
+POST /wp-json/content-poll/v1/block/{blockId}/vote
 Headers: X-WP-Nonce
 Body: { "optionIndex": 0, "postId": 123 }
 ```
 
 ### Results
 ```
-GET /wp-json/content-vote/v1/block/{blockId}/results
+GET /wp-json/content-poll/v1/block/{blockId}/results
 Response: {
   "blockId": "...",
   "totalVotes": 42,
@@ -173,7 +175,7 @@ Response: {
 
 ### AI Suggestions (Editor Only)
 ```
-GET /wp-json/content-vote/v1/suggest?postId=123
+GET /wp-json/content-poll/v1/suggest?postId=123
 Response: {
   "question": "What aspect interests you most?",
   "options": ["Option A", "Option B", "Option C", "Option D"]
@@ -197,4 +199,5 @@ GPL-2.0-or-later
 ## 🙏 Credits
 
 Built with modern WordPress tools and best practices. Uses @wordpress/scripts for building, WordPress design system for styling, and follows WordPress coding standards.
+
 

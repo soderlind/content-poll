@@ -1,11 +1,15 @@
 {
   "apiVersion": 3,
-  "name": "content-vote/vote-block",
-  "title": "Content Vote",
+  "name": "content-poll/vote-block",
+  "title": "ContentPoll AI",
   "description": "Allow visitors to cast a single vote on a question with 2–6 options.",
   "category": "widgets",
-  "icon": "poll",
-  "textdomain": "content-vote",
+  "icon": {
+    "src": "chart-bar",
+    "background": "#1e1e2f",
+    "foreground": "#ffffff"
+  },
+  "textdomain": "content-poll",
   "supports": {
     "html": false
   },

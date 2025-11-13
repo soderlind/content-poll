@@ -2,8 +2,8 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use ContentVote\REST\VoteController;
-use ContentVote\Security\SecurityHelper;
+use ContentPoll\REST\VoteController;
+use ContentPoll\Security\SecurityHelper;
 
 class RestVoteEndpointTest extends TestCase {
 	public function testVoteEndpointReturnsAggregate(): void {
@@ -15,7 +15,7 @@ class RestVoteEndpointTest extends TestCase {
 		$controller->register();
 		$nonce   = SecurityHelper::create_nonce();
 		$blockId = 'integration_block_1';
-		$req     = new WP_REST_Request( 'POST', '/content-vote/v1/block/' . $blockId . '/vote' );
+		$req     = new WP_REST_Request( 'POST', '/content-poll/v1/block/' . $blockId . '/vote' );
 		$req->set_header( 'X-WP-Nonce', $nonce );
 		$req->set_param( 'optionIndex', 0 );
 		$req->set_param( 'postId', 0 );

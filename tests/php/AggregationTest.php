@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-use ContentVote\Services\VoteStorageService;
+use ContentPoll\Services\VoteStorageService;
 use PHPUnit\Framework\TestCase;
 
 final class AggregationTest extends TestCase {

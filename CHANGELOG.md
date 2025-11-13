@@ -5,6 +5,28 @@ All notable changes to the Content Vote plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.0] - 2025-11-13
+
+### Added
+- Updated POT files (`content-poll.pot`, `content-vote.pot`) to reflect new/adjusted strings and AI provider labels.
+- Changelog alignment for upcoming roadmap items (analytics/export) to prepare for next feature release.
+
+### Changed
+- Renamed plugin from "Content Vote" to "ContentPoll AI" (primary public name now unified in headers, settings page, docs).
+- Version synchronized across plugin header, stable tag, package metadata, and internationalization resources.
+- Documentation wording aligned to new name; legacy references kept only in historical release notes.
+- Clarified branding while retaining existing folder slug (`content-poll`) and text domain for backward compatibility.
+ - Consolidated AI configuration validation notices to rely solely on WordPress settings error API (removed transient-based admin notice, preventing duplicate warnings).
+
+### Fixed
+- Eliminated duplicate AI configuration warning notices by removing transient-based admin notice path.
+
+### Security
+- No new security changes; retains enhancements from 0.3.0 (nonce handling, CSP compliance, atomic vote deduplication).
+
+### Notes
+- This is an interim maintenance release focused on the branding rename. All existing settings/options continue to work without migration steps. Future feature work (analytics/export) will build on the new name.
+
 ## [0.3.0] - 2025-11-13
 
 ### Added
@@ -78,3 +100,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [0.2.0]: https://github.com/yourusername/content-vote/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/yourusername/content-vote/releases/tag/v0.1.0
+[0.4.0]: https://github.com/yourusername/content-vote/compare/v0.3.0...v0.4.0
+[0.3.0]: https://github.com/yourusername/content-vote/compare/v0.2.0...v0.3.0

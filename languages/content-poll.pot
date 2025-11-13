@@ -1,0 +1,210 @@
+# Copyright (C) 2025 Per Soderlind
+# This file is distributed under the GPL v2 or later.
+msgid ""
+msgstr ""
+"Project-Id-Version: ContentPoll AI 0.4.0\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/content-poll\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2025-11-13T08:45:18+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
+"X-Domain: content-poll\n"
+
+#. Plugin Name of the plugin
+#: content-vote.php
+#: src/php/Admin/SettingsPage.php:36
+msgid "ContentPoll AI"
+msgstr ""
+
+#. Plugin URI of the plugin
+#: content-vote.php
+msgid "https://github.com/soderlind/content-poll"
+msgstr ""
+
+#. Description of the plugin
+#: content-vote.php
+msgid "AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results."
+msgstr ""
+
+#. Author of the plugin
+#: content-vote.php
+msgid "Per Soderlind"
+msgstr ""
+
+#. Author URI of the plugin
+#: content-vote.php
+msgid "https://soderlind.no"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:24
+msgid "ContentPoll AI Error:"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:26
+msgid "Please check your AI provider settings (model name, API key, endpoint) and try again."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:35
+msgid "ContentPoll Settings"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:66
+msgid "AI Suggestion Settings"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:73
+msgid "AI Provider"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:81
+msgid "OpenAI Type"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:89
+msgid "API Key"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:97
+msgid "Model / Deployment"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:105
+msgid "Azure OpenAI Endpoint"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:113
+msgid "Azure API Version"
+msgstr ""
+
+#. translators: %s: error message returned from validating the AI provider configuration
+#: src/php/Admin/SettingsPage.php:190
+#, php-format
+msgid "AI Configuration Warning: %s"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:361
+msgid "Save Settings"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:370
+msgid "Configure the AI service used for generating vote option suggestions."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:450
+msgid "Heuristic AI (Default)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:453
+#: src/php/Admin/SettingsPage.php:479
+msgid "OpenAI"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:456
+msgid "Anthropic Claude"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:459
+msgid "Google Gemini"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:462
+msgid "Ollama (Self-Hosted)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:466
+msgid "Heuristic AI uses built-in logic without API calls. Other options require API keys or local installation."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:482
+msgid "Azure OpenAI"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:486
+msgid "Choose between standard OpenAI API or Azure OpenAI Service"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:500
+msgid "API key from"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:503
+msgid "or"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:518
+msgid "OpenAI: gpt-3.5-turbo, gpt-4, etc. Anthropic: claude-3-5-sonnet-20241022, etc. Gemini: gemini-1.5-flash, etc. Ollama: llama3.2, mistral, etc."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:533
+msgid "Your Azure OpenAI resource endpoint URL"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:547
+msgid "Azure OpenAI API version (e.g., 2024-02-15-preview)"
+msgstr ""
+
+#: src/php/Blocks/VoteBlock.php:52
+msgid "Thank you for voting!"
+msgstr ""
+
+#: src/php/Blocks/VoteBlock.php:53
+msgid "Network error. Please try again."
+msgstr ""
+
+#: src/php/Services/AISuggestionService.php:402
+msgid "What is your opinion of this content?"
+msgstr ""
+
+#. translators: %s: extracted keyword from content used to form the poll question
+#: src/php/Services/AISuggestionService.php:408
+#, php-format
+msgid "Your view on \"%s\"?"
+msgstr ""
+
+#: src/php/Services/AISuggestionService.php:416
+msgid "Unsure"
+msgstr ""
+
+#: src/block/vote-block/index.js:94
+#: src/block/vote-block/index.js:134
+#: src/block/vote-block/index.js:199
+msgid "Option"
+msgstr ""
+
+#: src/block/vote-block/index.js:150
+msgid "Settings"
+msgstr ""
+
+#: src/block/vote-block/index.js:154
+msgid "Number of options"
+msgstr ""
+
+#: src/block/vote-block/index.js:168
+msgid "Suggesting…"
+msgstr ""
+
+#: src/block/vote-block/index.js:169
+msgid "Generate Suggestions"
+msgstr ""
+
+#: src/block/vote-block/index.js:173
+msgid "Options locked after votes"
+msgstr ""
+
+#: src/block/vote-block/index.js:187
+msgid "Enter question…"
+msgstr ""
+
+#: src/block/vote-block/block.json
+msgctxt "block title"
+msgid "ContentPoll Poll"
+msgstr ""
+
+#: src/block/vote-block/block.json
+msgctxt "block description"
+msgid "Allow visitors to cast a single vote on a question with 2–6 options."
+msgstr ""

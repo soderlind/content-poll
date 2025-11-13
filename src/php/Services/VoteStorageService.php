@@ -2,10 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\Services;
+namespace ContentPoll\Services;
 
 // WordPress global functions/classes used; no direct namespacing.
 
+/**
+ * Persistence service for vote submissions.
+ *
+ * Provides methods to record a vote atomically (preventing duplicates
+ * via UNIQUE constraint) and to retrieve aggregate statistics including
+ * per-option counts and percentages, as well as a specific user's vote.
+ */
 class VoteStorageService {
 	private string $table;
 	private $db; // wpdb-like object
@@ -32,6 +39,15 @@ class VoteStorageService {
 	 * @param int $option_index Selected option index (0-5)
 	 * @param string $hashed_token Hashed voter token
 	 * @return array<string,mixed> Aggregate results or error details
+	 */
+	/**
+	 * Record a single vote if not already submitted by this user token.
+	 *
+	 * @param string $block_id     Block instance identifier.
+	 * @param int    $post_id      Associated post ID (0 if unknown).
+	 * @param int    $option_index Option index (0-5).
+	 * @param string $hashed_token SHA256(token + AUTH_KEY).
+	 * @return array Aggregate results or error payload.
 	 */
 	public function record_vote( string $block_id, int $post_id, int $option_index, string $hashed_token ) {
 		$db = $this->db;
@@ -64,6 +80,12 @@ class VoteStorageService {
 	 * 
 	 * @param string $block_id Block identifier
 	 * @return array<string,mixed> Aggregate data with counts and percentages
+	 */
+	/**
+	 * Get aggregated vote results for block.
+	 *
+	 * @param string $block_id Block identifier.
+	 * @return array{blockId:string,totalVotes:int,counts:array<int,int>,percentages:array<int,float>} Summary data.
 	 */
 	public function get_aggregate( string $block_id ): array {
 		$db     = $this->db;
@@ -100,6 +122,13 @@ class VoteStorageService {
 	 * @param string $block_id Block identifier
 	 * @param string $hashed_token Hashed voter token
 	 * @return int|null Option index if user has voted, null otherwise
+	 */
+	/**
+	 * Retrieve user's previously selected option index.
+	 *
+	 * @param string $block_id     Block identifier.
+	 * @param string $hashed_token Hashed token.
+	 * @return int|null Option index or null.
 	 */
 	public function get_user_vote( string $block_id, string $hashed_token ): ?int {
 		$db     = $this->db;
