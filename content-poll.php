@@ -111,6 +111,16 @@ add_action( 'plugins_loaded', function () {
 	// Register dynamic block (server-rendered markup) and admin settings.
 	( new \ContentPoll\Blocks\VoteBlock() )->register();
 	new \ContentPoll\Admin\SettingsPage();
+
+	// Invalidate cached analytics summary when posts are saved (content changes may add/remove poll blocks).
+	add_action( 'save_post', function ( $post_id ) {
+		if ( wp_is_post_revision( $post_id ) ) {
+			return;
+		}
+		if ( function_exists( 'delete_transient' ) ) {
+			delete_transient( 'content_poll_posts_summary' );
+		}
+	}, 10, 1 );
 } );
 
 // One-time migration: backfill missing post_id for early votes stored before post_id capture was added.
