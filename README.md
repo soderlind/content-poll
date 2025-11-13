@@ -8,6 +8,10 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 **Perfect for**: Blog posts, product pages, documentation, news articles, tutorials, reviews – any content where you want to gauge reader opinions or preferences.
 
+
+https://github.com/user-attachments/assets/43e69a7e-fa44-4339-a761-c218e382f945
+
+
 ## ✨ Features
 
 ### Core Voting
