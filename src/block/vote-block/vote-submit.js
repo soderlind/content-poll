@@ -109,6 +109,10 @@
 									'content-poll__option--selected'
 								);
 							}
+							// User has already voted; show results only.
+							container.classList.add(
+								'content-poll--results-only'
+							);
 						}
 						container
 							.querySelectorAll( '.content-poll__option' )
@@ -117,6 +121,8 @@
 									'content-poll__option--disabled'
 								)
 							);
+						// If options disabled (voted state), hide them and show only results.
+						container.classList.add( 'content-poll--results-only' );
 						displayResults( res );
 					}
 				} )
@@ -170,6 +176,10 @@
 											'content-poll__option--disabled'
 										)
 									);
+								// Hide options on vote completion.
+								container.classList.add(
+									'content-poll--results-only'
+								);
 								fetch(
 									`${ window.location.origin }/wp-json/content-poll/v1/block/${ blockId }/results`
 								)
@@ -220,6 +230,10 @@
 										);
 									} );
 								messageEl.textContent = '';
+								// Restore options visibility when resetting in debug mode.
+								container.classList.remove(
+									'content-poll--results-only'
+								);
 								const resultsContainer =
 									container.querySelector(
 										'.content-poll__results'

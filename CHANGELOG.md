@@ -7,6 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.6.2] - 2025-11-13
+
+### Added
+- Results-only view: returning visitors (or revisits after voting) see only aggregated results; options are hidden for a cleaner experience.
+
+### Changed
+- Front-end script applies `content-poll--results-only` class post-vote and on revisit; CSS hides options/message.
+- Debug reset restores option visibility for development/testing when `WP_DEBUG` is enabled.
+
+### Internal
+- Prettier formatting adjustments to vote submission script; assets rebuilt.
+
+### Notes
+- Patch release focused on UX; no schema or API changes.
+
 ## [0.6.1] - 2025-11-13
 
 ### Fixed
@@ -184,4 +199,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.4.0]: https://github.com/yourusername/content-vote/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/yourusername/content-vote/compare/v0.2.0...v0.3.0
 [0.5.1]: https://github.com/yourusername/content-vote/compare/v0.5.0...v0.5.1
+[0.6.2]: https://github.com/yourusername/content-vote/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1
