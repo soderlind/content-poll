@@ -7,6 +7,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1] - 2025-11-13
 
+## [0.6.0] - 2025-11-13
+
+### Added
+- Analytics dashboard now uses `WP_List_Table` for "Posts with Polls" (pagination + sorting).
+- Screen Option to adjust posts-per-page for analytics list.
+- Orphan poll detection (legacy block vote data where block removed) with nonce-protected deletion action.
+- Transient caching (5 min) for aggregated post poll summary; invalidation on vote, post save, and orphan deletion.
+- PHPUnit tests covering caching invalidation logic (vote + manual invalidate helper).
+
+### Changed
+- Replaced manual HTML posts summary table with structured list table for scalability and consistency.
+- Enhanced legacy vote fallback logic (post_id=0) to merge seamlessly into per-post analytics without migration.
+- Clear separation of storage vs analytics responsibilities; added explicit cache invalidation helper.
+
+### Performance
+- Reduced repeated parse/query overhead via short-lived cached summary; invalidated on data mutations.
+
+### Fixed
+- Ensured list table renders headers and pagination correctly (column header setup).
+
+### Security
+- Orphan vote deletion guarded by per-block nonce; no destructive schema changes required for legacy vote support.
+
+### Notes
+- Minor version bump reflects new analytics capabilities and performance improvements.
+
+
 ### Added
 - Regenerated POT file to reflect latest workflow and branding adjustments.
 - Workflow exclusion tweaks to guarantee inclusion of `readme.txt`.
