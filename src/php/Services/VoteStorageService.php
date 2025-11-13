@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\Services;
+namespace ContentPoll\Services;
 
 // WordPress global functions/classes used; no direct namespacing.
 

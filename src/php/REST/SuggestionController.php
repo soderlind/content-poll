@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\REST;
+namespace ContentPoll\REST;
 
-use ContentVote\Services\AISuggestionService;
+use ContentPoll\Services\AISuggestionService;
 
 /**
  * REST controller to generate AI-assisted poll suggestions based on post content.
  */
 class SuggestionController {
-	private string $namespace = 'content-vote/v1';
+	private string $namespace = 'content-poll/v1';
 
 	/**
 	 * Register suggestion endpoint restricted to editors/authors.

@@ -1,6 +1,6 @@
 {
-	"name": "persoderlind/content-vote",
-	"description": "Adds a configurable vote block (2–6 options) for collecting anonymous sentiment on content pages.",
+	"name": "persoderlind/content-poll",
+	"description": "ContentPoll AI – AI-assisted contextual polls (2–6 options) for engaging readers directly on content pages.",
 	"type": "wordpress-plugin",
 	"license": "GPL-2.0-or-later",
 	"require": {
@@ -8,7 +8,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"ContentVote\\": "src/php/"
+			"ContentPoll\\": "src/php/"
 		}
 	},
 	"require-dev": {

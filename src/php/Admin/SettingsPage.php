@@ -2,40 +2,40 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\Admin;
+namespace ContentPoll\Admin;
 
 class SettingsPage {
-	private string $option_group = 'content_vote_settings';
-	private string $option_name = 'content_vote_options';
+	private string $option_group = 'content_poll_settings';
+	private string $option_name = 'content_poll_options';
 
 	public function __construct() {
-		$this->option_group = 'content_vote_options_group';
-		$this->option_name  = 'content_vote_options';
+		$this->option_group = 'content_poll_options_group';
+		$this->option_name  = 'content_poll_options';
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 		add_action( 'admin_notices', [ $this, 'display_ai_error_notices' ] );
 	}
 
 	public function display_ai_error_notices(): void {
-		$error = get_transient( 'content_vote_ai_error' );
+		$error = get_transient( 'content_poll_ai_error' );
 		if ( $error && current_user_can( 'manage_options' ) ) {
 			?>
 			<div class="notice notice-error is-dismissible">
-				<p><strong><?php esc_html_e( 'Content Vote AI Error:', 'content-vote' ); ?></strong>
+				<p><strong><?php esc_html_e( 'ContentPoll AI Error:', 'content-poll' ); ?></strong>
 					<?php echo esc_html( $error ); ?></p>
-				<p><?php esc_html_e( 'Please check your AI provider settings (model name, API key, endpoint) and try again.', 'content-vote' ); ?>
+				<p><?php esc_html_e( 'Please check your AI provider settings (model name, API key, endpoint) and try again.', 'content-poll' ); ?>
 				</p>
 			</div>
 			<?php
-			delete_transient( 'content_vote_ai_error' );
+			delete_transient( 'content_poll_ai_error' );
 		}
 	}
 	public function add_settings_page(): void {
 		add_options_page(
-			__( 'Content Vote Settings', 'content-vote' ),
-			__( 'Content Vote', 'content-vote' ),
+			__( 'ContentPoll Settings', 'content-poll' ),
+			__( 'ContentPoll AI', 'content-poll' ),
 			'manage_options',
-			'content-vote-settings',
+			'content-poll-settings',
 			[ $this, 'render_settings_page' ]
 		);
 	}
@@ -62,58 +62,58 @@ class SettingsPage {
 		] );
 
 		add_settings_section(
-			'content_vote_ai_section',
-			__( 'AI Suggestion Settings', 'content-vote' ),
+			'content_poll_ai_section',
+			__( 'AI Suggestion Settings', 'content-poll' ),
 			[ $this, 'render_ai_section_description' ],
-			'content-vote-settings'
+			'content-poll-settings'
 		);
 
 		add_settings_field(
 			'ai_provider',
-			__( 'AI Provider', 'content-vote' ),
+			__( 'AI Provider', 'content-poll' ),
 			[ $this, 'render_ai_provider_field' ],
-			'content-vote-settings',
-			'content_vote_ai_section'
+			'content-poll-settings',
+			'content_poll_ai_section'
 		);
 
 		add_settings_field(
 			'openai_type',
-			__( 'OpenAI Type', 'content-vote' ),
+			__( 'OpenAI Type', 'content-poll' ),
 			[ $this, 'render_openai_type_field' ],
-			'content-vote-settings',
-			'content_vote_ai_section'
+			'content-poll-settings',
+			'content_poll_ai_section'
 		);
 
 		add_settings_field(
 			'openai_key',
-			__( 'API Key', 'content-vote' ),
+			__( 'API Key', 'content-poll' ),
 			[ $this, 'render_openai_key_field' ],
-			'content-vote-settings',
-			'content_vote_ai_section'
+			'content-poll-settings',
+			'content_poll_ai_section'
 		);
 
 		add_settings_field(
 			'openai_model',
-			__( 'Model / Deployment', 'content-vote' ),
+			__( 'Model / Deployment', 'content-poll' ),
 			[ $this, 'render_openai_model_field' ],
-			'content-vote-settings',
-			'content_vote_ai_section'
+			'content-poll-settings',
+			'content_poll_ai_section'
 		);
 
 		add_settings_field(
 			'azure_endpoint',
-			__( 'Azure OpenAI Endpoint', 'content-vote' ),
+			__( 'Azure OpenAI Endpoint', 'content-poll' ),
 			[ $this, 'render_azure_endpoint_field' ],
-			'content-vote-settings',
-			'content_vote_ai_section'
+			'content-poll-settings',
+			'content_poll_ai_section'
 		);
 
 		add_settings_field(
 			'azure_api_version',
-			__( 'Azure API Version', 'content-vote' ),
+			__( 'Azure API Version', 'content-poll' ),
 			[ $this, 'render_azure_api_version_field' ],
-			'content-vote-settings',
-			'content_vote_ai_section'
+			'content-poll-settings',
+			'content_poll_ai_section'
 		);
 	}
 
@@ -162,9 +162,9 @@ class SettingsPage {
 	 * Validate AI configuration by attempting a test request
 	 */
 	private function validate_ai_configuration( array $settings ): void {
-		$provider = $settings[ 'ai_provider' ];
+		$provider     = $settings[ 'ai_provider' ];
 		$test_content = 'This is a test article about technology and innovation.';
-		
+
 		$error = null;
 
 		switch ( $provider ) {
@@ -184,9 +184,10 @@ class SettingsPage {
 
 		if ( $error ) {
 			add_settings_error(
-				'content_vote_messages',
+				'content_poll_messages',
 				'ai_validation_error',
-				sprintf( __( 'AI Configuration Warning: %s', 'content-vote' ), $error ),
+				/* translators: %s: error message returned from validating the AI provider configuration */
+				sprintf( __( 'AI Configuration Warning: %s', 'content-poll' ), $error ),
 				'error'
 			);
 		}
@@ -194,8 +195,8 @@ class SettingsPage {
 
 	private function test_openai( array $settings ): ?string {
 		$api_key = $settings[ 'openai_key' ];
-		$model = $settings[ 'openai_model' ];
-		$type = $settings[ 'openai_type' ];
+		$model   = $settings[ 'openai_model' ];
+		$type    = $settings[ 'openai_type' ];
 
 		if ( empty( $api_key ) || empty( $model ) ) {
 			return null; // Don't validate if credentials not provided
@@ -206,24 +207,24 @@ class SettingsPage {
 			if ( empty( $endpoint ) ) {
 				return null;
 			}
-			$url = rtrim( $endpoint, '/' ) . '/openai/deployments/' . $model . '/chat/completions?api-version=' . $settings[ 'azure_api_version' ];
+			$url     = rtrim( $endpoint, '/' ) . '/openai/deployments/' . $model . '/chat/completions?api-version=' . $settings[ 'azure_api_version' ];
 			$headers = [
 				'Content-Type' => 'application/json',
-				'api-key' => $api_key,
+				'api-key'      => $api_key,
 			];
 		} else {
-			$url = 'https://api.openai.com/v1/chat/completions';
+			$url     = 'https://api.openai.com/v1/chat/completions';
 			$headers = [
-				'Content-Type' => 'application/json',
+				'Content-Type'  => 'application/json',
 				'Authorization' => 'Bearer ' . $api_key,
 			];
 		}
 
 		$response = wp_remote_post( $url, [
 			'headers' => $headers,
-			'body' => wp_json_encode( [
-				'model' => $model,
-				'messages' => [ [ 'role' => 'user', 'content' => 'test' ] ],
+			'body'    => wp_json_encode( [
+				'model'      => $model,
+				'messages'   => [ [ 'role' => 'user', 'content' => 'test' ] ],
 				'max_tokens' => 5,
 			] ),
 			'timeout' => 10,
@@ -245,7 +246,7 @@ class SettingsPage {
 
 	private function test_anthropic( array $settings ): ?string {
 		$api_key = $settings[ 'anthropic_key' ];
-		$model = $settings[ 'anthropic_model' ];
+		$model   = $settings[ 'anthropic_model' ];
 
 		if ( empty( $api_key ) || empty( $model ) ) {
 			return null;
@@ -253,14 +254,14 @@ class SettingsPage {
 
 		$response = wp_remote_post( 'https://api.anthropic.com/v1/messages', [
 			'headers' => [
-				'Content-Type' => 'application/json',
-				'x-api-key' => $api_key,
+				'Content-Type'      => 'application/json',
+				'x-api-key'         => $api_key,
 				'anthropic-version' => '2023-06-01',
 			],
-			'body' => wp_json_encode( [
-				'model' => $model,
+			'body'    => wp_json_encode( [
+				'model'      => $model,
 				'max_tokens' => 5,
-				'messages' => [ [ 'role' => 'user', 'content' => 'test' ] ],
+				'messages'   => [ [ 'role' => 'user', 'content' => 'test' ] ],
 			] ),
 			'timeout' => 10,
 		] );
@@ -281,7 +282,7 @@ class SettingsPage {
 
 	private function test_gemini( array $settings ): ?string {
 		$api_key = $settings[ 'gemini_key' ];
-		$model = $settings[ 'gemini_model' ];
+		$model   = $settings[ 'gemini_model' ];
 
 		if ( empty( $api_key ) || empty( $model ) ) {
 			return null;
@@ -291,7 +292,7 @@ class SettingsPage {
 
 		$response = wp_remote_post( $url, [
 			'headers' => [ 'Content-Type' => 'application/json' ],
-			'body' => wp_json_encode( [
+			'body'    => wp_json_encode( [
 				'contents' => [ [ 'parts' => [ [ 'text' => 'test' ] ] ] ],
 			] ),
 			'timeout' => 10,
@@ -313,7 +314,7 @@ class SettingsPage {
 
 	private function test_ollama( array $settings ): ?string {
 		$endpoint = $settings[ 'ollama_endpoint' ];
-		$model = $settings[ 'ollama_model' ];
+		$model    = $settings[ 'ollama_model' ];
 
 		if ( empty( $endpoint ) || empty( $model ) ) {
 			return null;
@@ -323,8 +324,8 @@ class SettingsPage {
 
 		$response = wp_remote_post( $url, [
 			'headers' => [ 'Content-Type' => 'application/json' ],
-			'body' => wp_json_encode( [
-				'model' => $model,
+			'body'    => wp_json_encode( [
+				'model'  => $model,
 				'prompt' => 'test',
 				'stream' => false,
 			] ),
@@ -356,8 +357,8 @@ class SettingsPage {
 			<form action="options.php" method="post">
 				<?php
 				settings_fields( $this->option_group );
-				do_settings_sections( 'content-vote-settings' );
-				submit_button( __( 'Save Settings', 'content-vote' ) );
+				do_settings_sections( 'content-poll-settings' );
+				submit_button( __( 'Save Settings', 'content-poll' ) );
 				?>
 			</form>
 		</div>
@@ -366,7 +367,7 @@ class SettingsPage {
 
 	public function render_ai_section_description(): void {
 		?>
-		<p><?php esc_html_e( 'Configure the AI service used for generating vote option suggestions.', 'content-vote' ); ?></p>
+		<p><?php esc_html_e( 'Configure the AI service used for generating vote option suggestions.', 'content-poll' ); ?></p>
 		<script>
 			document.addEventListener('DOMContentLoaded', function () {
 				const providerSelect = document.getElementById('ai_provider');
@@ -446,23 +447,23 @@ class SettingsPage {
 		?>
 		<select name="<?php echo esc_attr( $this->option_name ); ?>[ai_provider]" id="ai_provider">
 			<option value="heuristic" <?php selected( $current, 'heuristic' ); ?>>
-				<?php esc_html_e( 'Heuristic AI (Default)', 'content-vote' ); ?>
+				<?php esc_html_e( 'Heuristic AI (Default)', 'content-poll' ); ?>
 			</option>
 			<option value="openai" <?php selected( $current, 'openai' ); ?>>
-				<?php esc_html_e( 'OpenAI', 'content-vote' ); ?>
+				<?php esc_html_e( 'OpenAI', 'content-poll' ); ?>
 			</option>
 			<option value="anthropic" <?php selected( $current, 'anthropic' ); ?>>
-				<?php esc_html_e( 'Anthropic Claude', 'content-vote' ); ?>
+				<?php esc_html_e( 'Anthropic Claude', 'content-poll' ); ?>
 			</option>
 			<option value="gemini" <?php selected( $current, 'gemini' ); ?>>
-				<?php esc_html_e( 'Google Gemini', 'content-vote' ); ?>
+				<?php esc_html_e( 'Google Gemini', 'content-poll' ); ?>
 			</option>
 			<option value="ollama" <?php selected( $current, 'ollama' ); ?>>
-				<?php esc_html_e( 'Ollama (Self-Hosted)', 'content-vote' ); ?>
+				<?php esc_html_e( 'Ollama (Self-Hosted)', 'content-poll' ); ?>
 			</option>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'Heuristic AI uses built-in logic without API calls. Other options require API keys or local installation.', 'content-vote' ); ?>
+			<?php esc_html_e( 'Heuristic AI uses built-in logic without API calls. Other options require API keys or local installation.', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
@@ -475,14 +476,14 @@ class SettingsPage {
 		?>
 		<select name="<?php echo esc_attr( $this->option_name ); ?>[openai_type]" id="openai_type">
 			<option value="openai" <?php selected( $current, 'openai' ); ?>>
-				<?php esc_html_e( 'OpenAI', 'content-vote' ); ?>
+				<?php esc_html_e( 'OpenAI', 'content-poll' ); ?>
 			</option>
 			<option value="azure" <?php selected( $current, 'azure' ); ?>>
-				<?php esc_html_e( 'Azure OpenAI', 'content-vote' ); ?>
+				<?php esc_html_e( 'Azure OpenAI', 'content-poll' ); ?>
 			</option>
 		</select>
 		<p class="description">
-			<?php esc_html_e( 'Choose between standard OpenAI API or Azure OpenAI Service', 'content-vote' ); ?>
+			<?php esc_html_e( 'Choose between standard OpenAI API or Azure OpenAI Service', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
@@ -496,10 +497,10 @@ class SettingsPage {
 		<input type="password" name="<?php echo esc_attr( $this->option_name ); ?>[openai_key]" id="openai_key"
 			value="<?php echo esc_attr( $value ); ?>" class="regular-text" />
 		<p class="description">
-			<?php esc_html_e( 'API key from', 'content-vote' ); ?>
+			<?php esc_html_e( 'API key from', 'content-poll' ); ?>
 			<a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>,
 			<a href="https://console.anthropic.com/" target="_blank">Anthropic</a>,
-			<?php esc_html_e( 'or', 'content-vote' ); ?>
+			<?php esc_html_e( 'or', 'content-poll' ); ?>
 			<a href="https://aistudio.google.com/app/apikey" target="_blank">Google AI Studio</a>
 		</p>
 		<?php
@@ -514,7 +515,7 @@ class SettingsPage {
 		<input type="text" name="<?php echo esc_attr( $this->option_name ); ?>[openai_model]" id="openai_model"
 			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="gpt-3.5-turbo" />
 		<p class="description">
-			<?php esc_html_e( 'OpenAI: gpt-3.5-turbo, gpt-4, etc. Anthropic: claude-3-5-sonnet-20241022, etc. Gemini: gemini-1.5-flash, etc. Ollama: llama3.2, mistral, etc.', 'content-vote' ); ?>
+			<?php esc_html_e( 'OpenAI: gpt-3.5-turbo, gpt-4, etc. Anthropic: claude-3-5-sonnet-20241022, etc. Gemini: gemini-1.5-flash, etc. Ollama: llama3.2, mistral, etc.', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
@@ -529,7 +530,7 @@ class SettingsPage {
 			value="<?php echo esc_attr( $value ); ?>" class="regular-text"
 			placeholder="https://your-resource.openai.azure.com" />
 		<p class="description">
-			<?php esc_html_e( 'Your Azure OpenAI resource endpoint URL', 'content-vote' ); ?>
+			<?php esc_html_e( 'Your Azure OpenAI resource endpoint URL', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
@@ -543,68 +544,68 @@ class SettingsPage {
 		<input type="text" name="<?php echo esc_attr( $this->option_name ); ?>[azure_api_version]" id="azure_api_version"
 			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="2024-02-15-preview" />
 		<p class="description">
-			<?php esc_html_e( 'Azure OpenAI API version (e.g., 2024-02-15-preview)', 'content-vote' ); ?>
+			<?php esc_html_e( 'Azure OpenAI API version (e.g., 2024-02-15-preview)', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
 
 	public static function get_ai_provider(): string {
-		$options = get_option( 'content_vote_options', [ 'ai_provider' => 'heuristic' ] );
+		$options = get_option( 'content_poll_options', [ 'ai_provider' => 'heuristic' ] );
 		return $options[ 'ai_provider' ] ?? 'heuristic';
 	}
 
 	public static function get_openai_type(): string {
-		$options = get_option( 'content_vote_options', [ 'openai_type' => 'openai' ] );
+		$options = get_option( 'content_poll_options', [ 'openai_type' => 'openai' ] );
 		return $options[ 'openai_type' ] ?? 'openai';
 	}
 
 	public static function get_openai_key(): string {
-		$options = get_option( 'content_vote_options', [ 'openai_key' => '' ] );
+		$options = get_option( 'content_poll_options', [ 'openai_key' => '' ] );
 		return $options[ 'openai_key' ] ?? '';
 	}
 
 	public static function get_openai_model(): string {
-		$options = get_option( 'content_vote_options', [ 'openai_model' => 'gpt-3.5-turbo' ] );
+		$options = get_option( 'content_poll_options', [ 'openai_model' => 'gpt-3.5-turbo' ] );
 		return $options[ 'openai_model' ] ?? 'gpt-3.5-turbo';
 	}
 
 	public static function get_azure_endpoint(): string {
-		$options = get_option( 'content_vote_options', [ 'azure_endpoint' => '' ] );
+		$options = get_option( 'content_poll_options', [ 'azure_endpoint' => '' ] );
 		return $options[ 'azure_endpoint' ] ?? '';
 	}
 
 	public static function get_azure_api_version(): string {
-		$options = get_option( 'content_vote_options', [ 'azure_api_version' => '2024-02-15-preview' ] );
+		$options = get_option( 'content_poll_options', [ 'azure_api_version' => '2024-02-15-preview' ] );
 		return $options[ 'azure_api_version' ] ?? '2024-02-15-preview';
 	}
 
 	public static function get_anthropic_key(): string {
-		$options = get_option( 'content_vote_options', [ 'anthropic_key' => '' ] );
+		$options = get_option( 'content_poll_options', [ 'anthropic_key' => '' ] );
 		return $options[ 'anthropic_key' ] ?? '';
 	}
 
 	public static function get_anthropic_model(): string {
-		$options = get_option( 'content_vote_options', [ 'anthropic_model' => 'claude-3-5-sonnet-20241022' ] );
+		$options = get_option( 'content_poll_options', [ 'anthropic_model' => 'claude-3-5-sonnet-20241022' ] );
 		return $options[ 'anthropic_model' ] ?? 'claude-3-5-sonnet-20241022';
 	}
 
 	public static function get_gemini_key(): string {
-		$options = get_option( 'content_vote_options', [ 'gemini_key' => '' ] );
+		$options = get_option( 'content_poll_options', [ 'gemini_key' => '' ] );
 		return $options[ 'gemini_key' ] ?? '';
 	}
 
 	public static function get_gemini_model(): string {
-		$options = get_option( 'content_vote_options', [ 'gemini_model' => 'gemini-1.5-flash' ] );
+		$options = get_option( 'content_poll_options', [ 'gemini_model' => 'gemini-1.5-flash' ] );
 		return $options[ 'gemini_model' ] ?? 'gemini-1.5-flash';
 	}
 
 	public static function get_ollama_endpoint(): string {
-		$options = get_option( 'content_vote_options', [ 'ollama_endpoint' => 'http://localhost:11434' ] );
+		$options = get_option( 'content_poll_options', [ 'ollama_endpoint' => 'http://localhost:11434' ] );
 		return $options[ 'ollama_endpoint' ] ?? 'http://localhost:11434';
 	}
 
 	public static function get_ollama_model(): string {
-		$options = get_option( 'content_vote_options', [ 'ollama_model' => 'llama3.2' ] );
+		$options = get_option( 'content_poll_options', [ 'ollama_model' => 'llama3.2' ] );
 		return $options[ 'ollama_model' ] ?? 'llama3.2';
 	}
 }

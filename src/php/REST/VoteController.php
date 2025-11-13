@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\REST;
+namespace ContentPoll\REST;
 
-use ContentVote\Services\VoteStorageService;
-use ContentVote\Security\SecurityHelper;
+use ContentPoll\Services\VoteStorageService;
+use ContentPoll\Security\SecurityHelper;
 
 /**
  * REST controller for vote submission and debug reset.
  * Registers endpoints on rest_api_init.
  */
 class VoteController {
-	private string $namespace = 'content-vote/v1';
+	private string $namespace = 'content-poll/v1';
 
 	/**
 	 * Register REST routes for voting and debug reset.
@@ -104,8 +104,8 @@ class VoteController {
 	 * @return string Token value (non-hashed).
 	 */
 	private function get_or_create_token(): string {
-		if ( isset( $_COOKIE[ 'content_vote_token' ] ) ) {
-			return sanitize_text_field( $_COOKIE[ 'content_vote_token' ] );
+		if ( isset( $_COOKIE[ 'content_poll_token' ] ) ) {
+			return sanitize_text_field( $_COOKIE[ 'content_poll_token' ] );
 		}
 		$token = bin2hex( random_bytes( 16 ) );
 		// Set cookie with SameSite attribute for CSRF protection.
@@ -119,10 +119,10 @@ class VoteController {
 			'samesite' => 'Lax',
 		];
 		if ( PHP_VERSION_ID >= 70300 ) {
-			setcookie( 'content_vote_token', $token, $options );
+			setcookie( 'content_poll_token', $token, $options );
 		} else {
 			// PHP < 7.3 fallback (append samesite to path).
-			setcookie( 'content_vote_token', $token, $options[ 'expires' ], $options[ 'path' ] . '; samesite=' . $options[ 'samesite' ], $options[ 'domain' ], $options[ 'secure' ], $options[ 'httponly' ] );
+			setcookie( 'content_poll_token', $token, $options[ 'expires' ], $options[ 'path' ] . '; samesite=' . $options[ 'samesite' ], $options[ 'domain' ], $options[ 'secure' ], $options[ 'httponly' ] );
 		}
 		return $token;
 	}
@@ -154,9 +154,9 @@ class VoteController {
 			'samesite' => 'Lax',
 		];
 		if ( PHP_VERSION_ID >= 70300 ) {
-			setcookie( 'content_vote_token', '', $options );
+			setcookie( 'content_poll_token', '', $options );
 		} else {
-			setcookie( 'content_vote_token', '', $options[ 'expires' ], $options[ 'path' ] . '; samesite=' . $options[ 'samesite' ], $options[ 'domain' ], $options[ 'secure' ], $options[ 'httponly' ] );
+			setcookie( 'content_poll_token', '', $options[ 'expires' ], $options[ 'path' ] . '; samesite=' . $options[ 'samesite' ], $options[ 'domain' ], $options[ 'secure' ], $options[ 'httponly' ] );
 		}
 		return [ 'success' => true, 'message' => 'Vote reset successfully' ];
 	}

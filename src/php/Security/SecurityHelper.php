@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\Security;
+namespace ContentPoll\Security;
 
 /**
  * Helper for nonce generation / verification tied to WordPress REST context.

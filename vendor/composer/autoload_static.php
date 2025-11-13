@@ -22,7 +22,7 @@ class ComposerStaticInitc1124f7b02bb0517c9115d2dd2d091db
         ),
         'C' => 
         array (
-            'ContentVote\\' => 12,
+            'ContentPoll\\' => 12,
         ),
     );
 
@@ -35,7 +35,7 @@ class ComposerStaticInitc1124f7b02bb0517c9115d2dd2d091db
         array (
             0 => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy',
         ),
-        'ContentVote\\' => 
+        'ContentPoll\\' => 
         array (
             0 => __DIR__ . '/../..' . '/src/php',
         ),

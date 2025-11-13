@@ -1,20 +1,20 @@
 <?php
 /**
- * Plugin Name: Content Vote
- * Description: Ask readers to vote on questions about your content. AI suggests relevant questions by analyzing your page. Beautiful card interface, real-time results.
+ * Plugin Name: ContentPoll AI
+ * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results.
  * Version: 0.3.0
  * Author: Per Soderlind
  * Author URI: https://soderlind.no
- * Plugin URI: https://github.com/soderlind/content-vote
+ * Plugin URI: https://github.com/soderlind/content-poll
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Requires at least: 6.8
  * Requires PHP: 8.3
- * Text Domain: content-vote
+ * Text Domain: content-poll
  */
 
 /**
- * Bootstrap file for the Content Vote plugin.
+ * Bootstrap file for the ContentPoll AI plugin.
  *
  * Responsibilities:
  * - Load Composer autoload (dependencies).
@@ -66,8 +66,8 @@ register_activation_hook( __FILE__, function () {
 // This helps satisfy strict Content Security Policy configurations that require a nonce on every script tag.
 // You can expose a nonce via:
 // 1. Setting $_SERVER['CONTENT_SECURITY_POLICY_NONCE'] in your mu-plugin or server layer.
-// 2. Defining a constant CONTENT_VOTE_CSP_NONCE.
-// 3. Adding a filter: add_filter('content_vote_csp_nonce', fn() => 'your-nonce');
+// 2. Defining a constant CONTENT_POLL_CSP_NONCE.
+// 3. Adding a filter: add_filter('content_poll_csp_nonce', fn() => 'your-nonce');
 add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
 	// Skip if nonce already present.
 	if ( strpos( $tag, ' nonce=' ) !== false ) {
@@ -77,11 +77,11 @@ add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
 	if ( isset( $_SERVER[ 'CONTENT_SECURITY_POLICY_NONCE' ] ) ) {
 		$csp_nonce = (string) $_SERVER[ 'CONTENT_SECURITY_POLICY_NONCE' ];
 	}
-	if ( ! $csp_nonce && defined( 'CONTENT_VOTE_CSP_NONCE' ) ) {
-		$csp_nonce = (string) CONTENT_VOTE_CSP_NONCE;
+	if ( ! $csp_nonce && defined( 'CONTENT_POLL_CSP_NONCE' ) ) {
+		$csp_nonce = (string) CONTENT_POLL_CSP_NONCE;
 	}
 	// Allow integrators to override / provide nonce value.
-	$csp_nonce = apply_filters( 'content_vote_csp_nonce', $csp_nonce, $handle, $src );
+	$csp_nonce = apply_filters( 'content_poll_csp_nonce', $csp_nonce, $handle, $src );
 	if ( $csp_nonce ) {
 		$escaped = esc_attr( $csp_nonce ); // Standard attribute escaping.
 		$tag     = preg_replace( '/<script\b/', '<script nonce="' . $escaped . '"', $tag, 1 );
@@ -91,17 +91,17 @@ add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
 
 add_action( 'plugins_loaded', function () {
 	// Load translations. Domain path declared in header.
-	load_plugin_textdomain( 'content-vote', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+	load_plugin_textdomain( 'content-poll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 
 	// Register REST endpoints for voting, nonce, results, AI suggestion.
-	( new \ContentVote\REST\VoteController() )->register();
-	( new \ContentVote\REST\NonceController() )->register();
-	( new \ContentVote\REST\ResultsController() )->register();
-	( new \ContentVote\REST\SuggestionController() )->register();
+	( new \ContentPoll\REST\VoteController() )->register();
+	( new \ContentPoll\REST\NonceController() )->register();
+	( new \ContentPoll\REST\ResultsController() )->register();
+	( new \ContentPoll\REST\SuggestionController() )->register();
 
 	// Register dynamic block (server-rendered markup) and admin settings.
-	( new \ContentVote\Blocks\VoteBlock() )->register();
-	new \ContentVote\Admin\SettingsPage();
+	( new \ContentPoll\Blocks\VoteBlock() )->register();
+	new \ContentPoll\Admin\SettingsPage();
 } );
 // Removed inline localization to comply with strict CSP (no inline scripts).
 // Block editor JS now derives postId via wp.data.select('core/editor').getCurrentPostId()

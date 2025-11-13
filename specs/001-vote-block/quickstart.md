@@ -37,10 +37,10 @@ Navigate to Settings > Content Vote:
 - External AI (if enabled) requires explicit consent acknowledgement.
 
 ## REST API Overview
-- List blocks: `GET /wp-json/content-vote/v1/blocks/{postId}`
-- Submit vote: `POST /wp-json/content-vote/v1/block/{blockId}/vote` (nonce required)
-- Get results: `GET /wp-json/content-vote/v1/block/{blockId}/results`
-- Suggest question/options: `GET /wp-json/content-vote/v1/suggest/{postId}` (capability required)
+- List blocks: `GET /wp-json/content-poll/v1/blocks/{postId}`
+- Submit vote: `POST /wp-json/content-poll/v1/block/{blockId}/vote` (nonce required)
+- Get results: `GET /wp-json/content-poll/v1/block/{blockId}/results`
+- Suggest question/options: `GET /wp-json/content-poll/v1/suggest/{postId}` (capability required)
 
 ## Testing
 - PHPUnit: VoteStorageService, REST endpoints.

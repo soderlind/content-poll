@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\Services;
+namespace ContentPoll\Services;
 
-use ContentVote\Admin\SettingsPage;
+use ContentPoll\Admin\SettingsPage;
 
 class AISuggestionService {
 	/**
@@ -119,7 +119,7 @@ class AISuggestionService {
 		}
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'Content Vote OpenAI Error: ' . $response->get_error_message() );
+			error_log( 'ContentPoll AI OpenAI Error: ' . $response->get_error_message() );
 			return [];
 		}
 
@@ -129,11 +129,11 @@ class AISuggestionService {
 		// Check for API error responses (invalid model, auth issues, etc.)
 		if ( isset( $data[ 'error' ] ) ) {
 			$error_message = $data[ 'error' ][ 'message' ] ?? 'Unknown error';
-			error_log( 'Content Vote OpenAI API Error: ' . $error_message );
+			error_log( 'ContentPoll AI OpenAI API Error: ' . $error_message );
 
 			// Store transient for admin notice
 			if ( current_user_can( 'manage_options' ) ) {
-				set_transient( 'content_vote_ai_error', $error_message, 300 );
+				set_transient( 'content_poll_ai_error', $error_message, 300 );
 			}
 			return [];
 		}
@@ -195,7 +195,7 @@ class AISuggestionService {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'Content Vote Anthropic Error: ' . $response->get_error_message() );
+			error_log( 'ContentPoll AI Anthropic Error: ' . $response->get_error_message() );
 			return [];
 		}
 
@@ -205,10 +205,10 @@ class AISuggestionService {
 		// Check for API error responses
 		if ( isset( $data[ 'error' ] ) ) {
 			$error_message = $data[ 'error' ][ 'message' ] ?? 'Unknown error';
-			error_log( 'Content Vote Anthropic API Error: ' . $error_message );
+			error_log( 'ContentPoll AI Anthropic API Error: ' . $error_message );
 
 			if ( current_user_can( 'manage_options' ) ) {
-				set_transient( 'content_vote_ai_error', $error_message, 300 );
+				set_transient( 'content_poll_ai_error', $error_message, 300 );
 			}
 			return [];
 		}
@@ -271,7 +271,7 @@ class AISuggestionService {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'Content Vote Gemini Error: ' . $response->get_error_message() );
+			error_log( 'ContentPoll AI Gemini Error: ' . $response->get_error_message() );
 			return [];
 		}
 
@@ -281,10 +281,10 @@ class AISuggestionService {
 		// Check for API error responses
 		if ( isset( $data[ 'error' ] ) ) {
 			$error_message = $data[ 'error' ][ 'message' ] ?? 'Unknown error';
-			error_log( 'Content Vote Gemini API Error: ' . $error_message );
+			error_log( 'ContentPoll AI Gemini API Error: ' . $error_message );
 
 			if ( current_user_can( 'manage_options' ) ) {
-				set_transient( 'content_vote_ai_error', $error_message, 300 );
+				set_transient( 'content_poll_ai_error', $error_message, 300 );
 			}
 			return [];
 		}
@@ -341,7 +341,7 @@ class AISuggestionService {
 		] );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( 'Content Vote Ollama Error: ' . $response->get_error_message() );
+			error_log( 'ContentPoll AI Ollama Error: ' . $response->get_error_message() );
 			return [];
 		}
 
@@ -351,10 +351,10 @@ class AISuggestionService {
 		// Check for error responses
 		if ( isset( $data[ 'error' ] ) ) {
 			$error_message = is_string( $data[ 'error' ] ) ? $data[ 'error' ] : ( $data[ 'error' ][ 'message' ] ?? 'Unknown error' );
-			error_log( 'Content Vote Ollama API Error: ' . $error_message );
+			error_log( 'ContentPoll AI Ollama API Error: ' . $error_message );
 
 			if ( current_user_can( 'manage_options' ) ) {
-				set_transient( 'content_vote_ai_error', $error_message, 300 );
+				set_transient( 'content_poll_ai_error', $error_message, 300 );
 			}
 			return [];
 		}
@@ -399,12 +399,13 @@ class AISuggestionService {
 		$top = array_slice( array_keys( $freq ), 0, 6 );
 		if ( empty( $top ) ) {
 			return [
-				'question' => __( 'What is your opinion of this content?', 'content-vote' ),
+				'question' => __( 'What is your opinion of this content?', 'content-poll' ),
 				'options'  => [ 'Great', 'Informative', 'Neutral', 'Confusing' ],
 			];
 		}
-		$stem     = $top[ 0 ];
-		$question = sprintf( __( 'Your view on "%s"?', 'content-vote' ), ucfirst( $stem ) );
+		$stem = $top[ 0 ];
+		/* translators: %s: extracted keyword from content used to form the poll question */
+		$question = sprintf( __( 'Your view on "%s"?', 'content-poll' ), ucfirst( $stem ) );
 		// Build option phrases.
 		$options = [];
 		foreach ( $top as $i => $word ) {
@@ -412,7 +413,7 @@ class AISuggestionService {
 		}
 		$count = count( $options );
 		if ( $count < 2 ) {
-			$options[] = __( 'Unsure', 'content-vote' );
+			$options[] = __( 'Unsure', 'content-poll' );
 		}
 		if ( $count > 6 ) {
 			$options = array_slice( $options, 0, 6 );

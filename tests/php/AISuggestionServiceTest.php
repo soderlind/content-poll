@@ -2,7 +2,7 @@
 declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
-use ContentVote\Services\AISuggestionService;
+use ContentPoll\Services\AISuggestionService;
 
 final class AISuggestionServiceTest extends TestCase {
 	public function testSuggestReturnsFallbackOnEmptyContent(): void {

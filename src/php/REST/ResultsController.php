@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\REST;
+namespace ContentPoll\REST;
 
-use ContentVote\Services\VoteStorageService;
-use ContentVote\Security\SecurityHelper;
+use ContentPoll\Services\VoteStorageService;
+use ContentPoll\Security\SecurityHelper;
 
 /**
  * REST controller for aggregated vote results per block instance.
  */
 class ResultsController {
-	private string $namespace = 'content-vote/v1';
+	private string $namespace = 'content-poll/v1';
 
 	/**
 	 * Register the results endpoint returning counts & percentages.
@@ -42,8 +42,8 @@ class ResultsController {
 		$agg      = $service->get_aggregate( $block_id );
 
 		// Add user's vote if they have voted
-		if ( isset( $_COOKIE[ 'content_vote_token' ] ) && defined( 'AUTH_KEY' ) ) {
-			$token        = sanitize_text_field( $_COOKIE[ 'content_vote_token' ] );
+		if ( isset( $_COOKIE[ 'content_poll_token' ] ) && defined( 'AUTH_KEY' ) ) {
+			$token        = sanitize_text_field( $_COOKIE[ 'content_poll_token' ] );
 			$hashed_token = hash( 'sha256', $token . AUTH_KEY );
 			$user_vote    = $service->get_user_vote( $block_id, $hashed_token );
 			if ( $user_vote !== null ) {

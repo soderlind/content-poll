@@ -1,33 +1,32 @@
 {
-  "apiVersion": 3,
-  "name": "content-vote/vote-block",
-  "title": "Content Vote",
-  "description": "Allow visitors to cast a single vote on a question with 2–6 options.",
-  "category": "widgets",
-  "icon": "poll",
-  "textdomain": "content-vote",
-  "supports": {
-    "html": false
-  },
-  "attributes": {
-    "blockId": {
-      "type": "string"
-    },
-    "question": {
-      "type": "string",
-      "default": "What do you most enjoy on a relaxed weekend?"
-    },
-    "options": {
-      "type": "array",
-      "default": [
-        "Exploring a new trail",
-        "Reading a good book",
-        "Cooking something new",
-        "Binge‑watching a series"
-      ]
-    }
-  },
-  "editorScript": "file:./index.js",
-  "viewScript": "file:./vote-submit.js",
-  "style": "file:./style-index.css"
+	"apiVersion": 3,
+	"name": "content-vote/vote-block",
+	"title": "Content Vote",
+	"description": "Allow visitors to cast a single vote on a question with 2–6 options.",
+	"category": "widgets",
+	"icon": "poll",
+	"textdomain": "content-vote",
+	"supports": {
+		"html": false
+	},
+	"attributes": {
+		"blockId": {
+			"type": "string""name": "content-poll/vote-block",
+			"title": "ContentPoll Poll",
+			"textdomain": "content-poll",
+			"default": "What do you most enjoy on a relaxed weekend?"
+		},
+		"options": {
+			"type": "array",
+			"default": [
+				"Exploring a new trail",
+				"Reading a good book",
+				"Cooking something new",
+				"Binge‑watching a series"
+			]
+		}
+	},
+	"editorScript": "file:./index.js",
+	"viewScript": "file:./vote-submit.js",
+	"style": "file:./style-index.css"
 }

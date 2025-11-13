@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\REST;
+namespace ContentPoll\REST;
 
-use ContentVote\Security\SecurityHelper;
+use ContentPoll\Security\SecurityHelper;
 
 /**
  * REST controller for providing a fresh nonce value to the client.
  */
 class NonceController {
-	private string $namespace = 'content-vote/v1';
+	private string $namespace = 'content-poll/v1';
 
 	/**
 	 * Register the nonce endpoint.

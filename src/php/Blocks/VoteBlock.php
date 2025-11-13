@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ContentVote\Blocks;
+namespace ContentPoll\Blocks;
 
-use ContentVote\Security\SecurityHelper;
+use ContentPoll\Security\SecurityHelper;
 
 /**
  * Dynamic vote block registration & rendering.
@@ -43,14 +43,14 @@ class VoteBlock {
 			$labelEsc   = esc_html( $label ); // Each option label escaped.
 			$aria       = 'Vote for option ' . ( $i + 1 );
 			$ariaEsc    = esc_attr( $aria ); // Accessibility label escaped.
-			$opts_html .= '<li class="content-vote__option" data-index="' . (int) $i . '" role="button" tabindex="0" aria-label="' . $ariaEsc . '"><span class="content-vote__radio"></span><span class="content-vote__label">' . $labelEsc . '</span></li>';
+			$opts_html .= '<li class="content-poll__option" data-index="' . (int) $i . '" role="button" tabindex="0" aria-label="' . $ariaEsc . '"><span class="content-poll__radio"></span><span class="content-poll__label">' . $labelEsc . '</span></li>';
 		}
 		$blockIdEsc = esc_attr( $block_id );
 		$nonceEsc   = esc_attr( $nonce );
 
 		// Prepare i18n strings for data attributes (CSP-compliant, no inline scripts)
-		$thankYou     = __( 'Thank you for voting!', 'content-vote' ); // Translatable user message.
-		$networkError = __( 'Network error. Please try again.', 'content-vote' ); // Translatable user message.
+		$thankYou     = __( 'Thank you for voting!', 'content-poll' ); // Translatable user message.
+		$networkError = __( 'Network error. Please try again.', 'content-poll' ); // Translatable user message.
 		$thankYouEsc  = esc_attr( $thankYou ); // Escaped for data attribute.
 		$networkEsc   = esc_attr( $networkError ); // Escaped for data attribute.
 
@@ -58,14 +58,14 @@ class VoteBlock {
 		$debugButton = '';
 		$debugAttr   = '';
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) { // Debug-only reset feature.
-			$debugButton = '<button type="button" class="content-vote__reset-btn" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #f0f0f0; border: 1px solid #ccc; cursor: pointer;">Reset Vote (Debug)</button>';
+			$debugButton = '<button type="button" class="content-poll__reset-btn" style="margin-top: 10px; padding: 5px 10px; font-size: 12px; background: #f0f0f0; border: 1px solid #ccc; cursor: pointer;">Reset Vote (Debug)</button>';
 			$debugAttr   = ' data-debug="true"';
 		}
 
-		return '<div class="content-vote" data-block-id="' . $blockIdEsc . '" data-nonce="' . $nonceEsc . '" data-i18n-thank-you="' . $thankYouEsc . '" data-i18n-network-error="' . $networkEsc . '"' . $debugAttr . '>' .
-			'<p class="content-vote__question">' . $question . '</p>' .
-			'<ul class="content-vote__options" role="list">' . $opts_html . '</ul>' .
-			'<div class="content-vote__message" aria-live="polite"></div>' .
+		return '<div class="content-poll" data-block-id="' . $blockIdEsc . '" data-nonce="' . $nonceEsc . '" data-i18n-thank-you="' . $thankYouEsc . '" data-i18n-network-error="' . $networkEsc . '"' . $debugAttr . '>' .
+			'<p class="content-poll__question">' . $question . '</p>' .
+			'<ul class="content-poll__options" role="list">' . $opts_html . '</ul>' .
+			'<div class="content-poll__message" aria-live="polite"></div>' .
 			$debugButton .
 			'</div>';
 	}

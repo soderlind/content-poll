@@ -16,7 +16,7 @@ import {
 } from './helpers.js';
 export { clampOptionCount, expandOrTrimOptions, computePercentages };
 
-registerBlockType( 'content-vote/vote-block', {
+registerBlockType( 'content-poll/vote-block', {
 	edit: Edit,
 	save: () => null,
 } );
@@ -29,7 +29,7 @@ function Edit( props ) {
 	const [ loadingSuggest, setLoadingSuggest ] = useState( false );
 	const [ suggestError, setSuggestError ] = useState( '' );
 	const blockProps = useBlockProps( {
-		className: 'content-vote-editor',
+		className: 'content-poll-editor',
 	} );
 
 	if ( ! blockId ) {
@@ -60,7 +60,7 @@ function Edit( props ) {
 		}
 		fetch(
 			window.location.origin +
-				'/wp-json/content-vote/v1/block/' +
+				'/wp-json/content-poll/v1/block/' +
 				blockId +
 				'/results'
 		)
@@ -91,7 +91,7 @@ function Edit( props ) {
 		const next = expandOrTrimOptions(
 			options,
 			num,
-			__( 'Option', 'content-vote' )
+			__( 'Option', 'content-poll' )
 		);
 		setAttributes( { options: next } );
 	};
@@ -111,7 +111,7 @@ function Edit( props ) {
 		const nonce = window?.wpApiSettings?.nonce || '';
 		fetch(
 			window.location.origin +
-				'/wp-json/content-vote/v1/suggest?postId=' +
+				'/wp-json/content-poll/v1/suggest?postId=' +
 				postId,
 			{
 				headers: nonce ? { 'X-WP-Nonce': nonce } : {},
@@ -131,7 +131,7 @@ function Edit( props ) {
 						options: expandOrTrimOptions(
 							data.options,
 							data.options.length,
-							__( 'Option', 'content-vote' )
+							__( 'Option', 'content-poll' )
 						),
 					} );
 					setCount( clampOptionCount( data.options.length ) );
@@ -147,11 +147,11 @@ function Edit( props ) {
 		<>
 			<InspectorControls>
 				<PanelBody
-					title={ __( 'Settings', 'content-vote' ) }
+						title={ __( 'Settings', 'content-poll' ) }
 					initialOpen={ true }
 				>
 					<RangeControl
-						label={ __( 'Number of options', 'content-vote' ) }
+						label={ __( 'Number of options', 'content-poll' ) }
 						value={ count }
 						min={ 2 }
 						max={ 6 }
@@ -165,15 +165,12 @@ function Edit( props ) {
 						style={ { marginTop: '0.5rem' } }
 					>
 						{ loadingSuggest
-							? __( 'Suggesting…', 'content-vote' )
-							: __( 'Generate Suggestions', 'content-vote' ) }
+							? __( 'Suggesting…', 'content-poll' )
+							: __( 'Generate Suggestions', 'content-poll' ) }
 					</Button>
 					{ locked && (
 						<Notice status="info" isDismissible={ false }>
-							{ __(
-								'Options locked after votes',
-								'content-vote'
-							) }
+							{ __( 'Options locked after votes', 'content-poll' ) }
 						</Notice>
 					) }
 					{ suggestError && (
@@ -187,25 +184,25 @@ function Edit( props ) {
 				<RichText
 					tagName="h4"
 					value={ question }
-					placeholder={ __( 'Enter question…', 'content-vote' ) }
+					placeholder={ __( 'Enter question…', 'content-poll' ) }
 					onChange={ ( v ) =>
 						! locked && setAttributes( { question: v } )
 					}
 				/>
-				<ul className="content-vote-options">
+				<ul className="content-poll-options">
 					{ options.slice( 0, count ).map( ( opt, i ) => (
-						<li key={ i } className="content-vote-option-item">
+						<li key={ i } className="content-poll-option-item">
 							<RichText
 								tagName="span"
 								value={ opt }
-								placeholder={
-									__( 'Option', 'content-vote' ) +
+									placeholder={
+										__( 'Option', 'content-poll' ) +
 									' ' +
 									( i + 1 )
 								}
 								onChange={ ( v ) => updateOption( v, i ) }
 								allowedFormats={ [] }
-								className="content-vote-option"
+									className="content-poll-option"
 							/>
 						</li>
 					) ) }
