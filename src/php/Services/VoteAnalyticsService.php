@@ -292,4 +292,16 @@ class VoteAnalyticsService {
 		$map = $this->get_post_block_attributes( $post_id );
 		return $map[ $block_id ] ?? null;
 	}
+
+	/**
+	 * Delete all vote rows for a given block id (orphan cleanup).
+	 *
+	 * @param string $block_id Block identifier.
+	 * @return int Rows affected.
+	 */
+	public function delete_block_votes( string $block_id ): int {
+		$db = $this->db;
+		$affected = $db->query( $db->prepare( "DELETE FROM {$this->table} WHERE block_id = %s", $block_id ) );
+		return (int) $affected;
+	}
 }

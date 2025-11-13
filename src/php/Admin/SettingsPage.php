@@ -17,10 +17,15 @@ class SettingsPage {
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
 
 		// Add admin columns
-		// Correct WordPress core hooks for posts and pages list tables
+		// Add list table columns for Posts and Pages
+		// Primary dynamic filters for columns
+		add_filter( 'manage_edit-post_columns', [ $this, 'add_votes_column' ] );
+		add_filter( 'manage_edit-page_columns', [ $this, 'add_votes_column' ] );
+		// Fallback legacy filters (ensure compatibility)
 		add_filter( 'manage_posts_columns', [ $this, 'add_votes_column' ] );
-		add_action( 'manage_posts_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
 		add_filter( 'manage_pages_columns', [ $this, 'add_votes_column' ] );
+		// Row rendering actions
+		add_action( 'manage_posts_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
 		add_action( 'manage_pages_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
 	}
 	public function add_settings_page(): void {
@@ -391,6 +396,33 @@ class SettingsPage {
 	private function render_analytics_tab(): void {
 		$analytics = new VoteAnalyticsService();
 
+		// Handle orphan poll deletion request.
+		if ( isset( $_GET['content_poll_delete_orphan'] ) && current_user_can( 'manage_options' ) ) {
+			$block_to_delete = sanitize_text_field( (string) $_GET['content_poll_delete_orphan'] );
+			$nonce           = $_GET['_wpnonce'] ?? '';
+			if ( $block_to_delete && $nonce && wp_verify_nonce( $nonce, 'content_poll_delete_orphan_' . $block_to_delete ) ) {
+				$deleted = $analytics->delete_block_votes( $block_to_delete );
+				if ( $deleted > 0 ) {
+					add_settings_error(
+						'content_poll_messages',
+						'content_poll_orphan_deleted',
+						/* translators: %d: number of rows deleted */
+						sprintf( __( 'Deleted %d orphan vote record(s).', 'content-poll' ), $deleted ),
+						'success'
+					);
+				} else {
+					add_settings_error(
+						'content_poll_messages',
+						'content_poll_orphan_none',
+						__( 'No orphan records matched for deletion.', 'content-poll' ),
+						'info'
+					);
+				}
+			}
+		}
+		// Display any settings messages (for deletion feedback).
+		settings_errors( 'content_poll_messages' );
+
 		// Handle post detail view
 		$viewing_post_id = isset( $_GET[ 'post_id' ] ) ? absint( $_GET[ 'post_id' ] ) : 0;
 
@@ -486,23 +518,34 @@ class SettingsPage {
 									<th><?php esc_html_e( 'Poll Question', 'content-poll' ); ?></th>
 									<th><?php esc_html_e( 'Total Votes', 'content-poll' ); ?></th>
 									<th><?php esc_html_e( 'Last Vote', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Actions', 'content-poll' ); ?></th>
 								</tr>
 							</thead>
 							<tbody>
 								<?php foreach ( $top_polls as $poll ) :
 									$attrs    = $analytics->get_block_attributes( (int) $poll->post_id, $poll->block_id );
-									$question = $attrs ? $attrs[ 'question' ] : $poll->block_id;
+									$is_orphan = ! $attrs;
+									$question = $attrs ? $attrs[ 'question' ] : __( 'Orphan Poll (block removed)', 'content-poll' );
+									$short_id = substr( $poll->block_id, 0, 8 ) . '...';
 									?>
 									<tr>
 										<td>
 											<strong><?php echo esc_html( $question ); ?></strong>
-											<br><small><?php
-											/* translators: %s: shortened block ID for display */
-											echo esc_html( sprintf( __( 'Block ID: %s', 'content-poll' ), substr( $poll->block_id, 0, 8 ) . '...' ) );
-											?></small>
+											<br><small><?php echo esc_html( sprintf( __( 'Block ID: %s', 'content-poll' ), $short_id ) ); ?><?php if ( $is_orphan ) : ?> • <span style="color:#d63638; font-weight:600;"><?php esc_html_e( 'Orphan', 'content-poll' ); ?></span><?php endif; ?></small>
 										</td>
 										<td><?php echo esc_html( number_format_i18n( (int) $poll->total_votes ) ); ?></td>
 										<td><?php echo esc_html( $poll->last_vote ? human_time_diff( strtotime( $poll->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
+										</td>
+										<td>
+											<?php if ( $is_orphan ) : ?>
+												<a href="<?php echo esc_url( wp_nonce_url( '?page=content-poll-settings&tab=analytics&content_poll_delete_orphan=' . urlencode( $poll->block_id ), 'content_poll_delete_orphan_' . $poll->block_id ) ); ?>" class="button button-small" onclick="return confirm('<?php esc_attr_e( 'Delete all vote records for this orphan poll? This cannot be undone.', 'content-poll' ); ?>');">
+													<?php esc_html_e( 'Delete Data', 'content-poll' ); ?>
+												</a>
+											<?php else : ?>
+												<a href="<?php echo esc_url( '?page=content-poll-settings&tab=analytics&post_id=' . (int) $poll->post_id ); ?>" class="button button-small">
+													<?php esc_html_e( 'View Post', 'content-poll' ); ?>
+												</a>
+											<?php endif; ?>
 										</td>
 									</tr>
 								<?php endforeach; ?>
