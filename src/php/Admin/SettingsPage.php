@@ -351,10 +351,10 @@ class SettingsPage {
 		}
 
 		// Determine active tab
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'settings';
-		$valid_tabs = [ 'settings', 'analytics' ];
+		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'analytics';
+		$valid_tabs = [ 'analytics', 'settings' ];
 		if ( ! in_array( $active_tab, $valid_tabs, true ) ) {
-			$active_tab = 'settings';
+			$active_tab = 'analytics';
 		}
 
 		?>
@@ -362,17 +362,19 @@ class SettingsPage {
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
 			
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=content-poll-settings&tab=settings" 
-				   class="nav-tab <?php echo $active_tab === 'settings' ? 'nav-tab-active' : ''; ?>">
-					<?php esc_html_e( 'AI Settings', 'content-poll' ); ?>
-				</a>
 				<a href="?page=content-poll-settings&tab=analytics" 
 				   class="nav-tab <?php echo $active_tab === 'analytics' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Analytics', 'content-poll' ); ?>
 				</a>
+				<a href="?page=content-poll-settings&tab=settings" 
+				   class="nav-tab <?php echo $active_tab === 'settings' ? 'nav-tab-active' : ''; ?>">
+					<?php esc_html_e( 'AI Settings', 'content-poll' ); ?>
+				</a>
 			</h2>
 
-			<?php if ( $active_tab === 'settings' ) : ?>
+			<?php if ( $active_tab === 'analytics' ) : ?>
+				<?php $this->render_analytics_tab(); ?>
+			<?php elseif ( $active_tab === 'settings' ) : ?>
 				<form action="options.php" method="post">
 					<?php
 					settings_fields( $this->option_group );
@@ -380,8 +382,6 @@ class SettingsPage {
 					submit_button( __( 'Save Settings', 'content-poll' ) );
 					?>
 				</form>
-			<?php elseif ( $active_tab === 'analytics' ) : ?>
-				<?php $this->render_analytics_tab(); ?>
 			<?php endif; ?>
 		</div>
 		<?php
