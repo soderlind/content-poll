@@ -47,12 +47,27 @@ AI reads your page content and generates contextually relevant poll questions:
 ## 📦 Installation
 
 ### Quick Install
-1. Copy `content-poll` folder to `wp-content/plugins/` (slug unchanged)
-2. Activate via WordPress Admin → Plugins
-3. (Optional) Configure AI at Settings → ContentPoll AI
+1. Download [`content-poll.zip`](https://github.com/soderlind/content-poll/releases/latest/download/content-poll.zip)
+2. Upload via  `Plugins → Add New → Upload Plugin`
+3. Activate via `WordPress Admin → Plugins`
+
+**Configuration (Optional)**
+
+1. Go to `Settings → ContentPoll AI`
+2. Choose an AI provider for suggestions
+3. Enter your API key or endpoint details
+4. Click Save Settings (plugin tests API connection automatically)
+
+See [AI Provider Integration Guide](https://github.com/soderlind/content-poll/blob/main/docs/AI-PROVIDERS.md) for detailed setup instructions for each AI provider.
+
+
+**Updates**
+   * Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.
 
 ### Development Install
 ```bash
+# Install via Composer
+composer require soderlind/content-poll
 # Install dependencies
 composer install
 npm install

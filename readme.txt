@@ -74,26 +74,20 @@ Configure once at Settings → ContentPoll AI. Then in any post, write your cont
 
 == Installation ==
 
-= Automatic Installation =
+= Installation =
 
-1. Go to Plugins → Add New
-2. Search for "ContentPoll AI" (formerly Content Vote)
-3. Click Install Now
-4. Click Activate
-
-= Manual Installation =
-
-1. Download the plugin ZIP file
-2. Go to Plugins → Add New → Upload Plugin
-3. Choose the ZIP file and click Install Now
-4. Activate the plugin
+1. Download [`content-poll.zip`](https://github.com/soderlind/content-poll/releases/latest/download/content-poll.zip)
+2. Upload via  `Plugins → Add New → Upload Plugin`
+3. Activate via `WordPress Admin → Plugins`
 
 = Configuration (Optional) =
 
-1. Go to Settings → Content Vote
+1. Go to Settings → ContentPoll AI
 2. Choose an AI provider for suggestions
 3. Enter your API key or endpoint details
 4. Click Save Settings (plugin tests API connection automatically)
+
+See [AI Provider Integration Guide](https://github.com/soderlind/content-poll/blob/main/docs/AI-PROVIDERS.md) for detailed setup instructions for each AI provider.
 
 == Frequently Asked Questions ==
 
@@ -169,15 +163,6 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 = Does it slow down my site? =
 
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
-
-== Screenshots ==
-
-1. Modern card-style voting interface with A-D labels and hover effects
-2. Real-time results with progress bars and vote counts
-3. Block editor with AI suggestion button
-4. Settings page showing 6 AI provider options
-5. Theme-adaptive design in light and dark modes
-6. Mobile responsive design
 
 == Changelog ==
 
