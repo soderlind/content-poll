@@ -41,8 +41,8 @@ class VoteBlock {
 		global $post;
 		$post_id   = $post ? (int) $post->ID : 0;
 		$postIdEsc = esc_attr( $post_id );
-		$nonce        = SecurityHelper::create_nonce();
-		$opts_html    = '';
+		$nonce     = SecurityHelper::create_nonce();
+		$opts_html = '';
 		foreach ( $options as $i => $label ) {
 			$labelEsc   = esc_html( $label ); // Each option label escaped.
 			$aria       = 'Vote for option ' . ( $i + 1 );

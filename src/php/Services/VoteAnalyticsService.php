@@ -207,11 +207,11 @@ class VoteAnalyticsService {
 		}
 		$summary = [];
 		foreach ( $posts as $p ) {
-		// Attempt cached summary first for performance (legacy + current votes aggregation is expensive).
-		$cached = get_transient( 'content_poll_posts_summary' );
-		if ( $cached !== false && is_array( $cached ) ) {
-			return $cached;
-		}
+			// Attempt cached summary first for performance (legacy + current votes aggregation is expensive).
+			$cached = get_transient( 'content_poll_posts_summary' );
+			if ( $cached !== false && is_array( $cached ) ) {
+				return $cached;
+			}
 			$blocks    = parse_blocks( $p->post_content );
 			$block_ids = [];
 			foreach ( $blocks as $b ) {

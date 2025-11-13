@@ -5,7 +5,7 @@ All notable changes to the Content Vote plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.5.1] - 2025-11-13
+
 
 ## [0.6.0] - 2025-11-13
 
@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Notes
 - Minor version bump reflects new analytics capabilities and performance improvements.
 
+## [0.5.1] - 2025-11-13
 
 ### Added
 - Regenerated POT file to reflect latest workflow and branding adjustments.

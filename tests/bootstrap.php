@@ -65,11 +65,11 @@ if ( is_dir( $wpRoot ) && file_exists( $wpRoot . '/wp-load.php' ) ) {
 				return false;
 			}
 			$entry = $content_poll_test_transients[ $key ];
-			if ( $entry['expires'] < time() ) {
+			if ( $entry[ 'expires' ] < time() ) {
 				unset( $content_poll_test_transients[ $key ] );
 				return false;
 			}
-			return $entry['value'];
+			return $entry[ 'value' ];
 		}
 	}
 	if ( ! function_exists( 'delete_transient' ) ) {

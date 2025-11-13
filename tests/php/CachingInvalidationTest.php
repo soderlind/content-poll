@@ -29,11 +29,11 @@ class CachingInvalidationTest extends TestCase {
 				if ( stripos( $sql, 'INSERT IGNORE' ) !== false ) {
 					// Very naive parse to extract values (block_id, post_id, option_index, hashed_token)
 					if ( preg_match( '/VALUES \(([^)]+)\)/i', $sql, $m ) ) {
-						$parts = array_map( 'trim', explode( ',', $m[1] ) );
+						$parts = array_map( 'trim', explode( ',', $m[ 1 ] ) );
 						if ( count( $parts ) >= 5 ) {
-							$block_id = trim( $parts[0], "'" );
-							$hashed_token = trim( $parts[3], "'" );
-							$key = $block_id . '|' . $hashed_token;
+							$block_id     = trim( $parts[ 0 ], "'" );
+							$hashed_token = trim( $parts[ 3 ], "'" );
+							$key          = $block_id . '|' . $hashed_token;
 							if ( isset( $this->votes[ $key ] ) ) {
 								$this->rows_affected = 0; // duplicate
 								return 0;
