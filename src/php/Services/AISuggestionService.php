@@ -403,9 +403,8 @@ class AISuggestionService {
 				'options'  => [ 'Great', 'Informative', 'Neutral', 'Confusing' ],
 			];
 		}
-		$stem             = $top[ 0 ];
-		$questionTemplate = __( 'Your view on "%s"?', 'content-vote' );
-		$question         = sprintf( $questionTemplate, ucfirst( $stem ) );
+		$stem     = $top[ 0 ];
+		$question = sprintf( __( 'Your view on "%s"?', 'content-vote' ), ucfirst( $stem ) );
 		// Build option phrases.
 		$options = [];
 		foreach ( $top as $i => $word ) {

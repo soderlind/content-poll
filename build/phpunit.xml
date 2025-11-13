@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/phpunit.xml.dist" tests="8" assertions="20" errors="0" failures="1" skipped="0" time="1.838567">
+    <testsuite name="ContentVote Unit" tests="8" assertions="20" errors="0" failures="1" skipped="0" time="1.838567">
+      <testsuite name="AISuggestionServiceTest" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/AISuggestionServiceTest.php" tests="2" assertions="3" errors="0" failures="1" skipped="0" time="1.827302">
+        <testcase name="testSuggestReturnsFallbackOnEmptyContent" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/AISuggestionServiceTest.php" line="8" class="AISuggestionServiceTest" classname="AISuggestionServiceTest" assertions="2" time="0.927578"/>
+        <testcase name="testSuggestExtractsKeywords" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/AISuggestionServiceTest.php" line="15" class="AISuggestionServiceTest" classname="AISuggestionServiceTest" assertions="1" time="0.899723">
+          <failure type="PHPUnit\Framework\ExpectationFailedException">AISuggestionServiceTest::testSuggestExtractsKeywords
+Failed asserting that false is true.
+
+/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/AISuggestionServiceTest.php:19
+/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/vendor/phpunit/phpunit/src/TextUI/Application.php:204</failure>
+        </testcase>
+      </testsuite>
+      <testsuite name="AggregationTest" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/AggregationTest.php" tests="1" assertions="3" errors="0" failures="0" skipped="0" time="0.000746">
+        <testcase name="testPercentagesComputedCorrectly" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/AggregationTest.php" line="88" class="AggregationTest" classname="AggregationTest" assertions="3" time="0.000746"/>
+      </testsuite>
+      <testsuite name="RestResultsEndpointTest" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/RestResultsEndpointTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.007991">
+        <testcase name="testResultsEndpointReturnsAggregateAfterVote" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/RestResultsEndpointTest.php" line="10" class="RestResultsEndpointTest" classname="RestResultsEndpointTest" assertions="2" time="0.007991"/>
+      </testsuite>
+      <testsuite name="RestVoteEndpointTest" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/RestVoteEndpointTest.php" tests="1" assertions="2" errors="0" failures="0" skipped="0" time="0.000891">
+        <testcase name="testVoteEndpointReturnsAggregate" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/RestVoteEndpointTest.php" line="9" class="RestVoteEndpointTest" classname="RestVoteEndpointTest" assertions="2" time="0.000891"/>
+      </testsuite>
+      <testsuite name="VoteStorageServiceTest" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/VoteStorageServiceTest.php" tests="3" assertions="10" errors="0" failures="0" skipped="0" time="0.001637">
+        <testcase name="testRecordVoteInsertsAndAggregates" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/VoteStorageServiceTest.php" line="96" class="VoteStorageServiceTest" classname="VoteStorageServiceTest" assertions="6" time="0.001302"/>
+        <testcase name="testDuplicateVotePrevention" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/VoteStorageServiceTest.php" line="109" class="VoteStorageServiceTest" classname="VoteStorageServiceTest" assertions="2" time="0.000200"/>
+        <testcase name="testInvalidOptionIndex" file="/Users/persoderlind/Sites/plugins/app/public/wp-content/plugins/content-vote/tests/php/VoteStorageServiceTest.php" line="118" class="VoteStorageServiceTest" classname="VoteStorageServiceTest" assertions="2" time="0.000135"/>
+      </testsuite>
+    </testsuite>
+  </testsuite>
+</testsuites>
