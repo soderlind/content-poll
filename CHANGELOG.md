@@ -5,6 +5,28 @@ All notable changes to the Content Vote plugin will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.5.0] - 2025-11-13
+
+### Added
+- GitHub-based automatic update integration via `GitHubPluginUpdater` (plugin-update-checker library).
+- Release workflow archive verification step (lists contents before publishing).
+
+### Changed
+- Release packaging exclusions aligned with `.gitattributes` for slimmer production zip.
+- Unified exclusion patterns between manual and on-release workflows.
+
+### Testing
+- Added PHPUnit tests for updater (constructor validation, init hook registration, release assets flag behavior).
+
+### Fixed
+- None in this release.
+
+### Security
+- No changes; inherits nonce/cookie safeguards from prior versions.
+
+### Notes
+- Foundation work for upcoming analytics/export features; updater enables smoother delivery of future enhancements.
+
 ## [0.4.0] - 2025-11-13
 
 ### Added
@@ -100,5 +122,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [0.2.0]: https://github.com/yourusername/content-vote/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/yourusername/content-vote/releases/tag/v0.1.0
+[0.5.0]: https://github.com/yourusername/content-vote/compare/v0.4.0...v0.5.0
 [0.4.0]: https://github.com/yourusername/content-vote/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/yourusername/content-vote/compare/v0.2.0...v0.3.0

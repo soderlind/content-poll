@@ -9,6 +9,7 @@ class ComposerStaticInitc1124f7b02bb0517c9115d2dd2d091db
     public static $files = array (
         '6124b4c8570aa390c21fafd04a26c69f' => __DIR__ . '/..' . '/myclabs/deep-copy/src/DeepCopy/deep_copy.php',
         'ec07570ca5a812141189b1fa81503674' => __DIR__ . '/..' . '/phpunit/phpunit/src/Framework/Assert/Functions.php',
+        'f6d4f6bcee7247df6b777884c3e22f98' => __DIR__ . '/..' . '/yahnis-elsts/plugin-update-checker/load-v5p6.php',
     );
 
     public static $prefixLengthsPsr4 = array (

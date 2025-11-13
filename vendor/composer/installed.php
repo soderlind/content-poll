@@ -1,9 +1,9 @@
 <?php return array(
     'root' => array(
-        'name' => 'persoderlind/content-vote',
+        'name' => 'persoderlind/content-poll',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '37e3d28dffb648ac4ee77757e7f318121e9f653b',
+        'reference' => 'b88a72e38d2f3468926bda5521e740029ac0a2ce',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -28,10 +28,10 @@
             'aliases' => array(),
             'dev_requirement' => true,
         ),
-        'persoderlind/content-vote' => array(
+        'persoderlind/content-poll' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '37e3d28dffb648ac4ee77757e7f318121e9f653b',
+            'reference' => 'b88a72e38d2f3468926bda5521e740029ac0a2ce',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -261,6 +261,15 @@
             'install_path' => __DIR__ . '/../theseer/tokenizer',
             'aliases' => array(),
             'dev_requirement' => true,
+        ),
+        'yahnis-elsts/plugin-update-checker' => array(
+            'pretty_version' => 'v5.6',
+            'version' => '5.6.0.0',
+            'reference' => 'a2db6871deec989a74e1f90fafc6d58ae526a879',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../yahnis-elsts/plugin-update-checker',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
     ),
 );
