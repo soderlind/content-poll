@@ -15,12 +15,13 @@ class SettingsPage {
 		$this->option_name  = 'content_poll_options';
 		add_action( 'admin_menu', [ $this, 'add_settings_page' ] );
 		add_action( 'admin_init', [ $this, 'register_settings' ] );
-		
+
 		// Add admin columns
-		add_filter( 'manage_post_posts_columns', [ $this, 'add_votes_column' ] );
-		add_action( 'manage_post_posts_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
-		add_filter( 'manage_page_posts_columns', [ $this, 'add_votes_column' ] );
-		add_action( 'manage_page_posts_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
+		// Correct WordPress core hooks for posts and pages list tables
+		add_filter( 'manage_posts_columns', [ $this, 'add_votes_column' ] );
+		add_action( 'manage_posts_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
+		add_filter( 'manage_pages_columns', [ $this, 'add_votes_column' ] );
+		add_action( 'manage_pages_custom_column', [ $this, 'render_votes_column' ], 10, 2 );
 	}
 	public function add_settings_page(): void {
 		add_options_page(
@@ -351,7 +352,7 @@ class SettingsPage {
 		}
 
 		// Determine active tab
-		$active_tab = isset( $_GET['tab'] ) ? sanitize_text_field( $_GET['tab'] ) : 'analytics';
+		$active_tab = isset( $_GET[ 'tab' ] ) ? sanitize_text_field( $_GET[ 'tab' ] ) : 'analytics';
 		$valid_tabs = [ 'analytics', 'settings' ];
 		if ( ! in_array( $active_tab, $valid_tabs, true ) ) {
 			$active_tab = 'analytics';
@@ -360,14 +361,14 @@ class SettingsPage {
 		?>
 		<div class="wrap">
 			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
-			
+
 			<h2 class="nav-tab-wrapper">
-				<a href="?page=content-poll-settings&tab=analytics" 
-				   class="nav-tab <?php echo $active_tab === 'analytics' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=content-poll-settings&tab=analytics"
+					class="nav-tab <?php echo $active_tab === 'analytics' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'Analytics', 'content-poll' ); ?>
 				</a>
-				<a href="?page=content-poll-settings&tab=settings" 
-				   class="nav-tab <?php echo $active_tab === 'settings' ? 'nav-tab-active' : ''; ?>">
+				<a href="?page=content-poll-settings&tab=settings"
+					class="nav-tab <?php echo $active_tab === 'settings' ? 'nav-tab-active' : ''; ?>">
 					<?php esc_html_e( 'AI Settings', 'content-poll' ); ?>
 				</a>
 			</h2>
@@ -389,45 +390,50 @@ class SettingsPage {
 
 	private function render_analytics_tab(): void {
 		$analytics = new VoteAnalyticsService();
-		
+
 		// Handle post detail view
-		$viewing_post_id = isset( $_GET['post_id'] ) ? absint( $_GET['post_id'] ) : 0;
-		
+		$viewing_post_id = isset( $_GET[ 'post_id' ] ) ? absint( $_GET[ 'post_id' ] ) : 0;
+
 		if ( $viewing_post_id > 0 ) {
 			$this->render_post_detail( $analytics, $viewing_post_id );
 			return;
 		}
 
 		// Summary metrics
-		$total_votes  = $analytics->get_total_votes();
-		$total_polls  = $analytics->get_total_polls();
-		$avg_votes    = $analytics->get_average_votes_per_poll();
-		$top_polls    = $analytics->get_top_polls( 5 );
-		$recent       = $analytics->get_recent_activity( 5 );
+		$total_votes   = $analytics->get_total_votes();
+		$total_polls   = $analytics->get_total_polls();
+		$avg_votes     = $analytics->get_average_votes_per_poll();
+		$top_polls     = $analytics->get_top_polls( 5 );
+		$recent        = $analytics->get_recent_activity( 5 );
 		$posts_summary = $analytics->get_posts_summary();
 
 		?>
 		<div class="content-poll-analytics" style="margin-top: 20px;">
-			
+
 			<!-- Summary Cards -->
-			<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
+			<div
+				style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
 				<div class="postbox" style="padding: 20px;">
 					<h3 style="margin-top: 0;"><?php esc_html_e( 'Total Votes', 'content-poll' ); ?></h3>
-					<p style="font-size: 32px; font-weight: bold; margin: 0;"><?php echo esc_html( number_format_i18n( $total_votes ) ); ?></p>
+					<p style="font-size: 32px; font-weight: bold; margin: 0;">
+						<?php echo esc_html( number_format_i18n( $total_votes ) ); ?></p>
 				</div>
 				<div class="postbox" style="padding: 20px;">
 					<h3 style="margin-top: 0;"><?php esc_html_e( 'Total Polls', 'content-poll' ); ?></h3>
-					<p style="font-size: 32px; font-weight: bold; margin: 0;"><?php echo esc_html( number_format_i18n( $total_polls ) ); ?></p>
+					<p style="font-size: 32px; font-weight: bold; margin: 0;">
+						<?php echo esc_html( number_format_i18n( $total_polls ) ); ?></p>
 				</div>
 				<div class="postbox" style="padding: 20px;">
 					<h3 style="margin-top: 0;"><?php esc_html_e( 'Average Votes/Poll', 'content-poll' ); ?></h3>
-					<p style="font-size: 32px; font-weight: bold; margin: 0;"><?php echo esc_html( number_format_i18n( $avg_votes, 1 ) ); ?></p>
+					<p style="font-size: 32px; font-weight: bold; margin: 0;">
+						<?php echo esc_html( number_format_i18n( $avg_votes, 1 ) ); ?></p>
 				</div>
 			</div>
 
 			<?php if ( empty( $posts_summary ) ) : ?>
 				<div class="notice notice-info">
-					<p><?php esc_html_e( 'No votes recorded yet. Add poll blocks to your posts and pages to start collecting votes.', 'content-poll' ); ?></p>
+					<p><?php esc_html_e( 'No votes recorded yet. Add poll blocks to your posts and pages to start collecting votes.', 'content-poll' ); ?>
+					</p>
 				</div>
 			<?php else : ?>
 
@@ -456,9 +462,11 @@ class SettingsPage {
 									</td>
 									<td><?php echo esc_html( number_format_i18n( (int) $row->poll_count ) ); ?></td>
 									<td><?php echo esc_html( number_format_i18n( (int) $row->total_votes ) ); ?></td>
-									<td><?php echo esc_html( $row->last_vote ? human_time_diff( strtotime( $row->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?></td>
+									<td><?php echo esc_html( $row->last_vote ? human_time_diff( strtotime( $row->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
+									</td>
 									<td>
-										<a href="?page=content-poll-settings&tab=analytics&post_id=<?php echo esc_attr( $row->post_id ); ?>" class="button button-small">
+										<a href="?page=content-poll-settings&tab=analytics&post_id=<?php echo esc_attr( $row->post_id ); ?>"
+											class="button button-small">
 											<?php esc_html_e( 'View Details', 'content-poll' ); ?>
 										</a>
 									</td>
@@ -481,20 +489,21 @@ class SettingsPage {
 								</tr>
 							</thead>
 							<tbody>
-								<?php foreach ( $top_polls as $poll ) : 
-									$attrs = $analytics->get_block_attributes( (int) $poll->post_id, $poll->block_id );
-									$question = $attrs ? $attrs['question'] : $poll->block_id;
-								?>
+								<?php foreach ( $top_polls as $poll ) :
+									$attrs    = $analytics->get_block_attributes( (int) $poll->post_id, $poll->block_id );
+									$question = $attrs ? $attrs[ 'question' ] : $poll->block_id;
+									?>
 									<tr>
 										<td>
 											<strong><?php echo esc_html( $question ); ?></strong>
-											<br><small><?php 
-												/* translators: %s: shortened block ID for display */
-												echo esc_html( sprintf( __( 'Block ID: %s', 'content-poll' ), substr( $poll->block_id, 0, 8 ) . '...' ) ); 
+											<br><small><?php
+											/* translators: %s: shortened block ID for display */
+											echo esc_html( sprintf( __( 'Block ID: %s', 'content-poll' ), substr( $poll->block_id, 0, 8 ) . '...' ) );
 											?></small>
 										</td>
 										<td><?php echo esc_html( number_format_i18n( (int) $poll->total_votes ) ); ?></td>
-										<td><?php echo esc_html( $poll->last_vote ? human_time_diff( strtotime( $poll->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?></td>
+										<td><?php echo esc_html( $poll->last_vote ? human_time_diff( strtotime( $poll->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
+										</td>
 									</tr>
 								<?php endforeach; ?>
 							</tbody>
@@ -536,7 +545,8 @@ class SettingsPage {
 
 			<h2>
 				<?php echo esc_html( $post->post_title ?: __( '(No title)', 'content-poll' ) ); ?>
-				<a href="<?php echo esc_url( get_edit_post_link( $post_id ) ); ?>" class="button button-small" style="margin-left: 10px;">
+				<a href="<?php echo esc_url( get_edit_post_link( $post_id ) ); ?>" class="button button-small"
+					style="margin-left: 10px;">
 					<?php esc_html_e( 'Edit Post', 'content-poll' ); ?>
 				</a>
 			</h2>
@@ -546,19 +556,19 @@ class SettingsPage {
 					<p><?php esc_html_e( 'No votes recorded for polls on this post yet.', 'content-poll' ); ?></p>
 				</div>
 			<?php else : ?>
-				<?php foreach ( $blocks as $block ) : 
-					$attrs      = $block_attrs[ $block->block_id ] ?? null;
-					$question   = $attrs ? $attrs['question'] : __( 'Untitled Poll', 'content-poll' );
-					$options    = $attrs ? $attrs['options'] : [];
-					$breakdown  = $analytics->get_block_option_breakdown( $block->block_id );
-				?>
+				<?php foreach ( $blocks as $block ) :
+					$attrs     = $block_attrs[ $block->block_id ] ?? null;
+					$question  = $attrs ? $attrs[ 'question' ] : __( 'Untitled Poll', 'content-poll' );
+					$options   = $attrs ? $attrs[ 'options' ] : [];
+					$breakdown = $analytics->get_block_option_breakdown( $block->block_id );
+					?>
 					<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
 						<h3 style="margin-top: 0;"><?php echo esc_html( $question ); ?></h3>
 						<p>
-							<strong><?php esc_html_e( 'Total Votes:', 'content-poll' ); ?></strong> 
+							<strong><?php esc_html_e( 'Total Votes:', 'content-poll' ); ?></strong>
 							<?php echo esc_html( number_format_i18n( (int) $block->total_votes ) ); ?>
 							&nbsp;|&nbsp;
-							<strong><?php esc_html_e( 'Last Vote:', 'content-poll' ); ?></strong> 
+							<strong><?php esc_html_e( 'Last Vote:', 'content-poll' ); ?></strong>
 							<?php echo esc_html( $block->last_vote ? human_time_diff( strtotime( $block->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
 						</p>
 
@@ -571,23 +581,25 @@ class SettingsPage {
 								</tr>
 							</thead>
 							<tbody>
-								<?php 
+								<?php
 								$option_count = count( $options );
-								for ( $i = 0; $i < $option_count; $i++ ) : 
+								for ( $i = 0; $i < $option_count; $i++ ) :
 									$label = $options[ $i ] ?? __( 'Option', 'content-poll' ) . ' ' . ( $i + 1 );
-									$votes = $breakdown['counts'][ $i ] ?? 0;
-									$pct   = $breakdown['percentages'][ $i ] ?? 0;
-								?>
+									$votes = $breakdown[ 'counts' ][ $i ] ?? 0;
+									$pct   = $breakdown[ 'percentages' ][ $i ] ?? 0;
+									?>
 									<tr>
 										<td>
-											<strong><?php echo esc_html( chr( 65 + $i ) ); ?>.</strong> 
+											<strong><?php echo esc_html( chr( 65 + $i ) ); ?>.</strong>
 											<?php echo esc_html( $label ); ?>
 										</td>
 										<td><?php echo esc_html( number_format_i18n( $votes ) ); ?></td>
 										<td>
 											<?php echo esc_html( number_format_i18n( $pct, 1 ) . '%' ); ?>
-											<div style="background: #ddd; height: 20px; border-radius: 3px; overflow: hidden; margin-top: 5px;">
-												<div style="background: #2271b1; height: 100%; width: <?php echo esc_attr( $pct ); ?>%;"></div>
+											<div
+												style="background: #ddd; height: 20px; border-radius: 3px; overflow: hidden; margin-top: 5px;">
+												<div style="background: #2271b1; height: 100%; width: <?php echo esc_attr( $pct ); ?>%;">
+												</div>
 											</div>
 										</td>
 									</tr>
@@ -856,13 +868,13 @@ class SettingsPage {
 		$new_columns = [];
 		foreach ( $columns as $key => $label ) {
 			if ( $key === 'comments' ) {
-				$new_columns['content_poll_votes'] = __( 'Poll Votes', 'content-poll' );
+				$new_columns[ 'content_poll_votes' ] = __( 'Poll Votes', 'content-poll' );
 			}
 			$new_columns[ $key ] = $label;
 		}
 		// If comments column doesn't exist, append
-		if ( ! isset( $new_columns['content_poll_votes'] ) ) {
-			$new_columns['content_poll_votes'] = __( 'Poll Votes', 'content-poll' );
+		if ( ! isset( $new_columns[ 'content_poll_votes' ] ) ) {
+			$new_columns[ 'content_poll_votes' ] = __( 'Poll Votes', 'content-poll' );
 		}
 		return $new_columns;
 	}
@@ -885,7 +897,8 @@ class SettingsPage {
 			?>
 			<strong><?php echo esc_html( number_format_i18n( $total_votes ) ); ?></strong>
 			<br>
-			<a href="<?php echo esc_url( admin_url( 'options-general.php?page=content-poll-settings&tab=analytics&post_id=' . $post_id ) ); ?>">
+			<a
+				href="<?php echo esc_url( admin_url( 'options-general.php?page=content-poll-settings&tab=analytics&post_id=' . $post_id ) ); ?>">
 				<?php esc_html_e( 'View Analytics', 'content-poll' ); ?>
 			</a>
 			<?php
