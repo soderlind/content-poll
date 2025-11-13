@@ -112,6 +112,53 @@ add_action( 'plugins_loaded', function () {
 	( new \ContentPoll\Blocks\VoteBlock() )->register();
 	new \ContentPoll\Admin\SettingsPage();
 } );
+
+// One-time migration: backfill missing post_id for early votes stored before post_id capture was added.
+add_action( 'admin_init', function () {
+	// Run only for administrators to avoid front-end overhead.
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	if ( get_transient( 'content_poll_post_id_migration_done' ) ) {
+		return; // Already migrated.
+	}
+	global $wpdb;
+	$table = $wpdb->prefix . 'vote_block_submissions';
+	$needs = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE post_id = 0" );
+	if ( $needs === 0 ) {
+		set_transient( 'content_poll_post_id_migration_done', 1, DAY_IN_SECONDS );
+		return;
+	}
+	// Fetch candidate posts/pages containing the vote block.
+	$posts = $wpdb->get_results( "SELECT ID, post_content FROM {$wpdb->posts} WHERE post_status IN ('publish','draft','future') AND post_type IN ('post','page') AND post_content LIKE '%content-poll/vote-block%'" );
+	if ( empty( $posts ) ) {
+		return; // Nothing to migrate.
+	}
+	$updated = 0;
+	foreach ( $posts as $p ) {
+		$blocks = parse_blocks( $p->post_content );
+		foreach ( $blocks as $block ) {
+			if ( isset( $block['blockName'] ) && $block['blockName'] === 'content-poll/vote-block' && isset( $block['attrs']['blockId'] ) ) {
+				$block_id = $block['attrs']['blockId'];
+				// Update rows with post_id = 0 for this block.
+				$affected = $wpdb->query( $wpdb->prepare( "UPDATE $table SET post_id = %d WHERE post_id = 0 AND block_id = %s", $p->ID, $block_id ) );
+				if ( $affected ) {
+					$updated += (int) $affected;
+				}
+			}
+		}
+	}
+	// If no more rows remain with post_id=0 mark migration done.
+	$remaining = (int) $wpdb->get_var( "SELECT COUNT(*) FROM $table WHERE post_id = 0" );
+	if ( $remaining === 0 ) {
+		set_transient( 'content_poll_post_id_migration_done', 1, DAY_IN_SECONDS );
+	}
+	if ( $updated > 0 ) {
+		add_action( 'admin_notices', function () use ( $updated ) {
+			printf( '<div class="notice notice-success"><p>%s</p></div>', esc_html( sprintf( __( 'ContentPoll migrated %d legacy vote record(s) to attach correct post IDs.', 'content-poll' ), $updated ) ) );
+		} );
+	}
+} );
 // Removed inline localization to comply with strict CSP (no inline scripts).
 // Block editor JS now derives postId via wp.data.select('core/editor').getCurrentPostId()
 // and nonce from wpApiSettings.nonce (core REST setup) without plugin-added inline script.
