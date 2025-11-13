@@ -9,14 +9,14 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-13T10:08:35+00:00\n"
+"POT-Creation-Date: 2025-11-13T16:44:19+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: content-poll\n"
 
 #. Plugin Name of the plugin
 #: content-poll.php
-#: src/php/Admin/SettingsPage.php:20
+#: src/php/Admin/SettingsPage.php:28
 msgid "ContentPoll AI"
 msgstr ""
 
@@ -40,103 +40,237 @@ msgstr ""
 msgid "https://soderlind.no"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:19
+#: src/php/Admin/SettingsPage.php:27
 msgid "ContentPoll Settings"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:50
+#: src/php/Admin/SettingsPage.php:58
 msgid "AI Suggestion Settings"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:57
+#: src/php/Admin/SettingsPage.php:65
 msgid "AI Provider"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:65
+#: src/php/Admin/SettingsPage.php:73
 msgid "OpenAI Type"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:73
+#: src/php/Admin/SettingsPage.php:81
 msgid "API Key"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:81
+#: src/php/Admin/SettingsPage.php:89
 msgid "Model / Deployment"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:89
+#: src/php/Admin/SettingsPage.php:97
 msgid "Azure OpenAI Endpoint"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:97
+#: src/php/Admin/SettingsPage.php:105
 msgid "Azure API Version"
 msgstr ""
 
 #. translators: %s: error message returned from validating the AI provider configuration
-#: src/php/Admin/SettingsPage.php:181
+#: src/php/Admin/SettingsPage.php:189
 #, php-format
 msgid "AI Configuration Warning: %s"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:352
+#: src/php/Admin/SettingsPage.php:367
+msgid "AI Settings"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:371
+msgid "Analytics"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:380
 msgid "Save Settings"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:361
-msgid "Configure the AI service used for generating vote option suggestions."
+#: src/php/Admin/SettingsPage.php:415
+#: src/php/Admin/SettingsPage.php:442
+#: src/php/Admin/SettingsPage.php:479
+msgid "Total Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:419
+msgid "Total Polls"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:423
+msgid "Average Votes/Poll"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:430
+msgid "No votes recorded yet. Add poll blocks to your posts and pages to start collecting votes."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:436
+msgid "Posts with Polls"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:440
+msgid "Post Title"
 msgstr ""
 
 #: src/php/Admin/SettingsPage.php:441
-msgid "Heuristic AI (Default)"
+msgid "Polls"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:443
+msgid "Last Activity"
 msgstr ""
 
 #: src/php/Admin/SettingsPage.php:444
-#: src/php/Admin/SettingsPage.php:470
-msgid "OpenAI"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:447
-msgid "Anthropic Claude"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:450
-msgid "Google Gemini"
+msgid "Actions"
 msgstr ""
 
 #: src/php/Admin/SettingsPage.php:453
+#: src/php/Admin/SettingsPage.php:538
+msgid "(No title)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:459
+#: src/php/Admin/SettingsPage.php:497
+#: src/php/Admin/SettingsPage.php:562
+msgid "ago"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:462
+msgid "View Details"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:474
+msgid "Top Polls by Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:478
+msgid "Poll Question"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:480
+msgid "Last Vote"
+msgstr ""
+
+#. translators: %s: shortened block ID for display
+#: src/php/Admin/SettingsPage.php:493
+#, php-format
+msgid "Block ID: %s"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:515
+msgid "Post not found."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:519
+#: src/php/Admin/SettingsPage.php:533
+msgid "← Back to Analytics"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:540
+msgid "Edit Post"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:546
+msgid "No votes recorded for polls on this post yet."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:551
+#: src/php/Services/VoteAnalyticsService.php:215
+msgid "Untitled Poll"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:558
+msgid "Total Votes:"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:561
+msgid "Last Vote:"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:568
+#: src/php/Admin/SettingsPage.php:577
+#: src/block/vote-block/index.js:94
+#: src/block/vote-block/index.js:134
+#: src/block/vote-block/index.js:202
+msgid "Option"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:569
+msgid "Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:570
+msgid "Percentage"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:606
+msgid "Configure the AI service used for generating vote option suggestions."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:686
+msgid "Heuristic AI (Default)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:689
+#: src/php/Admin/SettingsPage.php:715
+msgid "OpenAI"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:692
+msgid "Anthropic Claude"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:695
+msgid "Google Gemini"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:698
 msgid "Ollama (Self-Hosted)"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:457
+#: src/php/Admin/SettingsPage.php:702
 msgid "Heuristic AI uses built-in logic without API calls. Other options require API keys or local installation."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:473
+#: src/php/Admin/SettingsPage.php:718
 msgid "Azure OpenAI"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:477
+#: src/php/Admin/SettingsPage.php:722
 msgid "Choose between standard OpenAI API or Azure OpenAI Service"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:491
+#: src/php/Admin/SettingsPage.php:736
 msgid "API key from"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:494
+#: src/php/Admin/SettingsPage.php:739
 msgid "or"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:509
+#: src/php/Admin/SettingsPage.php:754
 msgid "OpenAI: gpt-3.5-turbo, gpt-4, etc. Anthropic: claude-3-5-sonnet-20241022, etc. Gemini: gemini-1.5-flash, etc. Ollama: llama3.2, mistral, etc."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:524
+#: src/php/Admin/SettingsPage.php:769
 msgid "Your Azure OpenAI resource endpoint URL"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:538
+#: src/php/Admin/SettingsPage.php:783
 msgid "Azure OpenAI API version (e.g., 2024-02-15-preview)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:859
+#: src/php/Admin/SettingsPage.php:865
+msgid "Poll Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:889
+msgid "View Analytics"
 msgstr ""
 
 #: src/php/Blocks/VoteBlock.php:52
@@ -159,12 +293,6 @@ msgstr ""
 
 #: src/php/Services/AISuggestionService.php:416
 msgid "Unsure"
-msgstr ""
-
-#: src/block/vote-block/index.js:94
-#: src/block/vote-block/index.js:134
-#: src/block/vote-block/index.js:202
-msgid "Option"
 msgstr ""
 
 #: src/block/vote-block/index.js:150

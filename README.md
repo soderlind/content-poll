@@ -203,7 +203,7 @@ Response: {
 
 ## 🗺️ Roadmap
 
-- [ ] Admin dashboard with vote analytics
+- [x] Admin dashboard with vote analytics
 - [ ] Export votes to CSV
 - [ ] Transient caching for high-traffic sites
 - [ ] Custom result templates
