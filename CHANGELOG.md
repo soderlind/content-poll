@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.6.3] - 2025-11-14
+
+### Changed
+- AI-powered suggestion providers (OpenAI, Anthropic, Gemini, Ollama) now infer the language of the post content within a single request and generate poll questions/options in that same language.
+- Simplified `AISuggestionService` by removing the internal PHP language heuristic in favor of model-based language detection.
+
+### Notes
+- Patch release focused on improving localization behavior for AI suggestions; no database or REST API changes.
+
 ## [0.6.2] - 2025-11-13
 
 ### Added
@@ -199,5 +208,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.4.0]: https://github.com/yourusername/content-vote/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/yourusername/content-vote/compare/v0.2.0...v0.3.0
 [0.5.1]: https://github.com/yourusername/content-vote/compare/v0.5.0...v0.5.1
+[0.6.3]: https://github.com/yourusername/content-vote/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/yourusername/content-vote/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1
