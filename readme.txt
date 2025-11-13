@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.6.0
+Stable tag: 0.6.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,6 +166,12 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.6.1 - 2025-11-13 =
+* Fixed: Analytics summary transient regression causing reset/overwrite during summary build.
+* Added: AI suggestion normalization guaranteeing question + options array (prevents empty suggestion tests).
+* Internal: Consolidated caching logic flow; improved test reliability for suggestion + caching invalidation.
+* Notes: Stability patch after major analytics release.
+
 
 = 0.6.0 - 2025-11-13 =
 * Added: Admin Analytics dashboard list now uses `WP_List_Table` with pagination & sortable columns.
@@ -237,6 +243,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.6.1 =
+Stability patch: fixes analytics caching regression and ensures consistent AI suggestions. Safe upgrade; no manual steps.
 
 = 0.6.0 =
 New analytics list table (pagination, sorting), orphan poll cleanup, and performance caching. Safe upgrade; no manual steps required.

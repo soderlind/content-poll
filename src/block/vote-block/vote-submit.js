@@ -10,7 +10,8 @@
 		const containers = document.querySelectorAll( '.content-poll' );
 		containers.forEach( ( container ) => {
 			const blockId = container.getAttribute( 'data-block-id' );
-			const postId = parseInt( container.getAttribute( 'data-post-id' ), 10 ) || 0;
+			const postId =
+				parseInt( container.getAttribute( 'data-post-id' ), 10 ) || 0;
 			const nonce = container.getAttribute( 'data-nonce' );
 			const isDebug = container.getAttribute( 'data-debug' ) === 'true';
 			const messageEl = container.querySelector(

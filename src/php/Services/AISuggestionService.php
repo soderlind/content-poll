@@ -33,12 +33,41 @@ class AISuggestionService {
 				$result = [];
 		}
 
-		// Fallback to heuristic if AI fails
-		if ( ! empty( $result ) ) {
-			return $result;
+		// Fallback to heuristic if AI fails (empty result)
+		if ( empty( $result ) ) {
+			$result = $this->suggest_heuristic( $content );
 		}
+		return $this->normalize_suggestion( $result, $content );
+	}
 
-		return $this->suggest_heuristic( $content );
+	/**
+	 * Ensure returned structure always contains 'question' and 'options'.
+	 * Defensive in case provider-specific handlers return partial data.
+	 *
+	 * @param array $data Raw suggestion data.
+	 * @param string $content Original content (may be reused for heuristic fallback).
+	 * @return array{question:string,options:array<int,string>}
+	 */
+	private function normalize_suggestion( array $data, string $content ): array {
+		if ( ! isset( $data[ 'question' ] ) || ! is_string( $data[ 'question' ] ) ) {
+			// Regenerate via heuristic to guarantee a question.
+			$data = $this->suggest_heuristic( $content );
+		}
+		if ( ! isset( $data[ 'options' ] ) || ! is_array( $data[ 'options' ] ) ) {
+			$data[ 'options' ] = $this->suggest_heuristic( $content )[ 'options' ];
+		}
+		// Enforce min 2, max 6 options.
+		$data[ 'options' ] = array_values( array_filter( $data[ 'options' ], fn( $o ) => is_string( $o ) && $o !== '' ) );
+		if ( count( $data[ 'options' ] ) < 2 ) {
+			$data[ 'options' ][] = 'Option';
+		}
+		if ( count( $data[ 'options' ] ) > 6 ) {
+			$data[ 'options' ] = array_slice( $data[ 'options' ], 0, 6 );
+		}
+		return [
+			'question' => $data[ 'question' ],
+			'options'  => $data[ 'options' ],
+		];
 	}
 
 	/**
