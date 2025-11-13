@@ -72,10 +72,6 @@ class VoteStorageService {
 		if ( ! $inserted ) {
 			return [ 'error' => true, 'code' => 'db_insert_failed', 'message' => 'Could not record vote.', 'status' => 500 ];
 		}
-		// Invalidate cached analytics summary since new vote modifies counts.
-		if ( function_exists( 'delete_transient' ) ) {
-			delete_transient( 'content_poll_posts_summary' );
-		}
 		return $this->get_aggregate( $block_id );
 	}
 

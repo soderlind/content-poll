@@ -186,11 +186,6 @@ class VoteAnalyticsService {
 	 * @return array Array of objects with post_id, post_title, poll_count, total_votes, last_vote.
 	 */
 	public function get_posts_summary(): array {
-		// Attempt cached summary first (built data for all posts)
-		$cached = get_transient( 'content_poll_posts_summary' );
-		if ( $cached !== false && is_array( $cached ) ) {
-			return $cached;
-		}
 		$db    = $this->db;
 		$posts = $db->get_results( "SELECT ID, post_title, post_content FROM {$db->posts} WHERE post_status IN ('publish','draft','future') AND post_type IN ('post','page') AND post_content LIKE '%content-poll/vote-block%'" );
 		if ( empty( $posts ) ) {
@@ -248,8 +243,6 @@ class VoteAnalyticsService {
 		usort( $summary, function ( $a, $b ) {
 			return $b->total_votes <=> $a->total_votes;
 		} );
-		$ttl = defined( 'MINUTE_IN_SECONDS' ) ? 5 * MINUTE_IN_SECONDS : 300;
-		set_transient( 'content_poll_posts_summary', $summary, $ttl );
 		return $summary;
 	}
 
@@ -305,8 +298,6 @@ class VoteAnalyticsService {
 	public function delete_block_votes( string $block_id ): int {
 		$db       = $this->db;
 		$affected = $db->query( $db->prepare( "DELETE FROM {$this->table} WHERE block_id = %s", $block_id ) );
-		// Invalidate cached summary after deletion.
-		delete_transient( 'content_poll_posts_summary' );
 		return (int) $affected;
 	}
 
@@ -314,6 +305,6 @@ class VoteAnalyticsService {
 	 * Explicit cache invalidation helper.
 	 */
 	public static function invalidate_cache(): void {
-		delete_transient( 'content_poll_posts_summary' );
+		// No-op: caching removed.
 	}
 }
