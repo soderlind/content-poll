@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.6.3
+Stable tag: 0.6.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,6 +165,12 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
 
 == Changelog ==
+
+= 0.6.4 - 2025-11-14 =
+* Added: Very conservative dry-run orphan detector in analytics service to help inspect block_ids that no longer appear in post/page content, without deleting data.
+* Changed: Vote REST endpoint now requires a valid non-zero postId and rejects votes without post context, preventing new ambiguous `post_id = 0` records.
+* Internal: Front-end vote script now resolves postId from both data attributes and the block editor store before submitting.
+* Notes: Safety-focused patch; existing legacy `post_id = 0` rows are preserved but no longer created.
 
 = 0.6.3 - 2025-11-14 =
 * Changed: AI providers now infer post language from content and generate poll questions/options in the same language in a single request.

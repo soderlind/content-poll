@@ -55,22 +55,22 @@ class VoteStorageService {
 		if ( $option_index < 0 || $option_index > 5 ) {
 			return [ 'error' => true, 'code' => 'invalid_option', 'message' => 'Invalid option index.', 'status' => 400 ];
 		}
-		// Use INSERT IGNORE for atomic duplicate prevention (race condition safe).
-		// If UNIQUE constraint (block_id, hashed_token) violated, insert silently fails.
-		$inserted = $db->query( $db->prepare(
-			"INSERT IGNORE INTO {$this->table} (block_id, post_id, option_index, hashed_token, created_at) VALUES (%s, %d, %d, %s, %s)",
-			$block_id,
-			$post_id,
-			$option_index,
-			$hashed_token,
-			gmdate( 'Y-m-d H:i:s' )
-		) );
-		// Check if insert actually occurred (affected_rows will be 0 if duplicate).
-		if ( $db->rows_affected === 0 ) {
+		// Insert row using wpdb::insert; rely on UNIQUE(block_id, hashed_token) to prevent duplicates.
+		$inserted = $db->insert(
+			$this->table,
+			[
+				'block_id'     => $block_id,
+				'post_id'      => $post_id,
+				'option_index' => $option_index,
+				'hashed_token' => $hashed_token,
+				'created_at'   => gmdate( 'Y-m-d H:i:s' ),
+			],
+			[ '%s', '%d', '%d', '%s', '%s' ]
+		);
+		if ( $inserted === false ) {
+			// Check if failure was due to duplicate key on (block_id, hashed_token).
+			// wpdb does not expose SQLSTATE directly, so treat any failure here as duplicate vote.
 			return [ 'error' => true, 'code' => 'duplicate_vote', 'message' => 'You have already voted.', 'status' => 400 ];
-		}
-		if ( ! $inserted ) {
-			return [ 'error' => true, 'code' => 'db_insert_failed', 'message' => 'Could not record vote.', 'status' => 500 ];
 		}
 		return $this->get_aggregate( $block_id );
 	}

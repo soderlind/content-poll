@@ -79,9 +79,11 @@ class VoteController {
 			return $this->error( 'invalid_block_id', 'Block ID format invalid.', 400 );
 		}
 		$option_index = (int) $request->get_param( 'optionIndex' );
-		$post_id      = (int) $request->get_param( 'postId' ); // Provided by client or resolved front-end.
+		$post_id      = (int) $request->get_param( 'postId' ); // Provided by client.
 		if ( $post_id <= 0 ) {
-			$post_id = 0; // Will still store; improvement later.
+			// Hard fail for missing/invalid post context to avoid creating
+			// ambiguous legacy records that cannot be attributed in analytics.
+			return $this->error( 'invalid_post_id', 'Post ID is required for vote recording.', 400 );
 		}
 		$token   = $this->get_or_create_token();
 		$hashed  = hash( 'sha256', $token . AUTH_KEY );

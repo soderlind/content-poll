@@ -21,7 +21,7 @@ class RestResultsEndpointTest extends TestCase {
 		$voteReq = new WP_REST_Request( 'POST', '/content-poll/v1/block/' . $blockId . '/vote' );
 		$voteReq->set_header( 'X-WP-Nonce', $nonce );
 		$voteReq->set_param( 'optionIndex', 0 );
-		$voteReq->set_param( 'postId', 0 );
+		$voteReq->set_param( 'postId', 123 );
 		rest_do_request( $voteReq );
 		// Fetch results
 		$resReq   = new WP_REST_Request( 'GET', '/content-poll/v1/block/' . $blockId . '/results' );
