@@ -3,6 +3,11 @@
 // localization functions like __() are available. Falls back to lightweight
 // stubs when WordPress is not present.
 
+// Define constant to prevent migrations during tests
+if ( ! defined( 'PHPUNIT_TEST' ) ) {
+	define( 'PHPUNIT_TEST', true );
+}
+
 require_once __DIR__ . '/../vendor/autoload.php';
 
 $wpRoot = getenv( 'WP_ROOT' ) ?: '/Users/persoderlind/Sites/plugins/app/public';
@@ -28,10 +33,19 @@ if ( is_dir( $wpRoot ) && file_exists( $wpRoot . '/wp-load.php' ) ) {
 	// Load WordPress core. This will define __(), get_option(), etc.
 	require_once $wpRoot . '/wp-load.php';
 	// Reset custom vote table between test runs for isolation.
+	// Only truncate if using a separate test database (prefix: test_).
+	// This prevents accidentally wiping production data during development tests.
 	global $wpdb;
 	if ( isset( $wpdb ) ) {
 		$table = $wpdb->prefix . 'vote_block_submissions';
-		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
+		// Safety check: only truncate if table prefix indicates test database
+		$isTestDatabase = (
+			strpos( $wpdb->prefix, 'test_' ) === 0 ||
+			strpos( $wpdb->prefix, 'phpunit_' ) === 0 ||
+			getenv( 'TRUNCATE_TEST_DATA' ) === 'true'
+		);
+
+		if ( $isTestDatabase && $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) === $table ) {
 			$wpdb->query( 'TRUNCATE TABLE ' . $table );
 		}
 	}

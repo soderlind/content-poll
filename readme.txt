@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.6.4
+Stable tag: 0.7.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -166,6 +166,47 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.7.6 - 2025-11-14 =
+* Fixed: Critical - Tests no longer delete production vote data during test runs
+* Fixed: DatabaseManager skips migrations during PHPUnit tests to prevent data loss
+* Added: Safe test runner script with confirmation prompt for database truncation
+* Added: wp-config.php support for test database prefix (WP_TESTS_DB_PREFIX)
+* Added: Comprehensive testing documentation and safety guides
+* Changed: Bootstrap protection prevents truncation unless using test prefix or explicit flag
+* Notes: Tests now safe to run during development without risk of losing production votes
+
+= 0.7.5 - 2025-11-14 =
+* Changed: Refactored database management into dedicated DatabaseManager class (architectural improvement)
+* Fixed: Critical - Removed activation hook for database operations to prevent vote data loss during plugin updates
+* Changed: Database initialization now runs on plugins_loaded with version-based migration tracking
+* Notes: Addresses root cause of vote resets during updates - activation hooks no longer affect database state
+
+= 0.7.4 - 2025-11-14 =
+* Fixed: Critical migration logic bug where old uniq_block_token index wasn't dropped if poll_id column already existed, causing conflicting unique constraints and vote data loss
+
+= 0.7.3 - 2025-11-14 =
+* Fixed: Idempotent migration checks now also verify each individual index exists before creation, preventing partial migration failures
+
+= 0.7.2 - 2025-11-14 =
+* Fixed: Critical bug where activation hook wasn't idempotent, causing migration failures and vote data loss when plugin file was updated
+* Performance: Optimized runtime migration check to run only once using option flag instead of every page load
+
+= 0.7.1 - 2025-11-14 =
+* Fixed: Critical database migration bug preventing proper poll_id column addition (dropped old constraint before adding new one)
+* Fixed: Critical bug where orphan deletion was querying wrong database column, preventing cleanup
+* Fixed: Improved orphan detection precision with exact JSON pattern matching
+* Performance: Optimized orphan detection from N+1 queries to 2 total queries (98% reduction for 100 polls)
+* Changed: Analytics consistently uses poll_id throughout codebase for clarity
+* Changed: Admin Analytics tab references poll_id consistently
+* Important: If upgrading from 0.7.0 with missing votes, deactivate and reactivate plugin to trigger proper migration
+
+= 0.7.0 - 2025-11-14 =
+* Added: Internal pollId attribute for each poll block, decoupling vote identity from Gutenberg's blockId
+* Added: Dedicated poll_id database column with automatic migration and backfill
+* Changed: All services now use pollId as canonical identifier with legacy blockId fallback
+* Changed: Orphan detection and admin analytics use "Poll ID" terminology
+* Changed: Cleaner results display with total votes summary instead of per-option percentages
+
 = 0.6.4 - 2025-11-14 =
 * Added: Very conservative dry-run orphan detector in analytics service to help inspect block_ids that no longer appear in post/page content, without deleting data.
 * Changed: Vote REST endpoint now requires a valid non-zero postId and rejects votes without post context, preventing new ambiguous `post_id = 0` records.
@@ -261,7 +302,28 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Upgrade Notice ==
 
-= 0.6.3 =
+= 0.7.6 =
+Critical test safety fix: Running tests no longer deletes production vote data. Includes safe test runner and comprehensive database protection. Highly recommended for developers.
+
+= 0.7.5 =
+Architectural fix: Database operations moved from activation hook to plugins_loaded. Eliminates vote data loss during plugin updates. Highly recommended upgrade.
+
+= 0.7.4 =
+Critical fix for partial migrations leaving conflicting unique constraints. Highly recommended upgrade.
+
+= 0.7.3 =
+Enhanced migration reliability with per-index existence checks. Recommended for all users.
+
+= 0.7.2 =
+Critical fix: Migration is now idempotent and won't break when plugin file is updated. Recommended upgrade for all users.
+
+= 0.7.1 =
+Critical bug fix for database migration that could cause vote data loss. If upgrading from 0.7.0, deactivate and reactivate plugin if votes are missing.
+
+= 0.7.0 =
+Introduces dedicated poll_id system for improved reliability. Automatic database migration on upgrade; safe for all installations.
+
+= 0.6.4 =
 Improved AI localization: language is inferred from content and polls are generated in that language. Safe upgrade; no manual steps.
 
 = 0.6.2 =

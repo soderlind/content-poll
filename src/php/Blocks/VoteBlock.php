@@ -28,12 +28,13 @@ class VoteBlock {
 	/**
 	 * Render front-end markup for the block.
 	 *
-	 * @param array  $attributes Block attributes (question, options, blockId).
+	 * @param array  $attributes Block attributes (question, options, pollId/blockId).
 	 * @param string $content    Original block content (unused; dynamic block).
 	 * @return string HTML output for the voting interface.
 	 */
 	public function render( array $attributes, string $content ): string {
-		$block_id     = $attributes[ 'blockId' ] ?? uniqid( 'vote_', true );
+		$poll_id      = $attributes[ 'pollId' ] ?? $attributes[ 'blockId' ] ?? uniqid( 'vote_', true );
+		$block_id     = $attributes[ 'blockId' ] ?? $poll_id; // legacy attribute support
 		$question_raw = $attributes[ 'question' ] ?? 'Your opinion?';
 		$question     = esc_html( $question_raw ); // Question text sanitized.
 		$options      = $attributes[ 'options' ] ?? [ 'A', 'B', 'C', 'D' ];
@@ -49,8 +50,8 @@ class VoteBlock {
 			$ariaEsc    = esc_attr( $aria ); // Accessibility label escaped.
 			$opts_html .= '<li class="content-poll__option" data-index="' . (int) $i . '" role="button" tabindex="0" aria-label="' . $ariaEsc . '"><span class="content-poll__radio"></span><span class="content-poll__label">' . $labelEsc . '</span></li>';
 		}
-		$blockIdEsc = esc_attr( $block_id );
-		$nonceEsc   = esc_attr( $nonce );
+		$pollIdEsc = esc_attr( $poll_id );
+		$nonceEsc  = esc_attr( $nonce );
 
 		// Prepare i18n strings for data attributes (CSP-compliant, no inline scripts)
 		$thankYou     = __( 'Thank you for voting!', 'content-poll' ); // Translatable user message.
@@ -66,7 +67,7 @@ class VoteBlock {
 			$debugAttr   = ' data-debug="true"';
 		}
 
-		return '<div class="content-poll" data-block-id="' . $blockIdEsc . '" data-post-id="' . $postIdEsc . '" data-nonce="' . $nonceEsc . '" data-i18n-thank-you="' . $thankYouEsc . '" data-i18n-network-error="' . $networkEsc . '"' . $debugAttr . '>' .
+		return '<div class="content-poll" data-poll-id="' . $pollIdEsc . '" data-block-id="' . esc_attr( $block_id ) . '" data-post-id="' . $postIdEsc . '" data-nonce="' . $nonceEsc . '" data-i18n-thank-you="' . $thankYouEsc . '" data-i18n-network-error="' . $networkEsc . '"' . $debugAttr . '>' .
 			'<p class="content-poll__question">' . $question . '</p>' .
 			'<ul class="content-poll__options" role="list">' . $opts_html . '</ul>' .
 			'<div class="content-poll__message" aria-live="polite"></div>' .

@@ -412,16 +412,16 @@ class SettingsPage {
 	}
 
 	private function render_analytics_tab(): void {
-		$analytics = new VoteAnalyticsService();
+		$analytics  = new VoteAnalyticsService();
 		$list_table = null;
 		if ( class_exists( '\\ContentPoll\\Admin\\PollsListTable' ) ) {
 			$list_table = new PollsListTable( $analytics );
 		}
 
 		// Handle orphan poll deletion request.
-		if ( isset( $_GET['content_poll_delete_orphan'] ) && current_user_can( 'manage_options' ) ) {
-			$block_to_delete = sanitize_text_field( (string) $_GET['content_poll_delete_orphan'] );
-			$nonce           = $_GET['_wpnonce'] ?? '';
+		if ( isset( $_GET[ 'content_poll_delete_orphan' ] ) && current_user_can( 'manage_options' ) ) {
+			$block_to_delete = sanitize_text_field( (string) $_GET[ 'content_poll_delete_orphan' ] );
+			$nonce           = $_GET[ '_wpnonce' ] ?? '';
 			if ( $block_to_delete && $nonce && wp_verify_nonce( $nonce, 'content_poll_delete_orphan_' . $block_to_delete ) ) {
 				$deleted = $analytics->delete_block_votes( $block_to_delete );
 				if ( $deleted > 0 ) {
@@ -460,6 +460,7 @@ class SettingsPage {
 		$top_polls     = $analytics->get_top_polls( 5 );
 		$recent        = $analytics->get_recent_activity( 5 );
 		$posts_summary = $analytics->get_posts_summary();
+		$orphans       = $analytics->detect_orphan_block_ids();
 
 		?>
 		<div class="content-poll-analytics" style="margin-top: 20px;">
@@ -470,17 +471,20 @@ class SettingsPage {
 				<div class="postbox" style="padding: 20px;">
 					<h3 style="margin-top: 0;"><?php esc_html_e( 'Total Votes', 'content-poll' ); ?></h3>
 					<p style="font-size: 32px; font-weight: bold; margin: 0;">
-						<?php echo esc_html( number_format_i18n( $total_votes ) ); ?></p>
+						<?php echo esc_html( number_format_i18n( $total_votes ) ); ?>
+					</p>
 				</div>
 				<div class="postbox" style="padding: 20px;">
 					<h3 style="margin-top: 0;"><?php esc_html_e( 'Total Polls', 'content-poll' ); ?></h3>
 					<p style="font-size: 32px; font-weight: bold; margin: 0;">
-						<?php echo esc_html( number_format_i18n( $total_polls ) ); ?></p>
+						<?php echo esc_html( number_format_i18n( $total_polls ) ); ?>
+					</p>
 				</div>
 				<div class="postbox" style="padding: 20px;">
 					<h3 style="margin-top: 0;"><?php esc_html_e( 'Average Votes/Poll', 'content-poll' ); ?></h3>
 					<p style="font-size: 32px; font-weight: bold; margin: 0;">
-						<?php echo esc_html( number_format_i18n( $avg_votes, 1 ) ); ?></p>
+						<?php echo esc_html( number_format_i18n( $avg_votes, 1 ) ); ?>
+					</p>
 				</div>
 			</div>
 
@@ -491,6 +495,46 @@ class SettingsPage {
 				</div>
 			<?php else : ?>
 
+				<?php if ( ! empty( $orphans ) ) : ?>
+					<div class="postbox" style="padding: 20px; margin-bottom: 20px; border-left:4px solid #d63638;">
+						<h2 style="margin-top: 0; color:#d63638;">
+							<?php esc_html_e( 'Orphan Poll Data (No Matching Blocks)', 'content-poll' ); ?>
+						</h2>
+						<p><?php esc_html_e( 'These vote records belong to poll IDs that no longer appear in any post or page content. You can safely delete them if you no longer need the historical data.', 'content-poll' ); ?>
+						</p>
+						<table class="wp-list-table widefat fixed striped">
+							<thead>
+								<tr>
+									<th><?php esc_html_e( 'Poll ID', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Approximate Votes', 'content-poll' ); ?></th>
+									<th><?php esc_html_e( 'Actions', 'content-poll' ); ?></th>
+								</tr>
+							</thead>
+							<tbody>
+								<?php foreach ( $orphans as $row ) :
+									$poll_id    = $row[ 'poll_id' ];
+									$vote_count = (int) $row[ 'approx_vote_count' ];
+									$short_id   = substr( $poll_id, 0, 8 ) . '...';
+									?>
+									<tr>
+										<td>
+											<code><?php echo esc_html( $short_id ); ?></code>
+										</td>
+										<td><?php echo esc_html( number_format_i18n( $vote_count ) ); ?></td>
+										<td>
+											<a href="<?php echo esc_url( wp_nonce_url( '?page=content-poll-settings&tab=analytics&content_poll_delete_orphan=' . urlencode( $poll_id ), 'content_poll_delete_orphan_' . $poll_id ) ); ?>"
+												class="button button-small"
+												onclick="return confirm('<?php esc_attr_e( 'Delete all vote records for this orphan poll? This cannot be undone.', 'content-poll' ); ?>');">
+												<?php esc_html_e( 'Delete Data', 'content-poll' ); ?>
+											</a>
+										</td>
+									</tr>
+								<?php endforeach; ?>
+							</tbody>
+						</table>
+					</div>
+				<?php endif; ?>
+
 				<!-- Posts Summary List Table -->
 				<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
 					<h2 style="margin-top: 0;"><?php esc_html_e( 'Posts with Polls', 'content-poll' ); ?></h2>
@@ -498,7 +542,8 @@ class SettingsPage {
 						<form method="get">
 							<input type="hidden" name="page" value="content-poll-settings" />
 							<input type="hidden" name="tab" value="analytics" />
-							<?php $list_table->prepare_items(); $list_table->display(); ?>
+							<?php $list_table->prepare_items();
+							$list_table->display(); ?>
 						</form>
 					<?php else : ?>
 						<p><?php esc_html_e( 'List table unavailable.', 'content-poll' ); ?></p>
@@ -520,27 +565,36 @@ class SettingsPage {
 							</thead>
 							<tbody>
 								<?php foreach ( $top_polls as $poll ) :
-									$attrs    = $analytics->get_block_attributes( (int) $poll->post_id, $poll->block_id );
+									$attrs     = $analytics->get_block_attributes( (int) $poll->post_id, $poll->poll_id );
 									$is_orphan = ! $attrs;
-									$question = $attrs ? $attrs[ 'question' ] : __( 'Orphan Poll (block removed)', 'content-poll' );
-									$short_id = substr( $poll->block_id, 0, 8 ) . '...';
+									$question  = $attrs ? $attrs[ 'question' ] : __( 'Orphan Poll (block removed)', 'content-poll' );
+									$short_id  = substr( $poll->poll_id, 0, 8 ) . '...';
 									?>
 									<tr>
 										<td>
 											<strong><?php echo esc_html( $question ); ?></strong>
-											<br><small><?php echo esc_html( sprintf( __( 'Block ID: %s', 'content-poll' ), $short_id ) ); ?><?php if ( $is_orphan ) : ?> • <span style="color:#d63638; font-weight:600;"><?php esc_html_e( 'Orphan', 'content-poll' ); ?></span><?php endif; ?></small>
+											<?php
+											/* translators: %s: truncated poll identifier */
+											$poll_id_label = sprintf( __( 'Poll ID: %s', 'content-poll' ), $short_id );
+											?>
+											<br><small><?php echo esc_html( $poll_id_label ); ?><?php if ( $is_orphan ) : ?>
+													• <span
+														style="color:#d63638; font-weight:600;"><?php esc_html_e( 'Orphan', 'content-poll' ); ?></span><?php endif; ?></small>
 										</td>
 										<td><?php echo esc_html( number_format_i18n( (int) $poll->total_votes ) ); ?></td>
 										<td><?php echo esc_html( $poll->last_vote ? human_time_diff( strtotime( $poll->last_vote ), time() ) . ' ' . __( 'ago', 'content-poll' ) : '-' ); ?>
 										</td>
 										<td>
 											<?php if ( $is_orphan ) : ?>
-												<a href="<?php echo esc_url( wp_nonce_url( '?page=content-poll-settings&tab=analytics&content_poll_delete_orphan=' . urlencode( $poll->block_id ), 'content_poll_delete_orphan_' . $poll->block_id ) ); ?>" class="button button-small" onclick="return confirm('<?php esc_attr_e( 'Delete all vote records for this orphan poll? This cannot be undone.', 'content-poll' ); ?>');">
+												<a href="<?php echo esc_url( wp_nonce_url( '?page=content-poll-settings&tab=analytics&content_poll_delete_orphan=' . urlencode( $poll->poll_id ), 'content_poll_delete_orphan_' . $poll->poll_id ) ); ?>"
+													class="button button-small"
+													onclick="return confirm('<?php esc_attr_e( 'Delete all vote records for this orphan poll? This cannot be undone.', 'content-poll' ); ?>');">
 													<?php esc_html_e( 'Delete Data', 'content-poll' ); ?>
 												</a>
 											<?php else : ?>
-												<a href="<?php echo esc_url( '?page=content-poll-settings&tab=analytics&post_id=' . (int) $poll->post_id ); ?>" class="button button-small">
-													<?php esc_html_e( 'View Post', 'content-poll' ); ?>
+												<a href="<?php echo esc_url( '?page=content-poll-settings&tab=analytics&post_id=' . (int) $poll->post_id ); ?>"
+													class="button button-small">
+													<?php esc_html_e( 'View Details', 'content-poll' ); ?>
 												</a>
 											<?php endif; ?>
 										</td>
@@ -597,10 +651,10 @@ class SettingsPage {
 				</div>
 			<?php else : ?>
 				<?php foreach ( $blocks as $block ) :
-					$attrs     = $block_attrs[ $block->block_id ] ?? null;
+					$attrs     = $block_attrs[ $block->poll_id ] ?? null;
 					$question  = $attrs ? $attrs[ 'question' ] : __( 'Untitled Poll', 'content-poll' );
 					$options   = $attrs ? $attrs[ 'options' ] : [];
-					$breakdown = $analytics->get_block_option_breakdown( $block->block_id );
+					$breakdown = $analytics->get_block_option_breakdown( $block->poll_id );
 					?>
 					<div class="postbox" style="padding: 20px; margin-bottom: 20px;">
 						<h3 style="margin-top: 0;"><?php echo esc_html( $question ); ?></h3>

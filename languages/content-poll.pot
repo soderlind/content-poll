@@ -2,21 +2,21 @@
 # This file is distributed under the GPL v2 or later.
 msgid ""
 msgstr ""
-"Project-Id-Version: ContentPoll AI 0.6.3\n"
+"Project-Id-Version: ContentPoll AI 0.7.0\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/content-poll\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2025-11-13T16:44:19+00:00\n"
+"POT-Creation-Date: 2025-11-14T12:56:07+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: content-poll\n"
 
 #. Plugin Name of the plugin
 #: content-poll.php
-#: src/php/Admin/SettingsPage.php:28
+#: src/php/Admin/SettingsPage.php:37
 msgid "ContentPoll AI"
 msgstr ""
 
@@ -40,258 +40,320 @@ msgstr ""
 msgid "https://soderlind.no"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:27
+#: src/php/Admin/PollsListTable.php:32
+msgid "Post Title"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:33
+msgid "Polls"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:34
+#: src/php/Admin/SettingsPage.php:472
+#: src/php/Admin/SettingsPage.php:561
+msgid "Total Votes"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:35
+msgid "Last Activity"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:36
+#: src/php/Admin/SettingsPage.php:510
+#: src/php/Admin/SettingsPage.php:563
+msgid "Actions"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:50
+msgid "No posts with polls found."
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:111
+#: src/php/Admin/SettingsPage.php:585
+#: src/php/Admin/SettingsPage.php:666
+msgid "ago"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:118
+msgid "View Details"
+msgstr ""
+
+#: src/php/Admin/PollsListTable.php:126
+#: src/php/Admin/SettingsPage.php:641
+msgid "(No title)"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:36
 msgid "ContentPoll Settings"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:58
+#: src/php/Admin/SettingsPage.php:46
+msgid "Poll Posts per page"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:82
 msgid "AI Suggestion Settings"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:65
+#: src/php/Admin/SettingsPage.php:89
 msgid "AI Provider"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:73
+#: src/php/Admin/SettingsPage.php:97
 msgid "OpenAI Type"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:81
+#: src/php/Admin/SettingsPage.php:105
 msgid "API Key"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:89
+#: src/php/Admin/SettingsPage.php:113
 msgid "Model / Deployment"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:97
+#: src/php/Admin/SettingsPage.php:121
 msgid "Azure OpenAI Endpoint"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:105
+#: src/php/Admin/SettingsPage.php:129
 msgid "Azure API Version"
 msgstr ""
 
 #. translators: %s: error message returned from validating the AI provider configuration
-#: src/php/Admin/SettingsPage.php:189
+#: src/php/Admin/SettingsPage.php:213
 #, php-format
 msgid "AI Configuration Warning: %s"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:367
-msgid "AI Settings"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:371
+#: src/php/Admin/SettingsPage.php:391
 msgid "Analytics"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:380
+#: src/php/Admin/SettingsPage.php:395
+msgid "AI Settings"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:406
 msgid "Save Settings"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:415
-#: src/php/Admin/SettingsPage.php:442
-#: src/php/Admin/SettingsPage.php:479
-msgid "Total Votes"
+#. translators: %d: number of rows deleted
+#: src/php/Admin/SettingsPage.php:432
+#, php-format
+msgid "Deleted %d orphan vote record(s)."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:419
-msgid "Total Polls"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:423
-msgid "Average Votes/Poll"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:430
-msgid "No votes recorded yet. Add poll blocks to your posts and pages to start collecting votes."
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:436
-msgid "Posts with Polls"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:440
-msgid "Post Title"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:441
-msgid "Polls"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:443
-msgid "Last Activity"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:444
-msgid "Actions"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:453
-#: src/php/Admin/SettingsPage.php:538
-msgid "(No title)"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:459
-#: src/php/Admin/SettingsPage.php:497
-#: src/php/Admin/SettingsPage.php:562
-msgid "ago"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:462
-msgid "View Details"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:474
-msgid "Top Polls by Votes"
+#: src/php/Admin/SettingsPage.php:439
+msgid "No orphan records matched for deletion."
 msgstr ""
 
 #: src/php/Admin/SettingsPage.php:478
-msgid "Poll Question"
+msgid "Total Polls"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:480
-msgid "Last Vote"
+#: src/php/Admin/SettingsPage.php:484
+msgid "Average Votes/Poll"
 msgstr ""
 
-#. translators: %s: shortened block ID for display
 #: src/php/Admin/SettingsPage.php:493
-#, php-format
-msgid "Block ID: %s"
+msgid "No votes recorded yet. Add poll blocks to your posts and pages to start collecting votes."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:515
-msgid "Post not found."
+#: src/php/Admin/SettingsPage.php:501
+msgid "Orphan Poll Data (No Matching Blocks)"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:519
-#: src/php/Admin/SettingsPage.php:533
-msgid "← Back to Analytics"
+#: src/php/Admin/SettingsPage.php:503
+msgid "These vote records belong to poll IDs that no longer appear in any post or page content. You can safely delete them if you no longer need the historical data."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:508
+msgid "Poll ID"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:509
+msgid "Approximate Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:527
+#: src/php/Admin/SettingsPage.php:591
+msgid "Delete all vote records for this orphan poll? This cannot be undone."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:528
+#: src/php/Admin/SettingsPage.php:592
+msgid "Delete Data"
 msgstr ""
 
 #: src/php/Admin/SettingsPage.php:540
+msgid "Posts with Polls"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:549
+msgid "List table unavailable."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:556
+msgid "Top Polls by Votes"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:560
+msgid "Poll Question"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:562
+msgid "Last Vote"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:570
+msgid "Orphan Poll (block removed)"
+msgstr ""
+
+#. translators: %s: truncated poll identifier
+#: src/php/Admin/SettingsPage.php:578
+#, php-format
+msgid "Poll ID: %s"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:582
+msgid "Orphan"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:597
+msgid "View Post"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:618
+msgid "Post not found."
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:622
+#: src/php/Admin/SettingsPage.php:636
+msgid "← Back to Analytics"
+msgstr ""
+
+#: src/php/Admin/SettingsPage.php:644
 msgid "Edit Post"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:546
+#: src/php/Admin/SettingsPage.php:650
 msgid "No votes recorded for polls on this post yet."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:551
-#: src/php/Services/VoteAnalyticsService.php:215
+#: src/php/Admin/SettingsPage.php:655
+#: src/php/Services/VoteAnalyticsService.php:279
 msgid "Untitled Poll"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:558
+#: src/php/Admin/SettingsPage.php:662
 msgid "Total Votes:"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:561
+#: src/php/Admin/SettingsPage.php:665
 msgid "Last Vote:"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:568
-#: src/php/Admin/SettingsPage.php:577
+#: src/php/Admin/SettingsPage.php:672
+#: src/php/Admin/SettingsPage.php:681
 #: src/block/vote-block/index.js:94
 #: src/block/vote-block/index.js:134
 #: src/block/vote-block/index.js:202
 msgid "Option"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:569
+#: src/php/Admin/SettingsPage.php:673
 msgid "Votes"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:570
+#: src/php/Admin/SettingsPage.php:674
 msgid "Percentage"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:606
+#: src/php/Admin/SettingsPage.php:712
 msgid "Configure the AI service used for generating vote option suggestions."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:686
+#: src/php/Admin/SettingsPage.php:792
 msgid "Heuristic AI (Default)"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:689
-#: src/php/Admin/SettingsPage.php:715
+#: src/php/Admin/SettingsPage.php:795
+#: src/php/Admin/SettingsPage.php:821
 msgid "OpenAI"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:692
+#: src/php/Admin/SettingsPage.php:798
 msgid "Anthropic Claude"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:695
+#: src/php/Admin/SettingsPage.php:801
 msgid "Google Gemini"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:698
+#: src/php/Admin/SettingsPage.php:804
 msgid "Ollama (Self-Hosted)"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:702
+#: src/php/Admin/SettingsPage.php:808
 msgid "Heuristic AI uses built-in logic without API calls. Other options require API keys or local installation."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:718
+#: src/php/Admin/SettingsPage.php:824
 msgid "Azure OpenAI"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:722
+#: src/php/Admin/SettingsPage.php:828
 msgid "Choose between standard OpenAI API or Azure OpenAI Service"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:736
+#: src/php/Admin/SettingsPage.php:842
 msgid "API key from"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:739
+#: src/php/Admin/SettingsPage.php:845
 msgid "or"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:754
+#: src/php/Admin/SettingsPage.php:860
 msgid "OpenAI: gpt-3.5-turbo, gpt-4, etc. Anthropic: claude-3-5-sonnet-20241022, etc. Gemini: gemini-1.5-flash, etc. Ollama: llama3.2, mistral, etc."
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:769
+#: src/php/Admin/SettingsPage.php:875
 msgid "Your Azure OpenAI resource endpoint URL"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:783
+#: src/php/Admin/SettingsPage.php:889
 msgid "Azure OpenAI API version (e.g., 2024-02-15-preview)"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:859
-#: src/php/Admin/SettingsPage.php:865
+#: src/php/Admin/SettingsPage.php:965
+#: src/php/Admin/SettingsPage.php:971
 msgid "Poll Votes"
 msgstr ""
 
-#: src/php/Admin/SettingsPage.php:889
+#: src/php/Admin/SettingsPage.php:996
 msgid "View Analytics"
 msgstr ""
 
-#: src/php/Blocks/VoteBlock.php:52
+#: src/php/Blocks/VoteBlock.php:57
 msgid "Thank you for voting!"
 msgstr ""
 
-#: src/php/Blocks/VoteBlock.php:53
+#: src/php/Blocks/VoteBlock.php:58
 msgid "Network error. Please try again."
 msgstr ""
 
-#: src/php/Services/AISuggestionService.php:402
+#: src/php/Services/AISuggestionService.php:425
 msgid "What is your opinion of this content?"
 msgstr ""
 
 #. translators: %s: extracted keyword from content used to form the poll question
-#: src/php/Services/AISuggestionService.php:408
+#: src/php/Services/AISuggestionService.php:431
 #, php-format
 msgid "Your view on \"%s\"?"
 msgstr ""
 
-#: src/php/Services/AISuggestionService.php:416
+#: src/php/Services/AISuggestionService.php:439
 msgid "Unsure"
 msgstr ""
 
@@ -327,45 +389,4 @@ msgstr ""
 #: src/block/vote-block/block.json
 msgctxt "block description"
 msgid "Allow visitors to cast a single vote on a question with 2–6 options."
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:120
-msgid "Poll Posts per page"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:436
-msgid "List table unavailable."
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:474
-msgid "Top Polls by Votes"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:489
-msgid "Orphan Poll (block removed)"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:494
-msgid "Orphan"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:506
-msgid "Delete Data"
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:501
-msgid "View Post"
-msgstr ""
-
-#. translators: %d: number of rows deleted
-#: src/php/Admin/SettingsPage.php:409
-msgid "Deleted %d orphan vote record(s)."
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:417
-msgid "No orphan records matched for deletion."
-msgstr ""
-
-#: src/php/Admin/SettingsPage.php:504
-msgid "Delete all vote records for this orphan poll? This cannot be undone."
 msgstr ""

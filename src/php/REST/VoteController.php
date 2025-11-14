@@ -19,7 +19,7 @@ class VoteController {
 	 */
 	public function register(): void {
 		add_action( 'rest_api_init', function () {
-			register_rest_route( $this->namespace, '/block/(?P<blockId>[a-zA-Z0-9_-]+)/vote', [
+			register_rest_route( $this->namespace, '/block/(?P<pollId>[a-zA-Z0-9_-]+)/vote', [
 				'methods'             => 'POST',
 				'callback'            => [ $this, 'handle_vote' ],
 				'permission_callback' => '__return_true', // Nonce required for actual vote acceptance.
@@ -36,7 +36,7 @@ class VoteController {
 			] );
 			// Debug-only reset endpoint for clearing the user vote cookie.
 			if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-				register_rest_route( $this->namespace, '/block/(?P<blockId>[a-zA-Z0-9_-]+)/reset', [
+				register_rest_route( $this->namespace, '/block/(?P<pollId>[a-zA-Z0-9_-]+)/reset', [
 					'methods'             => 'POST',
 					'callback'            => [ $this, 'handle_reset' ],
 					'permission_callback' => '__return_true',
@@ -73,10 +73,12 @@ class VoteController {
 		if ( ! defined( 'AUTH_KEY' ) || AUTH_KEY === 'put your unique phrase here' || empty( AUTH_KEY ) ) {
 			return $this->error( 'config_error', 'WordPress AUTH_KEY must be configured for vote security.', 500 );
 		}
-		$block_id = sanitize_text_field( (string) $request->get_param( 'blockId' ) );
-		// Validate block ID length (UUIDs are 36 chars; allow some flexibility).
-		if ( strlen( $block_id ) > 64 || strlen( $block_id ) < 8 ) {
-			return $this->error( 'invalid_block_id', 'Block ID format invalid.', 400 );
+		$poll_id      = sanitize_text_field( (string) $request->get_param( 'pollId' ) );
+		$block_id     = sanitize_text_field( (string) $request->get_param( 'blockId' ) );
+		$effective_id = $poll_id !== '' ? $poll_id : $block_id;
+		// Validate identifier length (UUIDs are 36 chars; allow some flexibility).
+		if ( strlen( $effective_id ) > 64 || strlen( $effective_id ) < 8 ) {
+			return $this->error( 'invalid_block_id', 'Poll ID format invalid.', 400 );
 		}
 		$option_index = (int) $request->get_param( 'optionIndex' );
 		$post_id      = (int) $request->get_param( 'postId' ); // Provided by client.
@@ -88,7 +90,7 @@ class VoteController {
 		$token   = $this->get_or_create_token();
 		$hashed  = hash( 'sha256', $token . AUTH_KEY );
 		$service = new VoteStorageService();
-		$result  = $service->record_vote( $block_id, $post_id, $option_index, $hashed );
+		$result  = $service->record_vote( $effective_id, $post_id, $option_index, $hashed );
 		if ( isset( $result[ 'error' ] ) && $result[ 'error' ] ) {
 			return $this->error( $result[ 'code' ], $result[ 'message' ], $result[ 'status' ] );
 		}

@@ -2,7 +2,7 @@
 /**
  * Plugin Name: ContentPoll AI
  * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results.
- * Version: 0.6.4
+ * Version: 0.7.6
  * Author: Per Soderlind
  * Author URI: https://soderlind.no
  * Plugin URI: https://github.com/soderlind/content-poll
@@ -18,17 +18,22 @@
  *
  * Responsibilities:
  * - Load Composer autoload (dependencies).
- * - Create the custom submissions table on activation.
+ * - Initialize database via DatabaseManager on plugins_loaded.
  * - Inject CSP nonce into script tags (for strict CSP setups).
  * - Load text domain for translations.
  * - Register REST controllers and block on plugins_loaded.
  *
  * This file intentionally uses core WordPress APIs directly (no function_exists
  * guards) under the assumption it runs inside a fully loaded WP environment.
+ *
+ * Note: Database initialization moved from activation hook to plugins_loaded
+ * to prevent vote data loss during plugin updates. Activation hooks fire on
+ * file changes (version bumps), which was causing migration re-triggers.
  */
 
 declare(strict_types=1);
 use ContentPoll\Update\GitHubPluginUpdater;
+use ContentPoll\Database\DatabaseManager;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,30 +43,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( file_exists( __DIR__ . '/vendor/autoload.php' ) ) {
 	require __DIR__ . '/vendor/autoload.php';
 }
-
-
-// Activation: create custom table.
-register_activation_hook( __FILE__, function () {
-	global $wpdb;
-	$table  = $wpdb->prefix . 'vote_block_submissions';
-	$exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
-	// Only create when absent. Using minimal schema for atomic vote storage.
-	if ( $exists !== $table ) {
-		$charset = $wpdb->get_charset_collate();
-		$sql     = "CREATE TABLE $table (
-			id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
-			block_id VARCHAR(64) NOT NULL,
-			post_id BIGINT UNSIGNED NOT NULL,
-			option_index TINYINT UNSIGNED NOT NULL,
-			hashed_token CHAR(64) NOT NULL,
-			created_at DATETIME NOT NULL,
-			PRIMARY KEY (id),
-			UNIQUE KEY uniq_block_token (block_id, hashed_token),
-			KEY idx_block_option (block_id, option_index)
-		) $charset";
-		$wpdb->query( $sql );
-	}
-} );
 
 // Inject CSP nonce attribute into enqueued script tags if a server-provided nonce is available.
 // This helps satisfy strict Content Security Policy configurations that require a nonce on every script tag.
@@ -93,6 +74,11 @@ add_filter( 'script_loader_tag', function ( $tag, $handle, $src ) {
 add_action( 'plugins_loaded', function () {
 	// Load translations. Domain path declared in header.
 	load_plugin_textdomain( 'content-poll', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
+
+	// Initialize database (creates table or runs migrations if needed).
+	// This runs early to ensure table exists before any REST/block operations.
+	// Uses version-based migration tracking to avoid repeated checks.
+	DatabaseManager::instance()->initialize();
 
 	// Update checker via GitHub releases.
 	GitHubPluginUpdater::create_with_assets(

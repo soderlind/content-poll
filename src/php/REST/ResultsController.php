@@ -18,12 +18,12 @@ class ResultsController {
 	 */
 	public function register(): void {
 		add_action( 'rest_api_init', function () {
-			register_rest_route( $this->namespace, '/block/(?P<blockId>[a-zA-Z0-9_-]+)/results', [
+			register_rest_route( $this->namespace, '/block/(?P<pollId>[a-zA-Z0-9_-]+)/results', [
 				'methods'             => 'GET',
 				'callback'            => [ $this, 'get_results' ],
 				'permission_callback' => '__return_true',
 				'args'                => [
-					'blockId' => [ 'type' => 'string', 'required' => true ],
+					'pollId' => [ 'type' => 'string', 'required' => true ],
 				],
 			] );
 		} );
@@ -37,15 +37,17 @@ class ResultsController {
 	 * @return array Aggregate payload.
 	 */
 	public function get_results( $request ) {
-		$block_id = sanitize_text_field( (string) $request->get_param( 'blockId' ) );
-		$service  = new VoteStorageService();
-		$agg      = $service->get_aggregate( $block_id );
+		$poll_id      = sanitize_text_field( (string) $request->get_param( 'pollId' ) );
+		$block_id     = sanitize_text_field( (string) $request->get_param( 'blockId' ) );
+		$effective_id = $poll_id !== '' ? $poll_id : $block_id;
+		$service      = new VoteStorageService();
+		$agg          = $service->get_aggregate( $effective_id );
 
 		// Add user's vote if they have voted
 		if ( isset( $_COOKIE[ 'content_poll_token' ] ) && defined( 'AUTH_KEY' ) ) {
 			$token        = sanitize_text_field( $_COOKIE[ 'content_poll_token' ] );
 			$hashed_token = hash( 'sha256', $token . AUTH_KEY );
-			$user_vote    = $service->get_user_vote( $block_id, $hashed_token );
+			$user_vote    = $service->get_user_vote( $effective_id, $hashed_token );
 			if ( $user_vote !== null ) {
 				$agg[ 'userVote' ] = $user_vote;
 			}

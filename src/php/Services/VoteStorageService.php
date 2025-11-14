@@ -31,65 +31,50 @@ class VoteStorageService {
 	}
 
 	/**
-	 * Attempt to record a vote with atomic deduplication.
-	 * Returns aggregate array OR error array: ['error'=>true,'code'=>string,'message'=>string,'status'=>int]
-	 * 
-	 * @param string $block_id Block identifier
-	 * @param int $post_id Post ID (0 if not in post context)
-	 * @param int $option_index Selected option index (0-5)
-	 * @param string $hashed_token Hashed voter token
-	 * @return array<string,mixed> Aggregate results or error details
-	 */
-	/**
 	 * Record a single vote if not already submitted by this user token.
 	 *
-	 * @param string $block_id     Block instance identifier.
+	 * @param string $poll_id      Canonical poll identifier.
 	 * @param int    $post_id      Associated post ID (0 if unknown).
 	 * @param int    $option_index Option index (0-5).
 	 * @param string $hashed_token SHA256(token + AUTH_KEY).
 	 * @return array Aggregate results or error payload.
 	 */
-	public function record_vote( string $block_id, int $post_id, int $option_index, string $hashed_token ) {
+	public function record_vote( string $poll_id, int $post_id, int $option_index, string $hashed_token ) {
 		$db = $this->db;
 		// Basic validation.
 		if ( $option_index < 0 || $option_index > 5 ) {
 			return [ 'error' => true, 'code' => 'invalid_option', 'message' => 'Invalid option index.', 'status' => 400 ];
 		}
-		// Insert row using wpdb::insert; rely on UNIQUE(block_id, hashed_token) to prevent duplicates.
+		// Insert row using wpdb::insert; rely on UNIQUE(poll_id, hashed_token) to prevent duplicates.
 		$inserted = $db->insert(
 			$this->table,
 			[
-				'block_id'     => $block_id,
+				'poll_id'      => $poll_id,
+				'block_id'     => $poll_id,
 				'post_id'      => $post_id,
 				'option_index' => $option_index,
 				'hashed_token' => $hashed_token,
 				'created_at'   => gmdate( 'Y-m-d H:i:s' ),
 			],
-			[ '%s', '%d', '%d', '%s', '%s' ]
+			[ '%s', '%s', '%d', '%d', '%s', '%s' ]
 		);
 		if ( $inserted === false ) {
-			// Check if failure was due to duplicate key on (block_id, hashed_token).
+			// Check if failure was due to duplicate key on (poll_id, hashed_token).
 			// wpdb does not expose SQLSTATE directly, so treat any failure here as duplicate vote.
 			return [ 'error' => true, 'code' => 'duplicate_vote', 'message' => 'You have already voted.', 'status' => 400 ];
 		}
-		return $this->get_aggregate( $block_id );
+		return $this->get_aggregate( $poll_id );
 	}
 
 	/**
-	 * Get aggregate counts and percentages for a block.
-	 * 
-	 * @param string $block_id Block identifier
-	 * @return array<string,mixed> Aggregate data with counts and percentages
-	 */
-	/**
-	 * Get aggregated vote results for block.
+	 * Get aggregated vote results for a poll.
 	 *
-	 * @param string $block_id Block identifier.
+	 * @param string $poll_id Poll identifier.
 	 * @return array{blockId:string,totalVotes:int,counts:array<int,int>,percentages:array<int,float>} Summary data.
 	 */
-	public function get_aggregate( string $block_id ): array {
+	public function get_aggregate( string $poll_id ): array {
 		$db     = $this->db;
-		$rows   = $db->get_results( $db->prepare( "SELECT option_index, COUNT(*) as cnt FROM {$this->table} WHERE block_id=%s GROUP BY option_index", $block_id ) );
+		$rows   = $db->get_results( $db->prepare( "SELECT option_index, COUNT(*) as cnt FROM {$this->table} WHERE poll_id=%s GROUP BY option_index", $poll_id ) );
 		$counts = [];
 		$total  = 0;
 		foreach ( $rows as $r ) {
@@ -109,7 +94,7 @@ class VoteStorageService {
 			$percentages[ $i ] = $total > 0 ? round( ( $c / $total ) * 100, 2 ) : 0.0;
 		}
 		return [
-			'blockId'     => $block_id,
+			'blockId'     => $poll_id,
 			'totalVotes'  => $total,
 			'counts'      => $counts,
 			'percentages' => $percentages,
@@ -117,24 +102,17 @@ class VoteStorageService {
 	}
 
 	/**
-	 * Get the user's vote for a specific block.
-	 * 
-	 * @param string $block_id Block identifier
-	 * @param string $hashed_token Hashed voter token
-	 * @return int|null Option index if user has voted, null otherwise
-	 */
-	/**
 	 * Retrieve user's previously selected option index.
 	 *
-	 * @param string $block_id     Block identifier.
+	 * @param string $poll_id      Poll identifier.
 	 * @param string $hashed_token Hashed token.
 	 * @return int|null Option index or null.
 	 */
-	public function get_user_vote( string $block_id, string $hashed_token ): ?int {
+	public function get_user_vote( string $poll_id, string $hashed_token ): ?int {
 		$db     = $this->db;
 		$result = $db->get_var( $db->prepare(
-			"SELECT option_index FROM {$this->table} WHERE block_id=%s AND hashed_token=%s LIMIT 1",
-			$block_id,
+			"SELECT option_index FROM {$this->table} WHERE poll_id=%s AND hashed_token=%s LIMIT 1",
+			$poll_id,
 			$hashed_token
 		) );
 		return $result !== null ? (int) $result : null;

@@ -9,11 +9,18 @@
 	ready( function () {
 		const containers = document.querySelectorAll( '.content-poll' );
 		containers.forEach( ( container ) => {
+			const pollId = container.getAttribute( 'data-poll-id' );
 			const blockId = container.getAttribute( 'data-block-id' );
-			let postId = parseInt( container.getAttribute( 'data-post-id' ), 10 );
+			let postId = parseInt(
+				container.getAttribute( 'data-post-id' ),
+				10
+			);
 			if ( ! postId && window.wp?.data?.select ) {
 				const editorSelect = window.wp.data.select( 'core/editor' );
-				if ( editorSelect && typeof editorSelect.getCurrentPostId === 'function' ) {
+				if (
+					editorSelect &&
+					typeof editorSelect.getCurrentPostId === 'function'
+				) {
 					postId = editorSelect.getCurrentPostId() || 0;
 				}
 			}
@@ -62,9 +69,6 @@
 					const label = String.fromCharCode( 65 + i );
 					resultsHTML +=
 						'<div class="content-poll__result-item">' +
-						'<div class="content-poll__result-percentage">' +
-						pct +
-						'%</div>' +
 						'<div class="content-poll__result-label">' +
 						'<span><strong>' +
 						label +
@@ -84,6 +88,14 @@
 						'</div>' +
 						'</div>';
 				}
+				// Append total votes summary at the end.
+				const totalVotes = res.totalVotes || 0;
+				resultsHTML +=
+					'<div class="content-poll__results-total">' +
+					totalVotes +
+					' vote' +
+					( totalVotes !== 1 ? 's' : '' ) +
+					'</div>';
 				let resultsContainer = container.querySelector(
 					'.content-poll__results'
 				);
@@ -98,8 +110,9 @@
 				// Removed debug console output.
 			}
 
+			const idForResults = pollId || blockId;
 			fetch(
-				`${ window.location.origin }/wp-json/content-poll/v1/block/${ blockId }/results`
+				`${ window.location.origin }/wp-json/content-poll/v1/block/${ idForResults }/results`
 			)
 				.then( ( r ) => r.json() )
 				.then( ( res ) => {
@@ -149,8 +162,9 @@
 							10
 						);
 						messageEl.textContent = '';
+						const idForVote = pollId || blockId;
 						fetch(
-							`${ window.location.origin }/wp-json/content-poll/v1/block/${ blockId }/vote`,
+							`${ window.location.origin }/wp-json/content-poll/v1/block/${ idForVote }/vote`,
 							{
 								method: 'POST',
 								headers: {
@@ -185,8 +199,9 @@
 								container.classList.add(
 									'content-poll--results-only'
 								);
+								const idForResultsAfterVote = pollId || blockId;
 								fetch(
-									`${ window.location.origin }/wp-json/content-poll/v1/block/${ blockId }/results`
+									`${ window.location.origin }/wp-json/content-poll/v1/block/${ idForResultsAfterVote }/results`
 								)
 									.then( ( r ) => r.json() )
 									.then( ( res ) => {
@@ -214,8 +229,9 @@
 			);
 			if ( resetBtn ) {
 				resetBtn.addEventListener( 'click', () => {
+					const idForReset = pollId || blockId;
 					fetch(
-						`${ window.location.origin }/wp-json/content-poll/v1/block/${ blockId }/reset`,
+						`${ window.location.origin }/wp-json/content-poll/v1/block/${ idForReset }/reset`,
 						{
 							method: 'POST',
 							headers: { 'Content-Type': 'application/json' },

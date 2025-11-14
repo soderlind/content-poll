@@ -18,18 +18,11 @@ final class AggregationTest extends TestCase {
 				return $q;
 			}
 			public function get_var( string $q ) {
-				// duplicate check
-				if ( str_contains( $q, 'hashed_token' ) ) {
-					foreach ( $this->rows as $r ) {
-						if ( $r[ 'block_id' ] === $r[ 'match_block' ] && $r[ 'hashed_token' ] === $r[ 'match_token' ] )
-							return $r[ 'id' ];
-					}
-				}
 				return null;
 			}
 			public function insert( string $table, array $data, array $fmt ) {
 				foreach ( $this->rows as $r ) {
-					if ( $r[ 'block_id' ] === $data[ 'block_id' ] && $r[ 'hashed_token' ] === $data[ 'hashed_token' ] )
+					if ( $r[ 'poll_id' ] === $data[ 'poll_id' ] && $r[ 'hashed_token' ] === $data[ 'hashed_token' ] )
 						return false;
 				}
 				$data[ 'id' ] = count( $this->rows ) + 1;
@@ -37,11 +30,11 @@ final class AggregationTest extends TestCase {
 				return true;
 			}
 			public function get_results( string $q ) {
-				if ( preg_match( "/WHERE block_id='([^']+)'/", $q, $m ) ) {
+				if ( preg_match( "/WHERE poll_id='([^']+)'/", $q, $m ) ) {
 					$block  = $m[ 1 ];
 					$counts = [];
 					foreach ( $this->rows as $r ) {
-						if ( $r[ 'block_id' ] === $block ) {
+						if ( $r[ 'poll_id' ] === $block ) {
 							$idx            = (int) $r[ 'option_index' ];
 							$counts[ $idx ] = ( $counts[ $idx ] ?? 0 ) + 1;
 						}
@@ -51,35 +44,6 @@ final class AggregationTest extends TestCase {
 				return [];
 			}
 			public function query( $sql ) {
-				// Handle INSERT IGNORE for testing
-				if ( preg_match( "/INSERT IGNORE INTO \w+ \([^)]+\) VALUES \('([^']+)', (\d+), (\d+), '([^']+)', '([^']*)'\)/", $sql, $m ) ) {
-					$block_id     = $m[ 1 ];
-					$post_id      = (int) $m[ 2 ];
-					$option_index = (int) $m[ 3 ];
-					$hashed_token = $m[ 4 ];
-					$created_at   = $m[ 5 ];
-
-					// Check for duplicate
-					foreach ( $this->rows as $r ) {
-						if ( $r[ 'block_id' ] === $block_id && $r[ 'hashed_token' ] === $hashed_token ) {
-							$this->rows_affected = 0;
-							return true; // INSERT IGNORE returns true even when ignoring
-						}
-					}
-
-					// Insert new row
-					$data                = [
-						'id'           => count( $this->rows ) + 1,
-						'block_id'     => $block_id,
-						'post_id'      => $post_id,
-						'option_index' => $option_index,
-						'hashed_token' => $hashed_token,
-						'created_at'   => $created_at,
-					];
-					$this->rows[]        = $data;
-					$this->rows_affected = 1;
-					return true;
-				}
 				return false;
 			}
 		};
