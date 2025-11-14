@@ -46,7 +46,7 @@ Unlike generic poll plugins, ContentPoll AI is designed for **content-driven vot
 
 AI reads your page content and generates contextually relevant questions and options:
 
-* **Heuristic** (Default, Free): Extracts keywords from your content, no API needed
+* **Heuristic** (Default, Free): Extracts keywords from your content, no API needed. Use it for tests and basic suggestions.
 * **OpenAI**: GPT models analyze your content for smart question suggestions
 * **Anthropic Claude**: Claude 3.5 understands content context deeply
 * **Google Gemini**: Gemini 1.5 Flash (free tier available!)

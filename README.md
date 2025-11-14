@@ -29,7 +29,7 @@ https://github.com/user-attachments/assets/c4ca3d5c-614f-4486-aa0c-36c35c15ce38
 
 ### AI-Powered Suggestions (6 Providers)
 AI reads your page content and generates contextually relevant poll questions:
-- **Heuristic** (Default) - Built-in keyword extraction from your content, no API required
+- **Heuristic** (Default) - Built-in keyword extraction from your content, no API required. Use it for tests and basic suggestions.
 - **OpenAI** - GPT models analyze your content for smart suggestions
 - **Azure OpenAI** - Enterprise Azure OpenAI Service
 - **Anthropic Claude** - Claude 3.5 Sonnet analyzes content context
