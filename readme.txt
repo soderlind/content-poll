@@ -168,8 +168,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 = 0.6.4 - 2025-11-14 =
 * Added: Very conservative dry-run orphan detector in analytics service to help inspect block_ids that no longer appear in post/page content, without deleting data.
-* Internal: No automatic deletions; orphan handling remains opt-in via explicit actions only.
-* Notes: Safety-focused patch; no schema or REST API changes.
+* Changed: Vote REST endpoint now requires a valid non-zero postId and rejects votes without post context, preventing new ambiguous `post_id = 0` records.
+* Internal: Front-end vote script now resolves postId from both data attributes and the block editor store before submitting.
+* Notes: Safety-focused patch; existing legacy `post_id = 0` rows are preserved but no longer created.
 
 = 0.6.3 - 2025-11-14 =
 * Changed: AI providers now infer post language from content and generate poll questions/options in the same language in a single request.

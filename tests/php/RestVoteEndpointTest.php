@@ -18,7 +18,7 @@ class RestVoteEndpointTest extends TestCase {
 		$req     = new WP_REST_Request( 'POST', '/content-poll/v1/block/' . $blockId . '/vote' );
 		$req->set_header( 'X-WP-Nonce', $nonce );
 		$req->set_param( 'optionIndex', 0 );
-		$req->set_param( 'postId', 0 );
+		$req->set_param( 'postId', 123 );
 		$response = rest_do_request( $req );
 		$data     = $response->get_data();
 		$this->assertTrue( isset( $data[ 'totalVotes' ] ) && $data[ 'totalVotes' ] === 1, 'Aggregate should report first vote.' );
