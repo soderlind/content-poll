@@ -273,7 +273,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
 
 		$url = 'https://generativelanguage.googleapis.com/v1beta/models/' . $model . ':generateContent?key=' . $api_key;
 

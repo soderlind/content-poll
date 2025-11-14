@@ -7,6 +7,104 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+## [0.7.6] - 2025-11-14
+
+### Fixed
+- **Critical**: Tests no longer delete production vote data - added PHPUNIT_TEST constant and database migration protection during test runs.
+- DatabaseManager now skips migrations during PHPUnit tests to prevent unintended schema changes and data loss.
+- Test bootstrap includes comprehensive database safety checks (test prefix detection, explicit truncation flag).
+
+### Added
+- Test runner script (`run-tests.sh`) with safe mode (default) and explicit truncation mode (requires confirmation).
+- wp-config.php configuration for test database prefix support (WP_TESTS_DB_PREFIX environment variable).
+- Comprehensive testing documentation (TESTING.md, tests/README.md, docs/TEST-DATABASE-SETUP.md).
+
+### Changed
+- Test suite now runs against production database without truncation unless explicitly configured with test prefix or confirmation.
+- Bootstrap protection prevents accidental data loss: only truncates if prefix is `test_*`, `phpunit_*`, or `TRUNCATE_TEST_DATA=true`.
+
+### Notes
+- Patch release addressing critical issue where running tests would delete all production votes.
+- Tests are now safe to run during development without risk of data loss.
+- Production data remains protected while maintaining full test coverage.
+
+## [0.7.5] - 2025-11-14
+
+### Changed
+- **Architecture**: Refactored database management into dedicated `DatabaseManager` class with singleton pattern.
+- **Critical**: Removed `register_activation_hook` for database operations to prevent vote data loss during plugin updates.
+- Database initialization now runs on `plugins_loaded` hook with version-based migration tracking instead of activation hook.
+- Migration logic uses semantic versioning (DB_VERSION) instead of boolean flag for better upgrade path management.
+
+### Fixed
+- **Critical**: Eliminated root cause of vote data loss during plugin updates - activation hooks no longer trigger database migrations.
+- Database schema changes are now completely decoupled from plugin file changes (version bumps, code edits).
+
+### Notes
+- Architectural release addressing fundamental issue with activation hook triggering on file changes.
+- Database operations moved from bootstrap file to dedicated service class for better separation of concerns.
+- Migration system now tracks database schema version independently of plugin version.
+- Existing installations will migrate automatically on first page load after update.
+
+## [0.7.4] - 2025-11-14
+
+### Fixed
+- **Critical**: Migration logic now drops old `uniq_block_token` index even when `poll_id` column already exists, preventing partial migration state where both unique constraints coexist and cause vote data loss.
+
+### Notes
+- Patch release fixing critical bug where previous migrations could leave database in inconsistent state with conflicting unique constraints.
+
+## [0.7.3] - 2025-11-14
+
+### Fixed
+- Enhanced idempotent migration by checking each index individually before creation, preventing partial migration states.
+
+### Notes
+- Patch release improving migration robustness with granular index existence checks.
+
+## [0.7.2] - 2025-11-14
+
+### Fixed
+- **Critical**: Migration now checks if indexes exist before dropping/adding them, making activation hook idempotent and preventing data loss when plugin file is updated.
+
+### Performance
+- Optimized runtime migration check to run only once using option flag (`content_poll_poll_id_migrated`) instead of checking database schema on every page load.
+
+### Notes
+- Patch release fixing critical issue where updating the plugin file would trigger activation hook again, causing migration to fail and lose unique constraint on poll_id, resulting in vote reset.
+
+## [0.7.1] - 2025-11-14
+
+### Changed
+- Analytics methods now consistently return `poll_id` fields instead of aliasing to `block_id`, aligning with the canonical poll identifier throughout the codebase.
+- Admin Settings Analytics tab updated to reference `poll_id` consistently for clarity.
+- Orphan detection and deletion now correctly use `poll_id` column for all database operations.
+
+### Fixed
+- **Critical**: Fixed database migration bug where old unique constraint wasn't dropped before adding new one, causing migration failures and vote data loss.
+- **Critical**: Fixed orphan deletion bug where `delete_block_votes()` was querying `block_id` column instead of `poll_id`, preventing orphan cleanup from working.
+- Improved orphan detection precision by matching exact JSON attribute patterns (`"pollId":"..."` and `"blockId":"..."`) instead of broad substring searches.
+
+### Performance
+- Optimized orphan detection from N+1 queries to 2 queries total, dramatically improving performance on sites with many polls (e.g., 100 polls: 101 queries → 2 queries, 98% reduction).
+
+### Notes
+- Patch release focused on completing the poll_id migration and fixing critical database migration and orphan management bugs introduced in 0.7.0.
+- **Important**: If upgrading from 0.7.0 and experiencing missing votes, the database migration may have failed. Drop the `poll_id` column and re-activate the plugin to trigger proper migration.
+
+## [0.7.0] - 2025-11-14
+
+### Added
+- Internal `pollId` attribute for each poll block, decoupling vote identity from Gutenberg's internal `blockId`.
+
+### Changed
+- Front-end scripts, REST vote/results controllers, and storage/analytics services now treat `pollId` as the canonical poll identifier, with legacy `blockId` supported as a backward-compatible fallback.
+- Orphan detection and the admin Analytics UI now operate on poll identifiers and use "Poll ID" terminology for clarity.
+- Results view removes per-option percentage labels in the list and instead appends a total votes summary below the chart for a cleaner, less noisy display.
+
+### Notes
+- Minor version bump reflects the internal identity refactor, dedicated `poll_id` database column (with automatic backfill from legacy `block_id`), and UI refinements.
+
 ## [0.6.4] - 2025-11-14
 
 ### Added
@@ -221,6 +319,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.3.0]: https://github.com/yourusername/content-vote/compare/v0.2.0...v0.3.0
 [0.5.1]: https://github.com/yourusername/content-vote/compare/v0.5.0...v0.5.1
 [0.6.4]: https://github.com/yourusername/content-vote/compare/v0.6.3...v0.6.4
+[0.7.0]: https://github.com/yourusername/content-vote/compare/v0.6.4...v0.7.0
 [0.6.3]: https://github.com/yourusername/content-vote/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/yourusername/content-vote/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1

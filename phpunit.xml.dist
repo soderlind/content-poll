@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="tests/bootstrap.php" colors="true" beStrictAboutTestsThatDoNotTestAnything="true" beStrictAboutOutputDuringTests="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.5/phpunit.xsd" cacheDirectory=".phpunit.cache">
+  <php>
+    <!-- Environment variables for test configuration -->
+    <!-- Set to 'true' to allow truncating production database (NOT RECOMMENDED) -->
+    <env name="TRUNCATE_TEST_DATA" value="false"/>
+    <!-- Optional: Override WordPress root path for tests -->
+    <!-- <env name="WP_ROOT" value="/path/to/wordpress"/> -->
+    <!-- Optional: Use test database prefix (safest option) -->
+    <!-- Configure your wp-config.php to use $table_prefix = 'test_'; when WP_TESTS_DB_PREFIX is set -->
+    <!-- <env name="WP_TESTS_DB_PREFIX" value="test_"/> -->
+  </php>
   <testsuites>
     <testsuite name="ContentVote Unit">
       <directory>tests/php</directory>

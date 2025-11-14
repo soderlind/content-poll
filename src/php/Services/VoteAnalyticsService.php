@@ -39,13 +39,13 @@ class VoteAnalyticsService {
 	}
 
 	/**
-	 * Get total number of distinct polls (blocks).
+	 * Get total number of distinct polls (identifier-based).
 	 *
-	 * @return int Number of unique block IDs.
+	 * @return int Number of unique poll identifiers.
 	 */
 	public function get_total_polls(): int {
 		$db     = $this->db;
-		$result = $db->get_var( "SELECT COUNT(DISTINCT block_id) FROM {$this->table}" );
+		$result = $db->get_var( "SELECT COUNT(DISTINCT poll_id) FROM {$this->table}" );
 		return $result ? (int) $result : 0;
 	}
 
@@ -69,9 +69,9 @@ class VoteAnalyticsService {
 	public function get_top_polls( int $limit = 10 ): array {
 		$db   = $this->db;
 		$rows = $db->get_results( $db->prepare(
-			"SELECT block_id, post_id, COUNT(*) as total_votes, MAX(created_at) as last_vote 
+			"SELECT poll_id, post_id, COUNT(*) as total_votes, MAX(created_at) as last_vote 
 			FROM {$this->table} 
-			GROUP BY block_id, post_id 
+			GROUP BY poll_id, post_id 
 			ORDER BY total_votes DESC 
 			LIMIT %d",
 			$limit
@@ -88,9 +88,9 @@ class VoteAnalyticsService {
 	public function get_recent_activity( int $limit = 10 ): array {
 		$db   = $this->db;
 		$rows = $db->get_results( $db->prepare(
-			"SELECT block_id, post_id, COUNT(*) as total_votes, MAX(created_at) as last_vote 
+			"SELECT poll_id, post_id, COUNT(*) as total_votes, MAX(created_at) as last_vote 
 			FROM {$this->table} 
-			GROUP BY block_id, post_id 
+			GROUP BY poll_id, post_id 
 			ORDER BY last_vote DESC 
 			LIMIT %d",
 			$limit
@@ -117,7 +117,7 @@ class VoteAnalyticsService {
 			return '\'' . esc_sql( $id ) . '\'';
 		}, $block_ids ) );
 		// Count votes where post_id matches OR legacy (post_id=0) for blocks belonging to this post.
-		$sql    = $db->prepare( "SELECT COUNT(*) FROM {$this->table} WHERE post_id = %d OR (post_id = 0 AND block_id IN ($in))", $post_id );
+		$sql    = $db->prepare( "SELECT COUNT(*) FROM {$this->table} WHERE post_id = %d OR (post_id = 0 AND poll_id IN ($in))", $post_id );
 		$result = $db->get_var( $sql );
 		return $result ? (int) $result : 0;
 	}
@@ -138,7 +138,7 @@ class VoteAnalyticsService {
 		$in   = implode( ',', array_map( function ( $id ) use ( $db ) {
 			return '\'' . esc_sql( $id ) . '\'';
 		}, $block_ids ) );
-		$sql  = $db->prepare( "SELECT block_id, COUNT(*) as total_votes, MAX(created_at) as last_vote FROM {$this->table} WHERE (post_id = %d OR post_id = 0) AND block_id IN ($in) GROUP BY block_id ORDER BY total_votes DESC", $post_id );
+		$sql  = $db->prepare( "SELECT poll_id, COUNT(*) as total_votes, MAX(created_at) as last_vote FROM {$this->table} WHERE (post_id = %d OR post_id = 0) AND poll_id IN ($in) GROUP BY poll_id ORDER BY total_votes DESC", $post_id );
 		$rows = $db->get_results( $sql );
 		return $rows ?: [];
 	}
@@ -152,7 +152,7 @@ class VoteAnalyticsService {
 	public function get_block_option_breakdown( string $block_id ): array {
 		$db     = $this->db;
 		$rows   = $db->get_results( $db->prepare(
-			"SELECT option_index, COUNT(*) as cnt FROM {$this->table} WHERE block_id=%s GROUP BY option_index",
+			"SELECT option_index, COUNT(*) as cnt FROM {$this->table} WHERE poll_id=%s GROUP BY option_index",
 			$block_id
 		) );
 		$counts = [];
@@ -192,24 +192,30 @@ class VoteAnalyticsService {
 		if ( empty( $posts ) ) {
 			return [];
 		}
-		$non_legacy = $db->get_results( "SELECT post_id, block_id, COUNT(*) cnt, MAX(created_at) last_vote FROM {$this->table} WHERE post_id > 0 GROUP BY post_id, block_id" );
+		$non_legacy = $db->get_results( "SELECT post_id, poll_id, COUNT(*) cnt, MAX(created_at) last_vote FROM {$this->table} WHERE post_id > 0 GROUP BY post_id, poll_id" );
 		$non_map    = [];
 		foreach ( $non_legacy as $row ) {
-			$key             = (int) $row->post_id . '|' . $row->block_id;
+			$key             = (int) $row->post_id . '|' . $row->poll_id;
 			$non_map[ $key ] = [ 'cnt' => (int) $row->cnt, 'last' => $row->last_vote ];
 		}
-		$legacy     = $db->get_results( "SELECT block_id, COUNT(*) cnt, MAX(created_at) last_vote FROM {$this->table} WHERE post_id = 0 GROUP BY block_id" );
+		$legacy     = $db->get_results( "SELECT poll_id, COUNT(*) cnt, MAX(created_at) last_vote FROM {$this->table} WHERE post_id = 0 GROUP BY poll_id" );
 		$legacy_map = [];
 		foreach ( $legacy as $row ) {
-			$legacy_map[ $row->block_id ] = [ 'cnt' => (int) $row->cnt, 'last' => $row->last_vote ];
+			$legacy_map[ $row->poll_id ] = [ 'cnt' => (int) $row->cnt, 'last' => $row->last_vote ];
 		}
 		$summary = [];
 		foreach ( $posts as $p ) {
 			$blocks    = parse_blocks( $p->post_content );
 			$block_ids = [];
 			foreach ( $blocks as $b ) {
-				if ( isset( $b[ 'blockName' ] ) && $b[ 'blockName' ] === 'content-poll/vote-block' && isset( $b[ 'attrs' ][ 'blockId' ] ) ) {
-					$block_ids[] = $b[ 'attrs' ][ 'blockId' ];
+				if ( isset( $b[ 'blockName' ] ) && $b[ 'blockName' ] === 'content-poll/vote-block' && isset( $b[ 'attrs' ] ) && is_array( $b[ 'attrs' ] ) ) {
+					$attrs        = $b[ 'attrs' ];
+					$poll_id      = $attrs[ 'pollId' ] ?? '';
+					$block_id     = $attrs[ 'blockId' ] ?? '';
+					$effective_id = $poll_id !== '' ? $poll_id : $block_id;
+					if ( $effective_id !== '' ) {
+						$block_ids[] = $effective_id;
+					}
 				}
 			}
 			$block_ids = array_unique( $block_ids );
@@ -263,11 +269,13 @@ class VoteAnalyticsService {
 		$map    = [];
 
 		foreach ( $blocks as $block ) {
-			if ( $block[ 'blockName' ] === 'content-poll/vote-block' && isset( $block[ 'attrs' ] ) ) {
-				$attrs    = $block[ 'attrs' ];
-				$block_id = $attrs[ 'blockId' ] ?? '';
-				if ( $block_id ) {
-					$map[ $block_id ] = [
+			if ( isset( $block[ 'blockName' ] ) && $block[ 'blockName' ] === 'content-poll/vote-block' && isset( $block[ 'attrs' ] ) && is_array( $block[ 'attrs' ] ) ) {
+				$attrs        = $block[ 'attrs' ];
+				$poll_id      = $attrs[ 'pollId' ] ?? '';
+				$block_id     = $attrs[ 'blockId' ] ?? '';
+				$effective_id = $poll_id !== '' ? $poll_id : $block_id;
+				if ( $effective_id ) {
+					$map[ $effective_id ] = [
 						'question' => $attrs[ 'question' ] ?? __( 'Untitled Poll', 'content-poll' ),
 						'options'  => $attrs[ 'options' ] ?? [],
 					];
@@ -296,10 +304,92 @@ class VoteAnalyticsService {
 	 * @param string $block_id Block identifier.
 	 * @return int Rows affected.
 	 */
-	public function delete_block_votes( string $block_id ): int {
-		$db       = $this->db;
-		$affected = $db->query( $db->prepare( "DELETE FROM {$this->table} WHERE block_id = %s", $block_id ) );
+	public function delete_block_votes( string $poll_id ): int {
+		$db = $this->db;
+		// Log orphan deletion details in debug mode for traceability.
+		if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
+			$pre_count = (int) $db->get_var( $db->prepare( "SELECT COUNT(*) FROM {$this->table} WHERE poll_id = %s", $poll_id ) );
+			if ( $pre_count > 0 ) {
+				// phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
+				error_log( sprintf(
+					'ContentPoll: deleting %d orphan vote rows for poll_id=%s at %s',
+					$pre_count,
+					$poll_id,
+					gmdate( 'c' )
+				) );
+			}
+		}
+
+		$affected = $db->query( $db->prepare( "DELETE FROM {$this->table} WHERE poll_id = %s", $poll_id ) );
 		return (int) $affected;
+	}
+
+	/**
+	 * Detect candidate orphan poll IDs (have votes but no matching blocks in any post).
+	 *
+	 * This is read-only and never deletes; callers may pass poll_ids to delete_block_votes().
+	 * Optimized to use a single query instead of N+1 queries.
+	 *
+	 * @return array<int,array{poll_id:string,approx_vote_count:int}>
+	 */
+	public function detect_orphan_block_ids(): array {
+		$db = $this->db;
+
+		// Get all poll_ids with their vote counts.
+		$rows = $db->get_results( "SELECT poll_id, COUNT(*) AS cnt FROM {$this->table} GROUP BY poll_id" );
+		if ( empty( $rows ) ) {
+			return [];
+		}
+
+		// Build a map of poll_id => count for quick lookup.
+		$poll_counts = [];
+		foreach ( $rows as $row ) {
+			$poll_counts[ (string) $row->poll_id ] = (int) $row->cnt;
+		}
+
+		// Find all poll_ids and block_ids that exist in published content in a single query.
+		// We look for vote-block blocks and extract their pollId/blockId attributes.
+		$posts_with_blocks = $db->get_results(
+			"SELECT post_content 
+			FROM {$db->posts} 
+			WHERE post_status IN ('publish','draft','future') 
+				AND post_type IN ('post','page') 
+				AND post_content LIKE '%content-poll/vote-block%'"
+		);
+
+		$found_ids = [];
+		if ( ! empty( $posts_with_blocks ) ) {
+			foreach ( $posts_with_blocks as $post ) {
+				$content = $post->post_content;
+
+				// Extract pollId values using a more precise regex pattern.
+				if ( preg_match_all( '/"pollId":"([^"]+)"/', $content, $poll_matches ) ) {
+					foreach ( $poll_matches[ 1 ] as $id ) {
+						$found_ids[ $id ] = true;
+					}
+				}
+
+				// Also check for legacy blockId values.
+				if ( preg_match_all( '/"blockId":"([^"]+)"/', $content, $block_matches ) ) {
+					foreach ( $block_matches[ 1 ] as $id ) {
+						$found_ids[ $id ] = true;
+					}
+				}
+			}
+		}
+
+		// Build orphan list: poll_ids with votes but not found in content.
+		$orphans = [];
+		foreach ( $poll_counts as $poll_id => $count ) {
+			if ( ! isset( $found_ids[ $poll_id ] ) ) {
+				$orphans[] = [
+					'poll_id'           => $poll_id,
+					'approx_vote_count' => $count,
+				];
+			}
+		}
+
+		return $orphans;
 	}
 
 	/**

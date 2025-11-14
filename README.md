@@ -137,6 +137,21 @@ composer test        # PHPUnit tests
 - **JavaScript**: Vitest for helper functions and logic
 - **PHP**: PHPUnit for storage, aggregation, and API validation
 - **Linting**: WordPress coding standards via @wordpress/scripts
+- **Database Safety**: Tests include safeguards to prevent accidental data loss
+
+**Run Tests Safely**:
+```bash
+# JavaScript tests (safe - no database changes)
+npm test
+
+# PHP tests with production database protection
+composer test
+
+# PHP tests with separate test database (recommended)
+WP_TESTS_DB_PREFIX=test_ composer test
+```
+
+See [tests/README.md](tests/README.md) for detailed testing documentation and database safety configuration.
 
 ### Project Structure
 ```

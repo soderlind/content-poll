@@ -20,12 +20,12 @@ final class VoteStorageServiceTest extends TestCase {
 				return $query;
 			}
 			public function get_var( string $query ) {
-				// Detect duplicate selection pattern: WHERE block_id='x' AND hashed_token='y'
-				if ( preg_match( "/WHERE block_id='([^']+)' AND hashed_token='([^']+)'/", $query, $m ) ) {
-					$block_id = $m[ 1 ];
-					$token    = $m[ 2 ];
+				// Detect selection pattern: WHERE poll_id='x' AND hashed_token='y'
+				if ( preg_match( "/WHERE poll_id='([^']+)' AND hashed_token='([^']+)'/", $query, $m ) ) {
+					$poll_id = $m[ 1 ];
+					$token   = $m[ 2 ];
 					foreach ( $this->rows as $r ) {
-						if ( $r[ 'block_id' ] === $block_id && $r[ 'hashed_token' ] === $token ) {
+						if ( $r[ 'poll_id' ] === $poll_id && $r[ 'hashed_token' ] === $token ) {
 							return $r[ 'id' ];
 						}
 					}
@@ -33,9 +33,9 @@ final class VoteStorageServiceTest extends TestCase {
 				return null;
 			}
 			public function insert( string $table, array $data, array $fmt ) {
-				// Enforce uniqueness by (block_id, hashed_token)
+				// Enforce uniqueness by (poll_id, hashed_token)
 				foreach ( $this->rows as $r ) {
-					if ( $r[ 'block_id' ] === $data[ 'block_id' ] && $r[ 'hashed_token' ] === $data[ 'hashed_token' ] ) {
+					if ( $r[ 'poll_id' ] === $data[ 'poll_id' ] && $r[ 'hashed_token' ] === $data[ 'hashed_token' ] ) {
 						return false; // duplicate
 					}
 				}
@@ -44,11 +44,11 @@ final class VoteStorageServiceTest extends TestCase {
 				return true;
 			}
 			public function get_results( string $query ) {
-				if ( preg_match( "/WHERE block_id='([^']+)'/", $query, $m ) ) {
-					$block_id = $m[ 1 ];
-					$counts   = [];
+				if ( preg_match( "/WHERE poll_id='([^']+)'/", $query, $m ) ) {
+					$poll_id = $m[ 1 ];
+					$counts  = [];
 					foreach ( $this->rows as $r ) {
-						if ( $r[ 'block_id' ] === $block_id ) {
+						if ( $r[ 'poll_id' ] === $poll_id ) {
 							$idx            = (int) $r[ 'option_index' ];
 							$counts[ $idx ] = ( $counts[ $idx ] ?? 0 ) + 1;
 						}
@@ -58,36 +58,7 @@ final class VoteStorageServiceTest extends TestCase {
 				return [];
 			}
 			public function query( $sql ) {
-				// Handle INSERT IGNORE for testing
-				// Expected: INSERT IGNORE INTO table (block_id, post_id, option_index, hashed_token, created_at) VALUES (...)
-				if ( preg_match( "/INSERT IGNORE INTO \w+ \([^)]+\) VALUES \('([^']+)', (\d+), (\d+), '([^']+)', '([^']*)'\)/", $sql, $m ) ) {
-					$block_id     = $m[ 1 ];
-					$post_id      = (int) $m[ 2 ];
-					$option_index = (int) $m[ 3 ];
-					$hashed_token = $m[ 4 ];
-					$created_at   = $m[ 5 ];
-
-					// Check for duplicate
-					foreach ( $this->rows as $r ) {
-						if ( $r[ 'block_id' ] === $block_id && $r[ 'hashed_token' ] === $hashed_token ) {
-							$this->rows_affected = 0;
-							return true; // INSERT IGNORE returns true even when ignoring
-						}
-					}
-
-					// Insert new row
-					$data                = [
-						'id'           => count( $this->rows ) + 1,
-						'block_id'     => $block_id,
-						'post_id'      => $post_id,
-						'option_index' => $option_index,
-						'hashed_token' => $hashed_token,
-						'created_at'   => $created_at,
-					];
-					$this->rows[]        = $data;
-					$this->rows_affected = 1;
-					return true;
-				}
+				// Not used in current VoteStorageService tests.
 				return false;
 			}
 		};

@@ -23,7 +23,7 @@ registerBlockType( 'content-poll/vote-block', {
 
 function Edit( props ) {
 	const { attributes, setAttributes } = props;
-	const { question, options, blockId } = attributes;
+	const { question, options, pollId } = attributes;
 	const [ count, setCount ] = useState( options.length );
 	const [ locked, setLocked ] = useState( false );
 	const [ loadingSuggest, setLoadingSuggest ] = useState( false );
@@ -32,7 +32,7 @@ function Edit( props ) {
 		className: 'content-poll-editor',
 	} );
 
-	if ( ! blockId ) {
+	if ( ! pollId ) {
 		const generateId = () => {
 			if (
 				window?.crypto &&
@@ -51,17 +51,17 @@ function Edit( props ) {
 				}
 			);
 		};
-		setAttributes( { blockId: generateId() } );
+		setAttributes( { pollId: generateId() } );
 	}
 
 	useEffect( () => {
-		if ( ! blockId ) {
+		if ( ! pollId ) {
 			return;
 		}
 		fetch(
 			window.location.origin +
 				'/wp-json/content-poll/v1/block/' +
-				blockId +
+				pollId +
 				'/results'
 		)
 			.then( ( r ) => r.json() )
@@ -71,7 +71,7 @@ function Edit( props ) {
 				}
 			} )
 			.catch( () => {} );
-	}, [ blockId ] );
+	}, [ pollId ] );
 
 	const updateOption = ( value, index ) => {
 		if ( locked ) {
