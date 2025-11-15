@@ -11,7 +11,7 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 <img width="1271" height="634" alt="content-poll" src="https://github.com/user-attachments/assets/cb224614-8a1f-4598-bef9-7f5be3b042e2" />
 
-<img width="25%" alt="Image" src=".screenshots/content-vote-settings.png" /><img width="25%" alt="Image" src=".screenshots/content-poll.png" /><img width="25%" alt="Image" src=".screenshots/content-vote-edit.png" /><img width="25%" alt="Image" src=".screenshots/content-poll-analytics-single.png" />
+<img width="25%" alt="Image" src=".screenshots/content-vote-settings.png" /><img width="25%" alt="Image" src=".screenshots/content-vote-edit.png" /><img width="25%" alt="Image" src=".screenshots/content-poll.png" /><img width="25%" alt="Image" src=".screenshots/content-poll-analytics-single.png" />
 
 [Features](#-features) | [Installation](#-installation) | [Usage](#-usage) | [Design Features](#-design-features) | [Development](#-development) | [Privacy & Security](#-privacy--security) | [REST API](#-rest-api) | [Roadmap](#-roadmap) 
 
