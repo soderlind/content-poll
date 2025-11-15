@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.8.0
+Stable tag: 0.8.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -168,6 +168,11 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.8.1 - 2025-11-15 =
+* Changed: Refactored AISuggestionService (single prompt constant + unified JSON parsing)
+* Fixed: More robust AI suggestion JSON parsing (multi-stage recovery) and isolated REST tests (unique block IDs)
+* Notes: Internal reliability maintenance; safe upgrade; no schema changes
+
 = 0.8.0 - 2025-11-15 =
 * Added: Grok (xAI) AI provider for poll suggestions (model: grok-2 by default)
 * Added: Validation and error surfacing for Grok API responses
@@ -310,6 +315,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.8.1 =
+Internal reliability update (refactored AI suggestion logic + safer tests). Safe upgrade; no database changes.
 
 = 0.8.0 =
 Adds Grok (xAI) provider for AI suggestions. Update if you want xAI integration. No database changes; safe upgrade.
