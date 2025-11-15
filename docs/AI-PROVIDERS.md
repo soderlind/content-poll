@@ -113,12 +113,12 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 
 ### API Endpoints
 
-**OpenAI**: `https://api.openai.com/v1/chat/completions`
-**Azure OpenAI**: `{endpoint}/openai/deployments/{deployment}/chat/completions?api-version={version}`
-**Anthropic**: `https://api.anthropic.com/v1/messages`
-**Gemini**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}`
-**Ollama**: `{endpoint}/api/generate`
-**Grok (xAI)**: `https://api.x.ai/v1/chat/completions`
+- **OpenAI**: `https://api.openai.com/v1/chat/completions`
+- **Azure OpenAI**: `{endpoint}/openai/deployments/{deployment}/chat/completions?api-version={version}`
+- **Anthropic**: `https://api.anthropic.com/v1/messages`
+- **Gemini**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}`
+- **Ollama**: `{endpoint}/api/generate`
+- **Grok (xAI)**: `https://api.x.ai/v1/chat/completions`
 
 ### Security Notes
 - API keys are stored in WordPress options (encrypted by WordPress)
