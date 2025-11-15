@@ -13,7 +13,7 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 <img width="20%"  height="718" alt="Image" src="https://github.com/user-attachments/assets/5817ea97-6e8d-4b93-b8b7-c4a3c78e471d" /><img width="20%" height="526" alt="Image" src="https://github.com/user-attachments/assets/04e0c8f2-fba4-45e5-a5ed-23d5277dae1b" /><img width="20%" height="634" alt="Image" src="https://github.com/user-attachments/assets/5ee307dc-7269-43b0-9fd8-6fdf018e4f2e" /><img width="20%" height="733" alt="Image" src="https://github.com/user-attachments/assets/3c019f11-c27e-4877-9763-389e2d098626" />
 
-[Features](#-features) | [Installation](#-installation) | [Usage](#-usage) | [Development](#-development) | [Privacy & Security](#-privacy--security) | [REST API](#-rest-api) | [Roadmap](#-roadmap) 
+[Features](#-features) | [Installation](#-installation) | [Usage](#-usage) | [Design Features](#-design-features) | [Development](#-development) | [Privacy & Security](#-privacy--security) | [REST API](#-rest-api) | [Roadmap](#-roadmap) 
 
 ## ✨ Features
 
@@ -120,6 +120,102 @@ After voting, visitors see:
 - **Theme Colors**: Uses WordPress CSS custom properties (`--wp--preset--color--*`)
 - **Responsive**: Works beautifully on all screen sizes
 - **Box Sizing**: Proper containment prevents overflow issues
+
+### CSS Customization
+
+You can fully restyle the poll via standard CSS. The front‑end markup exposes predictable class names and leverages WordPress design tokens (`--wp--preset--color--*`) plus a custom radius variable (`--wp--custom--border--radius`). Override these in your theme or a custom stylesheet.
+
+Key wrapper & structural classes:
+- `.content-poll` – Outer container (padding, border, background, overall radius)
+- `.content-poll__question` – Question text
+- `.content-poll__options` – List wrapper for interactive options
+- `.content-poll__option` – Individual clickable card
+- `.content-poll__radio` – Circular selection indicator within each option
+- `.content-poll__label` – Option text span inside the card
+- `.content-poll__message` – Post‑vote message container
+- `.content-poll__results` – Wrapper for results view
+- `.content-poll__result-item` – Individual result card
+- `.content-poll__result-label` – Flex row containing option label + percentage
+- `.content-poll__result-count` – Percentage text (now showing % after changes)
+- `.content-poll__result-bar` / `.content-poll__result-fill` – Progress bar track & fill (gradient)
+- `.content-poll__results-total` – Total votes summary element (appended dynamically)
+- State class: `.content-poll--results-only` – Hides interactive option list after voting
+
+Useful CSS variables (fallbacks shown in code):
+- `--wp--preset--color--primary`
+- `--wp--preset--color--secondary`
+- `--wp--preset--color--contrast`
+- `--wp--preset--color--base`
+- `--wp--custom--border--radius`
+
+#### Quick Examples
+
+Rounded cards & softer shadow:
+```css
+.content-poll__option {
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+```
+
+Custom gradient for result bar:
+```css
+.content-poll__result-fill {
+  background: linear-gradient(90deg,#667eea,#764ba2);
+}
+```
+
+Larger percentage emphasis:
+```css
+.content-poll__result-count {
+  font-size: 0.95em;
+  font-weight: 600;
+  opacity: 1;
+}
+```
+
+Change option hover behavior:
+```css
+.content-poll__option:hover {
+  transform: scale(1.01);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+```
+
+Adjust overall corner radius globally:
+```css
+.content-poll {
+  --wp--custom--border--radius: 12px;
+}
+```
+
+Minimal flat style:
+```css
+.content-poll__option {
+  box-shadow: none;
+  border: 1px solid #e0e0e0;
+}
+.content-poll__option:hover {
+  transform: none;
+  box-shadow: none;
+  background: #f9f9f9;
+}
+```
+
+Hide total votes (if you prefer only percentages):
+```css
+.content-poll__results-total { display: none; }
+```
+
+#### Accessibility Notes
+- Percentages are rendered with an `aria-label` containing both the raw vote count and percentage for screen readers.
+- Preserve contrast when changing gradients or text colors.
+
+#### Best Practices
+- Prefer overriding variables for broad changes (theme color alignment).
+- Keep hover/active transitions <= 0.25s for responsiveness.
+- Maintain readable touch targets: keep option padding ≥ 0.75em.
+- Test focus outlines after customizations to retain keyboard accessibility.
 
 ## 🔧 Development
 

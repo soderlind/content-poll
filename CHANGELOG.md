@@ -6,6 +6,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.8.2] - 2025-11-15
+
+### Changed
+- Results view now displays per-option percentages instead of raw vote counts while keeping a total votes summary for context.
+- README updated with detailed CSS customization guidance for the poll block (class names, variables, and examples).
+
+### Notes
+- Minor UX/documentation release; no database or schema changes.
+- Safe upgrade; no action required.
+
+
 ## [0.8.1] - 2025-11-15
 
 ### Changed
@@ -357,3 +368,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.6.2]: https://github.com/yourusername/content-vote/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1
 [0.8.1]: https://github.com/yourusername/content-vote/compare/v0.8.0...v0.8.1
+[0.8.2]: https://github.com/yourusername/content-vote/compare/v0.8.1...v0.8.2

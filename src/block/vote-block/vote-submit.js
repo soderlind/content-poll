@@ -75,11 +75,13 @@
 						'.</strong> ' +
 						optionText +
 						'</span>' +
-						'<span class="content-poll__result-count">' +
+						'<span class="content-poll__result-count" aria-label="' +
+						pct +
+						'% of votes (' +
 						c +
-						' vote' +
-						( c !== 1 ? 's' : '' ) +
-						'</span>' +
+						')">' +
+						pct +
+						'%</span>' +
 						'</div>' +
 						'<div class="content-poll__result-bar">' +
 						'<div class="content-poll__result-fill" style="width: ' +
