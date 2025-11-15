@@ -13,6 +13,8 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 <img width="20%"  height="718" alt="Image" src="https://github.com/user-attachments/assets/5817ea97-6e8d-4b93-b8b7-c4a3c78e471d" /><img width="20%" height="526" alt="Image" src="https://github.com/user-attachments/assets/04e0c8f2-fba4-45e5-a5ed-23d5277dae1b" /><img width="20%" height="634" alt="Image" src="https://github.com/user-attachments/assets/5ee307dc-7269-43b0-9fd8-6fdf018e4f2e" /><img width="20%" height="733" alt="Image" src="https://github.com/user-attachments/assets/3c019f11-c27e-4877-9763-389e2d098626" />
 
+[Features](#-features) | [Installation](#-installation) | [Usage](#-usage) | [Development](#-development) | [Privacy & Security](#-privacy--security) | [REST API](#-rest-api) | [Roadmap](#-roadmap) 
+
 ## ✨ Features
 
 ### Core Voting
@@ -228,9 +230,15 @@ Response: {
 - [ ] Multiple votes per user (optional)
 - [ ] Integration with popular form plugins
 
-## 📄 License
+## 📄 Copyright and License
 
-GPL-2.0-or-later
+ContentPoll AI is copyright 2025 Per Soderlind
+
+ContentPoll AI is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 of the License, or (at your option) any later version.
+
+ContentPoll AI is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with the Extension. If not, see http://www.gnu.org/licenses/.
 
 ## 🙏 Credits
 
