@@ -74,6 +74,8 @@ class SettingsPage {
 				'gemini_model'      => 'gemini-1.5-flash',
 				'ollama_endpoint'   => 'http://localhost:11434',
 				'ollama_model'      => 'llama3.2',
+				'grok_key'          => '',
+				'grok_model'        => 'grok-2',
 			],
 		] );
 
@@ -136,9 +138,11 @@ class SettingsPage {
 	public function sanitize_settings( $input ): array {
 		$sanitized = [];
 
-		$sanitized[ 'ai_provider' ] = isset( $input[ 'ai_provider' ] ) && in_array( $input[ 'ai_provider' ], [ 'heuristic', 'openai', 'anthropic', 'gemini', 'ollama' ], true )
+		$sanitized[ 'ai_provider' ] = isset( $input[ 'ai_provider' ] ) && in_array( $input[ 'ai_provider' ], [ 'heuristic', 'openai', 'anthropic', 'gemini', 'ollama', 'grok' ], true )
 			? $input[ 'ai_provider' ]
 			: 'heuristic';
+		$sanitized[ 'grok_key' ]    = isset( $input[ 'grok_key' ] ) ? sanitize_text_field( $input[ 'grok_key' ] ) : '';
+		$sanitized[ 'grok_model' ]  = isset( $input[ 'grok_model' ] ) ? sanitize_text_field( $input[ 'grok_model' ] ) : 'grok-2';
 
 		$sanitized[ 'openai_type' ] = isset( $input[ 'openai_type' ] ) && in_array( $input[ 'openai_type' ], [ 'openai', 'azure' ], true )
 			? $input[ 'openai_type' ]
@@ -195,6 +199,9 @@ class SettingsPage {
 				break;
 			case 'ollama':
 				$error = $this->test_ollama( $settings );
+				break;
+			case 'grok':
+				$error = $this->test_grok( $settings );
 				break;
 		}
 
@@ -364,6 +371,45 @@ class SettingsPage {
 
 		if ( isset( $data[ 'error' ] ) ) {
 			return is_string( $data[ 'error' ] ) ? $data[ 'error' ] : ( $data[ 'error' ][ 'message' ] ?? 'Unknown error' );
+		}
+
+		return null;
+	}
+
+	private function test_grok( array $settings ): ?string {
+		$api_key = $settings[ 'grok_key' ] ?? '';
+		$model   = $settings[ 'grok_model' ] ?? 'grok-2';
+
+		if ( empty( $api_key ) || empty( $model ) ) {
+			return null; // Don't validate if credentials not provided
+		}
+
+		$url     = 'https://api.x.ai/v1/chat/completions';
+		$headers = [
+			'Content-Type'  => 'application/json',
+			'Authorization' => 'Bearer ' . $api_key,
+		];
+		$payload = [
+			'model'      => $model,
+			'messages'   => [ [ 'role' => 'user', 'content' => 'test' ] ],
+			'max_tokens' => 5,
+		];
+
+		$response = wp_remote_post( $url, [
+			'headers' => $headers,
+			'body'    => wp_json_encode( $payload ),
+			'timeout' => 10,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message();
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+
+		if ( isset( $data[ 'error' ] ) ) {
+			return $data[ 'error' ][ 'message' ] ?? 'Unknown error';
 		}
 
 		return null;
@@ -726,6 +772,7 @@ class SettingsPage {
 					const isAnthropic = provider === 'anthropic';
 					const isGemini = provider === 'gemini';
 					const isOllama = provider === 'ollama';
+					const isGrok = provider === 'grok';
 
 					// Show/hide OpenAI type selector
 					if (typeSelect) {
@@ -743,6 +790,8 @@ class SettingsPage {
 								keyLabel.textContent = 'Anthropic API Key';
 							} else if (isGemini) {
 								keyLabel.textContent = 'Google AI API Key';
+							} else if (isGrok) {
+								keyLabel.textContent = 'xAI API Key';
 							} else {
 								keyLabel.textContent = 'API Key';
 							}
@@ -802,6 +851,9 @@ class SettingsPage {
 			</option>
 			<option value="ollama" <?php selected( $current, 'ollama' ); ?>>
 				<?php esc_html_e( 'Ollama (Self-Hosted)', 'content-poll' ); ?>
+			</option>
+			<option value="grok" <?php selected( $current, 'grok' ); ?>>
+				<?php esc_html_e( 'Grok (xAI)', 'content-poll' ); ?>
 			</option>
 		</select>
 		<p class="description">
@@ -949,6 +1001,16 @@ class SettingsPage {
 	public static function get_ollama_model(): string {
 		$options = get_option( 'content_poll_options', [ 'ollama_model' => 'llama3.2' ] );
 		return $options[ 'ollama_model' ] ?? 'llama3.2';
+	}
+
+	public static function get_grok_key(): string {
+		$options = get_option( 'content_poll_options', [ 'grok_key' => '' ] );
+		return $options[ 'grok_key' ] ?? '';
+	}
+
+	public static function get_grok_model(): string {
+		$options = get_option( 'content_poll_options', [ 'grok_model' => 'grok-2' ] );
+		return $options[ 'grok_model' ] ?? 'grok-2';
 	}
 
 	/**

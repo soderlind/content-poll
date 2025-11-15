@@ -6,6 +6,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.8.0] - 2025-11-15
+
+### Added
+- Grok (xAI) AI provider for content-aware poll suggestions (`grok-2` model by default).
+- Validation hook for Grok API credentials (real-time test on settings save).
+- Dynamic settings UI label now clarifies xAI API Key when Grok selected.
+
+### Changed
+- AI provider list expanded from 6 to 7 providers across README and readme.txt.
+- Settings JavaScript updated to include Grok provider key label logic.
+
+### Notes
+- Minor feature release introducing new external AI option. Falls back gracefully to heuristic when Grok credentials are absent or API errors occur.
+- No database/schema changes.
+- Recommended update for users wanting xAI/Grok integration.
+
+### Security
+- Maintains existing sanitation/validation patterns; Grok API errors logged and surfaced via transient admin notice (same as other providers).
+
 
 ## [0.7.6] - 2025-11-14
 

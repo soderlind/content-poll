@@ -31,6 +31,9 @@ class AISuggestionService {
 			case 'ollama':
 				$result = $this->suggest_ollama( $text );
 				break;
+			case 'grok':
+				$result = $this->suggest_grok( $text );
+				break;
 			default:
 				$result = [];
 		}
@@ -389,6 +392,74 @@ class AISuggestionService {
 		$content_text = $data[ 'response' ];
 
 		// Try to extract JSON from the response
+		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
+			$json = json_decode( $matches[ 0 ], true );
+			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {
+				return [
+					'question' => sanitize_text_field( $json[ 'question' ] ),
+					'options'  => array_map( 'sanitize_text_field', array_slice( $json[ 'options' ], 0, 6 ) ),
+				];
+			}
+		}
+
+		return [];
+	}
+
+	/**
+	 * Generate Grok (xAI) based suggestion.
+	 * @param string $text Content excerpt.
+	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
+	 */
+	private function suggest_grok( string $text ): array {
+		$api_key = SettingsPage::get_grok_key();
+		$model   = SettingsPage::get_grok_model();
+
+		if ( empty( $api_key ) || empty( $model ) ) {
+			return [];
+		}
+
+		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+
+		$response = wp_remote_post( 'https://api.x.ai/v1/chat/completions', [
+			'headers' => [
+				'Content-Type'  => 'application/json',
+				'Authorization' => 'Bearer ' . $api_key,
+			],
+			'body'    => wp_json_encode( [
+				'model'       => $model,
+				'messages'    => [
+					[ 'role' => 'system', 'content' => 'You generate poll questions and voting options. Always respond with valid JSON.' ],
+					[ 'role' => 'user', 'content' => $prompt ],
+				],
+				'temperature' => 0.7,
+				'max_tokens'  => 200,
+			] ),
+			'timeout' => 10,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			error_log( 'ContentPoll AI Grok Error: ' . $response->get_error_message() );
+			return [];
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+
+		if ( isset( $data[ 'error' ] ) ) {
+			$error_message = $data[ 'error' ][ 'message' ] ?? 'Unknown error';
+			error_log( 'ContentPoll AI Grok API Error: ' . $error_message );
+			if ( current_user_can( 'manage_options' ) ) {
+				set_transient( 'content_poll_ai_error', $error_message, 300 );
+			}
+			return [];
+		}
+
+		if ( ! isset( $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ] ) ) {
+			return [];
+		}
+
+		$content_text = $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ];
+
 		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
 			$json = json_decode( $matches[ 0 ], true );
 			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {

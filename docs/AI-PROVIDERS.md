@@ -75,6 +75,19 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
   - Endpoint: `http://localhost:11434` (default)
   - Model: `llama3.2` or any installed model
 
+### 7. Grok (xAI)
+- **API Key Required**: Yes
+- **Cost**: Pay per use (xAI pricing)
+- **Models**: `grok-2` (default) plus future variants as released
+- **Description**: Real-time reasoning model from xAI focused on concise contextual understanding.
+- **Best For**: Fast, succinct poll suggestion generation leveraging emerging reasoning capabilities.
+- **API Key**: Obtain from your xAI account dashboard.
+- **Configuration**:
+  - Provider: Grok (xAI)
+  - API Key: Your xAI API key
+  - Model: `grok-2` (default) or updated released model
+
+
 ## Provider Comparison
 
 | Provider | Cost | Quality | Speed | Privacy | Best Use Case |
@@ -85,6 +98,7 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 | Anthropic | $$ | Excellent | Fast | External | Long content |
 | Gemini | $/Free | Good | Fast | External | Budget-conscious |
 | Ollama | Free* | Good | Medium | Full | Privacy-first |
+| Grok (xAI) | $$ | Good/Emerging | Fast | External | Real-time reasoning |
 
 *Infrastructure costs only
 
@@ -104,6 +118,7 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 **Anthropic**: `https://api.anthropic.com/v1/messages`
 **Gemini**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}`
 **Ollama**: `{endpoint}/api/generate`
+**Grok (xAI)**: `https://api.x.ai/v1/chat/completions`
 
 ### Security Notes
 - API keys are stored in WordPress options (encrypted by WordPress)

@@ -22,7 +22,7 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 - **Theme Adaptive**: Automatically matches your WordPress theme colors
 - **Persistent Selection**: Returning voters see their previously selected option checked
 
-### AI-Powered Suggestions (6 Providers)
+### AI-Powered Suggestions (7 Providers)
 AI reads your page content and generates contextually relevant poll questions:
 - **Heuristic** (Default) - Built-in keyword extraction from your content, no API required. Use it for tests and basic suggestions.
 - **OpenAI** - GPT models analyze your content for smart suggestions
@@ -30,6 +30,7 @@ AI reads your page content and generates contextually relevant poll questions:
 - **Anthropic Claude** - Claude 3.5 Sonnet analyzes content context
 - **Google Gemini** - Gemini 1.5 Flash (free tier available)
 - **Ollama** - Self-hosted local models process content privately
+- **Grok (xAI)** - Real‑time reasoning model from xAI; concise, context-aware poll suggestions
 
 **Example**: On a blog post about photography tips, AI might suggest: "Which photography technique interests you most?" with options like "Composition", "Lighting", "Editing", "Equipment".
 
