@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.7.6
+Stable tag: 0.8.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -42,7 +42,7 @@ Unlike generic poll plugins, ContentPoll AI is designed for **content-driven vot
 * ✓ **Persistent Selection**: Returning voters see their choice marked
 * 📱 **Fully Responsive**: Beautiful on desktop, tablet, and mobile
 
-= AI-Powered Suggestions (6 Options!) =
+= AI-Powered Suggestions (7 Options!) =
 
 AI reads your page content and generates contextually relevant questions and options:
 
@@ -52,6 +52,7 @@ AI reads your page content and generates contextually relevant questions and opt
 * **Google Gemini**: Gemini 1.5 Flash (free tier available!)
 * **Azure OpenAI**: Enterprise Azure OpenAI Service
 * **Ollama**: Self-hosted local models (process content privately)
+* **Grok (xAI)**: Real‑time reasoning model from xAI; concise, context-aware suggestions
 
 Configure once at Settings → ContentPoll AI. Then in any post, write your content, add the vote block, and click "Generate Suggestions". AI suggests a question relevant to what readers just read.
 
@@ -117,6 +118,7 @@ No. Each visitor gets one vote per voting block, tracked by a secure cookie. Whe
 * **Anthropic Claude**: Good for nuanced understanding, requires paid account  
 * **Ollama**: Completely private, self-hosted, no API costs
 * **Azure OpenAI**: Enterprise with SLA, requires Azure subscription
+* **Grok (xAI)**: Emerging real-time reasoning; quick, contextual outputs (requires xAI key)
 
 = Does it work with my theme? =
 
@@ -165,6 +167,13 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
 
 == Changelog ==
+
+= 0.8.0 - 2025-11-15 =
+* Added: Grok (xAI) AI provider for poll suggestions (model: grok-2 by default)
+* Added: Validation and error surfacing for Grok API responses
+* Changed: Provider count increased from 6 to 7 (docs & UI updated)
+* Notes: Feature release; no schema changes; falls back to heuristic if Grok unavailable
+
 
 = 0.7.6 - 2025-11-14 =
 * Fixed: Critical - Tests no longer delete production vote data during test runs
@@ -301,6 +310,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.8.0 =
+Adds Grok (xAI) provider for AI suggestions. Update if you want xAI integration. No database changes; safe upgrade.
 
 = 0.7.6 =
 Critical test safety fix: Running tests no longer deletes production vote data. Includes safe test runner and comprehensive database protection. Highly recommended for developers.

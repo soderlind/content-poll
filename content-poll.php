@@ -1,8 +1,8 @@
 <?php
 /**
  * Plugin Name: ContentPoll AI
- * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI). Modern card UI & real-time results.
- * Version: 0.7.6
+ * Description: AI-assisted contextual polls. Ask readers targeted questions about the content they are viewing. Generates smart question + option suggestions (Heuristic, OpenAI, Claude, Gemini, Ollama, Azure OpenAI, Grok). Modern card UI & real-time results.
+ * Version: 0.8.0
  * Author: Per Soderlind
  * Author URI: https://soderlind.no
  * Plugin URI: https://github.com/soderlind/content-poll

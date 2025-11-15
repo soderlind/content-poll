@@ -53,6 +53,11 @@ if ( is_dir( $wpRoot ) && file_exists( $wpRoot . '/wp-load.php' ) ) {
 	// Minimal mocks when WordPress is unavailable.
 	if ( ! function_exists( 'get_option' ) ) {
 		function get_option( $option, $default = false ) {
+			// Allow test override via global array when WordPress isn't loaded.
+			global $content_poll_test_options;
+			if ( is_array( $content_poll_test_options ) && isset( $content_poll_test_options[ $option ] ) ) {
+				return $content_poll_test_options[ $option ];
+			}
 			return $default;
 		}
 	}
