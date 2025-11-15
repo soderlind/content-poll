@@ -14,8 +14,17 @@ class RestVoteEndpointTest extends TestCase {
 		$controller = new VoteController();
 		$controller->register();
 		$nonce   = SecurityHelper::create_nonce();
-		$blockId = 'integration_block_1';
-		$req     = new WP_REST_Request( 'POST', '/content-poll/v1/block/' . $blockId . '/vote' );
+		$blockId = 'integration_' . uniqid();
+		// Optional cleanup if DB loaded and table exists (prevents residual interference)
+		if ( function_exists( 'wpdb' ) ) {
+			global $wpdb;
+			if ( isset( $wpdb ) && isset( $wpdb->prefix ) ) {
+				$table = $wpdb->prefix . 'vote_block_submissions';
+				// Best-effort delete any residual rows for this block id (should be none)
+				$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $table . ' WHERE block_id = %s OR poll_id = %s', $blockId, $blockId ) );
+			}
+		}
+		$req = new WP_REST_Request( 'POST', '/content-poll/v1/block/' . $blockId . '/vote' );
 		$req->set_header( 'X-WP-Nonce', $nonce );
 		$req->set_param( 'optionIndex', 0 );
 		$req->set_param( 'postId', 123 );

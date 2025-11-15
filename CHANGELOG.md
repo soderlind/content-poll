@@ -6,6 +6,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.8.1] - 2025-11-15
+
+### Changed
+- Consolidated AI suggestion prompt into a single constant template and unified JSON parsing logic inside `AISuggestionService`, removing duplicated provider-specific prompt code.
+
+### Fixed
+- Improved robustness of AI suggestion JSON parsing (multi-stage extraction: direct decode, brace span recovery, fragment scanning) reducing malformed suggestion fallbacks.
+- REST vote/results tests now isolate data using unique block IDs, preventing residual poll data from affecting subsequent test runs.
+
+### Notes
+- Internal maintenance release focused on reliability and maintainability of AI suggestion pipeline and test isolation.
+- No database or schema changes.
+- Safe upgrade; no action required.
+
 ## [0.8.0] - 2025-11-15
 
 ### Added
@@ -342,3 +356,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.6.3]: https://github.com/yourusername/content-vote/compare/v0.6.2...v0.6.3
 [0.6.2]: https://github.com/yourusername/content-vote/compare/v0.6.1...v0.6.2
 [0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1
+[0.8.1]: https://github.com/yourusername/content-vote/compare/v0.8.0...v0.8.1

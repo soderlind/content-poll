@@ -16,7 +16,14 @@ class RestResultsEndpointTest extends TestCase {
 		( new VoteController() )->register();
 		( new ResultsController() )->register();
 		$nonce   = SecurityHelper::create_nonce();
-		$blockId = 'results_block';
+		$blockId = 'results_' . uniqid();
+		if ( function_exists( 'wpdb' ) ) {
+			global $wpdb;
+			if ( isset( $wpdb ) && isset( $wpdb->prefix ) ) {
+				$table = $wpdb->prefix . 'vote_block_submissions';
+				$wpdb->query( $wpdb->prepare( 'DELETE FROM ' . $table . ' WHERE block_id = %s OR poll_id = %s', $blockId, $blockId ) );
+			}
+		}
 		// Cast a vote first
 		$voteReq = new WP_REST_Request( 'POST', '/content-poll/v1/block/' . $blockId . '/vote' );
 		$voteReq->set_header( 'X-WP-Nonce', $nonce );

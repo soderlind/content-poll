@@ -7,6 +7,7 @@ namespace ContentPoll\Services;
 use ContentPoll\Admin\SettingsPage;
 
 class AISuggestionService {
+	private const PROMPT_TEMPLATE = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n%s";
 	/**
 	 * Generate a suggestion (question + option list) from post content.
 	 * Uses configured AI provider (heuristic or OpenAI).
@@ -89,7 +90,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
 
 		// Build request based on type (OpenAI or Azure)
 		if ( $type === 'azure' ) {
@@ -176,15 +177,9 @@ class AISuggestionService {
 
 		$content_text = $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ];
 
-		// Try to extract JSON from the response
-		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
-			$json = json_decode( $matches[ 0 ], true );
-			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {
-				return [
-					'question' => sanitize_text_field( $json[ 'question' ] ),
-					'options'  => array_map( 'sanitize_text_field', array_slice( $json[ 'options' ], 0, 6 ) ),
-				];
-			}
+		$parsed = $this->parse_poll_json( $content_text );
+		if ( ! empty( $parsed ) ) {
+			return $parsed;
 		}
 
 		return [];
@@ -203,7 +198,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
 
 		$response = wp_remote_post( 'https://api.anthropic.com/v1/messages', [
 			'headers' => [
@@ -249,15 +244,9 @@ class AISuggestionService {
 
 		$content_text = $data[ 'content' ][ 0 ][ 'text' ];
 
-		// Try to extract JSON from the response
-		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
-			$json = json_decode( $matches[ 0 ], true );
-			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {
-				return [
-					'question' => sanitize_text_field( $json[ 'question' ] ),
-					'options'  => array_map( 'sanitize_text_field', array_slice( $json[ 'options' ], 0, 6 ) ),
-				];
-			}
+		$parsed = $this->parse_poll_json( $content_text );
+		if ( ! empty( $parsed ) ) {
+			return $parsed;
 		}
 
 		return [];
@@ -276,7 +265,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
 
 		$url = 'https://generativelanguage.googleapis.com/v1beta/models/' . $model . ':generateContent?key=' . $api_key;
 
@@ -323,15 +312,9 @@ class AISuggestionService {
 
 		$content_text = $data[ 'candidates' ][ 0 ][ 'content' ][ 'parts' ][ 0 ][ 'text' ];
 
-		// Try to extract JSON from the response
-		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
-			$json = json_decode( $matches[ 0 ], true );
-			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {
-				return [
-					'question' => sanitize_text_field( $json[ 'question' ] ),
-					'options'  => array_map( 'sanitize_text_field', array_slice( $json[ 'options' ], 0, 6 ) ),
-				];
-			}
+		$parsed = $this->parse_poll_json( $content_text );
+		if ( ! empty( $parsed ) ) {
+			return $parsed;
 		}
 
 		return [];
@@ -350,7 +333,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
 
 		$url = rtrim( $endpoint, '/' ) . '/api/generate';
 
@@ -391,15 +374,9 @@ class AISuggestionService {
 
 		$content_text = $data[ 'response' ];
 
-		// Try to extract JSON from the response
-		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
-			$json = json_decode( $matches[ 0 ], true );
-			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {
-				return [
-					'question' => sanitize_text_field( $json[ 'question' ] ),
-					'options'  => array_map( 'sanitize_text_field', array_slice( $json[ 'options' ], 0, 6 ) ),
-				];
-			}
+		$parsed = $this->parse_poll_json( $content_text );
+		if ( ! empty( $parsed ) ) {
+			return $parsed;
 		}
 
 		return [];
@@ -418,7 +395,7 @@ class AISuggestionService {
 			return [];
 		}
 
-		$prompt = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n" . $text;
+		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
 
 		$response = wp_remote_post( 'https://api.x.ai/v1/chat/completions', [
 			'headers' => [
@@ -460,14 +437,9 @@ class AISuggestionService {
 
 		$content_text = $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ];
 
-		if ( preg_match( '/\{[^}]+\}/', $content_text, $matches ) ) {
-			$json = json_decode( $matches[ 0 ], true );
-			if ( isset( $json[ 'question' ], $json[ 'options' ] ) && is_array( $json[ 'options' ] ) ) {
-				return [
-					'question' => sanitize_text_field( $json[ 'question' ] ),
-					'options'  => array_map( 'sanitize_text_field', array_slice( $json[ 'options' ], 0, 6 ) ),
-				];
-			}
+		$parsed = $this->parse_poll_json( $content_text );
+		if ( ! empty( $parsed ) ) {
+			return $parsed;
 		}
 
 		return [];
@@ -513,5 +485,50 @@ class AISuggestionService {
 			$options = array_slice( $options, 0, 6 );
 		}
 		return [ 'question' => $question, 'options' => $options ];
+	}
+
+
+	/**
+	 * Parse provider raw response chunk for poll JSON and sanitize.
+	 *
+	 * @param string $raw Provider response content.
+	 * @return array{question:string,options:array<int,string>}|array
+	 */
+	private function parse_poll_json( string $raw ): array {
+		$raw = trim( $raw );
+		// 1. Try direct decode (model returns pure JSON)
+		$direct = json_decode( $raw, true );
+		if ( is_array( $direct ) && isset( $direct[ 'question' ], $direct[ 'options' ] ) && is_array( $direct[ 'options' ] ) ) {
+			return [
+				'question' => sanitize_text_field( $direct[ 'question' ] ),
+				'options'  => array_map( 'sanitize_text_field', array_slice( $direct[ 'options' ], 0, 6 ) ),
+			];
+		}
+		// 2. Locate first '{' and last '}' to capture full object
+		$start = strpos( $raw, '{' );
+		$end   = strrpos( $raw, '}' );
+		if ( $start !== false && $end !== false && $end > $start ) {
+			$candidate = substr( $raw, $start, $end - $start + 1 );
+			$decoded   = json_decode( $candidate, true );
+			if ( is_array( $decoded ) && isset( $decoded[ 'question' ], $decoded[ 'options' ] ) && is_array( $decoded[ 'options' ] ) ) {
+				return [
+					'question' => sanitize_text_field( $decoded[ 'question' ] ),
+					'options'  => array_map( 'sanitize_text_field', array_slice( $decoded[ 'options' ], 0, 6 ) ),
+				];
+			}
+		}
+		// 3. Fallback: scan all non-nested simple object patterns and try each
+		if ( preg_match_all( '/\{[^{}]*\}/', $raw, $all ) ) {
+			foreach ( $all[ 0 ] as $fragment ) {
+				$decoded = json_decode( $fragment, true );
+				if ( is_array( $decoded ) && isset( $decoded[ 'question' ], $decoded[ 'options' ] ) && is_array( $decoded[ 'options' ] ) ) {
+					return [
+						'question' => sanitize_text_field( $decoded[ 'question' ] ),
+						'options'  => array_map( 'sanitize_text_field', array_slice( $decoded[ 'options' ], 0, 6 ) ),
+					];
+				}
+			}
+		}
+		return [];
 	}
 }
