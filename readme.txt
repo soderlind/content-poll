@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.8.1
+Stable tag: 0.8.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -168,6 +168,11 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.8.2 - 2025-11-15 =
+* Changed: Results block now shows per-option percentages (with total votes summary) for clearer at-a-glance interpretation
+* Changed: README expanded with CSS customization section (class names, variables, and examples) for theming the poll block
+* Notes: Minor UX/documentation update; no database changes; safe upgrade
+
 = 0.8.1 - 2025-11-15 =
 * Changed: Refactored AISuggestionService (single prompt constant + unified JSON parsing)
 * Fixed: More robust AI suggestion JSON parsing (multi-stage recovery) and isolated REST tests (unique block IDs)
@@ -315,6 +320,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.8.2 =
+Display now emphasizes per-option percentages instead of raw counts, with total votes preserved. Includes updated CSS customization docs. Safe upgrade; no database changes.
 
 = 0.8.1 =
 Internal reliability update (refactored AI suggestion logic + safer tests). Safe upgrade; no database changes.
