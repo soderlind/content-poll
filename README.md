@@ -11,7 +11,7 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 <img width="1271" height="634" alt="content-poll" src="https://github.com/user-attachments/assets/cb224614-8a1f-4598-bef9-7f5be3b042e2" />
 
-<img width="24%"  height="718" alt="Image" src="https://github.com/user-attachments/assets/5817ea97-6e8d-4b93-b8b7-c4a3c78e471d" /><img width="24%" height="526" alt="Image" src="https://github.com/user-attachments/assets/04e0c8f2-fba4-45e5-a5ed-23d5277dae1b" /><img width="24%" height="634" alt="Image" src="https://github.com/user-attachments/assets/5ee307dc-7269-43b0-9fd8-6fdf018e4f2e" /><img width="24%" height="733" alt="Image" src="https://github.com/user-attachments/assets/3c019f11-c27e-4877-9763-389e2d098626" />
+<img width="25%"  height="718" alt="Image" src="https://github.com/user-attachments/assets/5817ea97-6e8d-4b93-b8b7-c4a3c78e471d" /><img width="25%" height="526" alt="Image" src="https://github.com/user-attachments/assets/04e0c8f2-fba4-45e5-a5ed-23d5277dae1b" /><img width="25%" height="634" alt="Image" src="https://github.com/user-attachments/assets/5ee307dc-7269-43b0-9fd8-6fdf018e4f2e" /><img width="25%" height="733" alt="Image" src="https://github.com/user-attachments/assets/3c019f11-c27e-4877-9763-389e2d098626" />
 
 [Features](#-features) | [Installation](#-installation) | [Usage](#-usage) | [Design Features](#-design-features) | [Development](#-development) | [Privacy & Security](#-privacy--security) | [REST API](#-rest-api) | [Roadmap](#-roadmap) 
 
