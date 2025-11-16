@@ -47,6 +47,16 @@
 					: `Option ${ index + 1 }`;
 			}
 
+			// Utility to escape HTML special characters in user-supplied text.
+			function escapeHTML( str ) {
+				return String( str )
+					.replace( /&/g, '&amp;' )
+					.replace( /</g, '&lt;' )
+					.replace( />/g, '&gt;' )
+					.replace( /"/g, '&quot;' )
+					.replace( /'/g, '&#39;' );
+			}
+
 			function displayResults( res ) {
 				// Removed debug console output.
 				if ( ! res || typeof res.totalVotes === 'undefined' ) {
@@ -73,7 +83,7 @@
 						'<span><strong>' +
 						label +
 						'.</strong> ' +
-						optionText +
+						escapeHTML(optionText) +
 						'</span>' +
 						'<span class="content-poll__result-count" aria-label="' +
 						pct +
