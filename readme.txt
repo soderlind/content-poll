@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.8.2
+Stable tag: 0.8.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -168,6 +168,13 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 
 == Changelog ==
 
+= 0.8.3 - 2025-11-16 =
+* Changed: Updated JavaScript dev tooling (`@wordpress/scripts`, `vitest`) and verified all JS tests and builds pass on the newer stack.
+* Security: Reviewed `npm audit` output; remaining issues are limited to dev-only tooling (`js-yaml`, `webpack-dev-server` via `@wordpress/scripts`).
+* Security: Applied `npm audit fix` (non-force) and intentionally avoided `--force` downgrade of `@wordpress/scripts` to prevent regressing to older tooling.
+* Security: Fix code security issues found by gitHub Advanted Security Scan.
+* Notes: Tooling/audit-focused release only; no runtime behavior or database/schema changes. Safe upgrade; no action required.
+
 = 0.8.2 - 2025-11-15 =
 * Changed: Results block now shows per-option percentages (with total votes summary) for clearer at-a-glance interpretation
 * Changed: README expanded with CSS customization section (class names, variables, and examples) for theming the poll block
@@ -320,6 +327,9 @@ No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded as
 * i18n ready
 
 == Upgrade Notice ==
+
+= 0.8.3 =
+Tooling and security maintenance release (updated JS dev stack, audit review). No runtime or schema changes; safe upgrade with no manual steps.
 
 = 0.8.2 =
 Display now emphasizes per-option percentages instead of raw counts, with total votes preserved. Includes updated CSS customization docs. Safe upgrade; no database changes.

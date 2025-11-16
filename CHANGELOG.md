@@ -6,6 +6,21 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.8.3] - 2025-11-16
+
+### Changed
+- Updated JavaScript toolchain devDependencies (`@wordpress/scripts`, `vitest`) and confirmed all JS tests and builds pass on the newer stack.
+
+### Security
+- Reviewed `npm audit` output; remaining vulnerabilities are limited to dev-only tooling (`js-yaml`, `webpack-dev-server` via `@wordpress/scripts`).
+- Applied `npm audit fix` (non-force); declined `--force` downgrade of `@wordpress/scripts` to avoid reintroducing older tooling with its own issues.
+- Fix code security issues found by gitHub Advanted Security Scan.
+
+### Notes
+- Dev tooling and audit-only changes; no runtime/plugin behavior or database schema modifications.
+- Safe upgrade; no action required for existing installs.
+
+
 ## [0.8.2] - 2025-11-15
 
 ### Changed
@@ -369,3 +384,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 [0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1
 [0.8.1]: https://github.com/yourusername/content-vote/compare/v0.8.0...v0.8.1
 [0.8.2]: https://github.com/yourusername/content-vote/compare/v0.8.1...v0.8.2
+[0.8.3]: https://github.com/yourusername/content-vote/compare/v0.8.2...v0.8.3
