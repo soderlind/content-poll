@@ -83,7 +83,7 @@
 						'<span><strong>' +
 						label +
 						'.</strong> ' +
-							escapeHTML( optionText ) +
+						escapeHTML( optionText ) +
 						'</span>' +
 						'<span class="content-poll__result-count" aria-label="' +
 						pct +
