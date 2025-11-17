@@ -8,8 +8,16 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 
 **Perfect for**: Blog posts, product pages, documentation, news articles, tutorials, reviews – any content where you want to gauge reader opinions or preferences.
 
+<div align="center">
+  <video src="https://github.com/user-attachments/assets/5981267e-4573-4ac5-ae80-81b7c3f85156" width="100%" />
+</div>
 
-<img width="1271" height="634" alt="content-poll" src="https://github.com/user-attachments/assets/cb224614-8a1f-4598-bef9-7f5be3b042e2" />
+
+
+
+
+
+
 
 <img width="25%" alt="Image" src=".screenshots/content-vote-settings.png" /><img width="25%" alt="Image" src=".screenshots/content-vote-edit.png" /><img width="25%" alt="Image" src=".screenshots/content-poll.png" /><img width="25%" alt="Image" src=".screenshots/content-poll-analytics-single.png" />
 
