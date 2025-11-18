@@ -371,17 +371,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Vote lock after submission to prevent duplicate votes
 - Editor-only AI suggestions based on post content
 
-[0.2.0]: https://github.com/yourusername/content-vote/compare/v0.1.0...v0.2.0
-[0.1.0]: https://github.com/yourusername/content-vote/releases/tag/v0.1.0
-[0.5.0]: https://github.com/yourusername/content-vote/compare/v0.4.0...v0.5.0
-[0.4.0]: https://github.com/yourusername/content-vote/compare/v0.3.0...v0.4.0
-[0.3.0]: https://github.com/yourusername/content-vote/compare/v0.2.0...v0.3.0
-[0.5.1]: https://github.com/yourusername/content-vote/compare/v0.5.0...v0.5.1
-[0.6.4]: https://github.com/yourusername/content-vote/compare/v0.6.3...v0.6.4
-[0.7.0]: https://github.com/yourusername/content-vote/compare/v0.6.4...v0.7.0
-[0.6.3]: https://github.com/yourusername/content-vote/compare/v0.6.2...v0.6.3
-[0.6.2]: https://github.com/yourusername/content-vote/compare/v0.6.1...v0.6.2
-[0.6.1]: https://github.com/yourusername/content-vote/compare/v0.6.0...v0.6.1
-[0.8.1]: https://github.com/yourusername/content-vote/compare/v0.8.0...v0.8.1
-[0.8.2]: https://github.com/yourusername/content-vote/compare/v0.8.1...v0.8.2
-[0.8.3]: https://github.com/yourusername/content-vote/compare/v0.8.2...v0.8.3
+
+[0.5.0]: https://github.com/soderlind/content-poll/compare/0.4.0...0.5.0
+[0.4.0]: https://github.com/soderlind/content-poll/compare/0.3.0...0.4.0
+[0.3.0]: https://github.com/soderlind/content-poll/compare/0.2.0...0.3.0
+[0.5.1]: https://github.com/soderlind/content-poll/compare/0.5.0...0.5.1
+[0.6.4]: https://github.com/soderlind/content-poll/compare/0.6.3...0.6.4
+[0.7.0]: https://github.com/soderlind/content-poll/compare/0.6.4...0.7.0
+[0.6.3]: https://github.com/soderlind/content-poll/compare/0.6.2...0.6.3
+[0.6.2]: https://github.com/soderlind/content-poll/compare/0.6.1...0.6.2
+[0.6.1]: https://github.com/soderlind/content-poll/compare/0.6.0...0.6.1
+[0.8.1]: https://github.com/soderlind/content-poll/compare/0.8.0...0.8.1
+[0.8.2]: https://github.com/soderlind/content-poll/compare/0.8.1...0.8.2
+[0.8.3]: https://github.com/soderlind/content-poll/compare/0.8.2...0.8.3
