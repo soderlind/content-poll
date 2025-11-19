@@ -61,21 +61,21 @@ class SettingsPage {
 			'type'              => 'array',
 			'sanitize_callback' => [ $this, 'sanitize_settings' ],
 			'default'           => [
-				'ai_provider'       => 'heuristic',
-				'openai_type'       => 'openai',
-				'openai_key'        => '',
-				'openai_model'      => 'gpt-3.5-turbo',
-				'azure_endpoint'    => '',
-				'azure_deployment'  => '',
-				'azure_api_version' => '2024-02-15-preview',
-				'anthropic_key'     => '',
-				'anthropic_model'   => 'claude-3-5-sonnet-20241022',
-				'gemini_key'        => '',
-				'gemini_model'      => 'gemini-1.5-flash',
-				'ollama_endpoint'   => 'http://localhost:11434',
-				'ollama_model'      => 'llama3.2',
-				'grok_key'          => '',
-				'grok_model'        => 'grok-2',
+				'ai_provider'        => 'heuristic',
+				'openai_type'        => 'openai',
+				'openai_key'         => '',
+				'openai_model'       => 'gpt-3.5-turbo',
+				'azure_endpoint'     => '',
+				'azure_deployment'   => '',
+				'azure_api_version'  => '2024-02-15-preview',
+				'anthropic_key'      => '',
+				'anthropic_model'    => 'claude-3-5-sonnet-20241022',
+				'gemini_key'         => '',
+				'gemini_model'       => 'gemini-1.5-flash',
+				'ollama_endpoint'    => 'http://localhost:11434',
+				'ollama_model'       => 'llama3.2',
+				'grok_key'           => '',
+				'grok_model'         => 'grok-2',
 			],
 		] );
 
@@ -141,8 +141,8 @@ class SettingsPage {
 		$sanitized[ 'ai_provider' ] = isset( $input[ 'ai_provider' ] ) && in_array( $input[ 'ai_provider' ], [ 'heuristic', 'openai', 'anthropic', 'gemini', 'ollama', 'grok' ], true )
 			? $input[ 'ai_provider' ]
 			: 'heuristic';
-		$sanitized[ 'grok_key' ]    = isset( $input[ 'grok_key' ] ) ? sanitize_text_field( $input[ 'grok_key' ] ) : '';
-		$sanitized[ 'grok_model' ]  = isset( $input[ 'grok_model' ] ) ? sanitize_text_field( $input[ 'grok_model' ] ) : 'grok-2';
+		$sanitized[ 'grok_key' ]           = isset( $input[ 'grok_key' ] ) ? sanitize_text_field( $input[ 'grok_key' ] ) : '';
+		$sanitized[ 'grok_model' ]         = isset( $input[ 'grok_model' ] ) ? sanitize_text_field( $input[ 'grok_model' ] ) : 'grok-2';
 
 		$sanitized[ 'openai_type' ] = isset( $input[ 'openai_type' ] ) && in_array( $input[ 'openai_type' ], [ 'openai', 'azure' ], true )
 			? $input[ 'openai_type' ]

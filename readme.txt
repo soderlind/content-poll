@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.8.3
+Stable tag: 0.9.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,11 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
 
 == Changelog ==
+
+= 0.9.0 - 2025-11-19 =
+* Changed: PocketFlow multi-step AI flow is now always used for OpenAI and Azure OpenAI providers; the separate PocketFlow checkbox has been removed from settings.
+* Changed: OpenAI/Azure suggestions now always run through the topic-aware multi-step flow (keywords → poll draft → validation) for more structured questions and options.
+* Notes: Heuristic, Anthropic, Gemini, Ollama, and Grok providers are unchanged; heuristic fallback still applies when external providers fail.
 
 = 0.8.3 - 2025-11-16 =
 * Changed: Updated JavaScript dev tooling (`@wordpress/scripts`, `vitest`) and verified all JS tests and builds pass on the newer stack.

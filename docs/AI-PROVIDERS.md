@@ -87,11 +87,25 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
   - API Key: Your xAI API key
   - Model: `grok-2` (default) or updated released model
 
+### 8. PocketFlow Mode (Multi-Step, OpenAI/Azure)
+- **API Key Required**: Yes (uses your OpenAI/Azure credentials)
+- **Cost**: Same as your configured OpenAI/Azure usage
+- **Models**: Any chat-capable OpenAI or Azure OpenAI deployment you have configured
+- **Description**: Optional internal multi-step flow inspired by PocketFlow that first extracts topics from the content and then generates a poll question and options, with an extra validation pass to normalize the JSON.
+- **Best For**: Posts where you want more deliberate, topic-aware polls while keeping your existing OpenAI/Azure setup.
+- **Configuration**:
+  - AI Provider: OpenAI
+  - OpenAI Type: OpenAI or Azure OpenAI
+  - API Key: Your OpenAI or Azure OpenAI API key
+  - Model / Deployment: Same as for the regular OpenAI provider
+  - Azure Endpoint/API Version: Required only when using Azure OpenAI
+  - PocketFlow multi-step mode: Enabled (checkbox in AI Settings)
+
 
 ## Provider Comparison
 
-| Provider | Cost | Quality | Speed | Privacy | Best Use Case |
-|----------|------|---------|-------|---------|---------------|
+| Provider / Mode | Cost | Quality | Speed | Privacy | Best Use Case |
+|-----------------|------|---------|-------|---------|---------------|
 | Heuristic | Free | Basic | Fast | Full | Testing/Simple sites |
 | OpenAI | $$ | Excellent | Fast | External | Production quality |
 | Azure OpenAI | $$$ | Excellent | Fast | Enterprise | Compliance required |
@@ -99,6 +113,7 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 | Gemini | $/Free | Good | Fast | External | Budget-conscious |
 | Ollama | Free* | Good | Medium | Full | Privacy-first |
 | Grok (xAI) | $$ | Good/Emerging | Fast | External | Real-time reasoning |
+| OpenAI + PocketFlow mode | $$ | Excellent | Medium | External | Topic-aware, robust polls |
 
 *Infrastructure costs only
 
