@@ -7,7 +7,8 @@ namespace ContentPoll\Services;
 use ContentPoll\Admin\SettingsPage;
 
 class AISuggestionService {
-	private const PROMPT_TEMPLATE = "Based on the following content, first infer the language of the content, then suggest one poll question and 4-6 voting options in that same language. Return only valid JSON in this exact format: {\"question\": \"...\", \"options\": [\"...\", \"...\"]}. Do not include any text outside the JSON.\n\nContent:\n%s";
+	public const PROMPT_TEMPLATE             = "You are creating a poll based ONLY on the content below.\n\n1) First, infer the language of the content.\n2) Then output that inferred language as an ISO 639-1 language code in the field \"language\" (for example: \"en\" for English, \"no\" or \"nb\" for Norwegian Bokmål).\n3) Then write exactly ONE knowledge/comprehension poll question in that SAME language that checks the reader’s understanding of an important fact, purpose, or claim in the content.\n4) For this comprehension question, write 4–6 short answer options, ALL in that SAME language. Make sure there is ONE clearly best/correct answer that is directly supported by the content, and 3–5 distractor options that are plausible but clearly less correct or incomplete. Avoid near-duplicates; each option should be meaningfully distinct.\n5) Do NOT mix languages between the question and the options.\n6) Do NOT translate the content; stay in the content’s language.\n7) Do NOT use Norwegian unless the content itself is Norwegian.\n\nReturn ONLY valid JSON in this exact format (no markdown, no prose):\n\n{\n  \"language\": \"xx\",\n  \"question\": \"...\",\n  \"options\": [\"...\", \"...\", \"...\"]\n}\n\nContent:\n%s";
+	public const PROMPT_TEMPLATE_TOPIC_AWARE = "You are creating TWO complementary poll questions based ONLY on the content and topics below.\n\nYour goals are:\n- One knowledge/comprehension question that checks understanding of a key fact, purpose, or claim related to the topics.\n- One opinion/priority question that asks the voter to choose what they find most important or what they prefer among the main aspects of the topics.\n\nSteps:\n1) First, infer the language of the content.\n2) Then output that inferred language as an ISO 639-1 language code in the field \"language\" (for example: \"en\" for English, \"no\" or \"nb\" for Norwegian Bokmål).\n3) Write exactly ONE knowledge/comprehension poll question in that SAME language that is clearly about the given topics.\n4) For this comprehension question, write 4–6 short answer options, ALL in that SAME language. Make sure there is ONE clearly best/correct answer that is directly supported by the content, and 3–5 distractor options that are plausible but clearly less correct or incomplete. Avoid near-duplicates; each option should be meaningfully distinct.\n5) Then write exactly ONE opinion/priority poll question in that SAME language that invites the voter to choose which aspect, consequence, or benefit (related to the given topics) they find most important, most concerning, or most positive.\n6) For this opinion/priority question, write 4–6 short answer options, ALL in that SAME language, that each represent a different aspect or angle mentioned or implied in the content.\n7) Do NOT mix languages between any question and its options.\n8) Do NOT translate the content; stay in the content’s language.\n9) Do NOT use Norwegian unless the content itself is Norwegian.\n\nReturn ONLY valid JSON in this exact format (no markdown, no prose):\n\n{\n  \"language\": \"xx\",\n  \"questions\": [\n    {\n      \"type\": \"comprehension\",\n      \"question\": \"...\",\n      \"options\": [\"...\", \"...\", \"...\"]\n    },\n    {\n      \"type\": \"opinion\",\n      \"question\": \"...\",\n      \"options\": [\"...\", \"...\", \"...\"]\n    }\n  ]\n}\n\nContent:\n%s\n\nTopics to focus on:\n%s";
 	/**
 	 * Generate a suggestion (question + option list) from post content.
 	 * Uses configured AI provider (heuristic or OpenAI).
@@ -21,7 +22,7 @@ class AISuggestionService {
 
 		switch ( $provider ) {
 			case 'openai':
-				$result = $this->suggest_openai( $text );
+				$result = $this->suggest_pocketflow( $text );
 				break;
 			case 'anthropic':
 				$result = $this->suggest_anthropic( $text );
@@ -44,6 +45,49 @@ class AISuggestionService {
 			$result = $this->suggest_heuristic( $content );
 		}
 		return $this->normalize_suggestion( $result, $content );
+	}
+
+	/**
+	 * Generate suggestion using internal PocketFlow-style multi-step flow.
+	 * Reuses OpenAI/Azure configuration via LLMClient and PocketFlow nodes.
+	 *
+	 * @param string $text Content excerpt (plain text, trimmed).
+	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
+	 */
+	private function suggest_pocketflow( string $text ): array {
+		if ( $text === '' ) {
+			return [];
+		}
+
+		// LLMClient will validate that OpenAI/Azure configuration is present.
+		try {
+			$client = new \ContentPoll\AI\LLMClient();
+		} catch (\RuntimeException $e) {
+			error_log( 'ContentPoll AI PocketFlow config error: ' . $e->getMessage() );
+			return [];
+		}
+
+		$shared                    = new \stdClass();
+		$shared->content_excerpt   = $text;
+		$shared->topics            = [];
+		$shared->raw_poll_response = '';
+		$shared->final_poll        = null;
+
+		$flow = \ContentPoll\AI\PocketFlow\PollGenerationFlowFactory::create( $client );
+
+		try {
+			$flow->run( $shared );
+		} catch (\Throwable $e) {
+			// Any unexpected error in the flow should not break the editor.
+			error_log( 'ContentPoll AI PocketFlow runtime error: ' . $e->getMessage() );
+			return [];
+		}
+
+		if ( ! isset( $shared->final_poll ) || ! is_array( $shared->final_poll ) ) {
+			return [];
+		}
+
+		return $shared->final_poll;
 	}
 
 	/**
@@ -76,114 +120,6 @@ class AISuggestionService {
 		];
 	}
 
-	/**
-	 * Generate OpenAI-based suggestion.
-	 * @param string $content Raw post content.
-	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
-	 */
-	private function suggest_openai( string $text ): array {
-		$api_key = SettingsPage::get_openai_key();
-		$model   = SettingsPage::get_openai_model();
-		$type    = SettingsPage::get_openai_type();
-
-		if ( empty( $api_key ) || empty( $model ) ) {
-			return [];
-		}
-
-		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
-
-		// Build request based on type (OpenAI or Azure)
-		if ( $type === 'azure' ) {
-			$endpoint    = SettingsPage::get_azure_endpoint();
-			$api_version = SettingsPage::get_azure_api_version();
-
-			if ( empty( $endpoint ) ) {
-				return [];
-			}
-
-			// Azure OpenAI endpoint format
-			$url = rtrim( $endpoint, '/' ) . '/openai/deployments/' . $model . '/chat/completions?api-version=' . $api_version;
-
-			$response = wp_remote_post( $url, [
-				'headers' => [
-					'Content-Type' => 'application/json',
-					'api-key'      => $api_key,
-				],
-				'body'    => wp_json_encode( [
-					'messages'    => [
-						[
-							'role'    => 'system',
-							'content' => 'You are a helpful assistant that generates poll questions and voting options based on content. Always respond with valid JSON.',
-						],
-						[
-							'role'    => 'user',
-							'content' => $prompt,
-						],
-					],
-					'temperature' => 0.7,
-					'max_tokens'  => 200,
-				] ),
-				'timeout' => 10,
-			] );
-		} else {
-			// Standard OpenAI endpoint
-			$response = wp_remote_post( 'https://api.openai.com/v1/chat/completions', [
-				'headers' => [
-					'Content-Type'  => 'application/json',
-					'Authorization' => 'Bearer ' . $api_key,
-				],
-				'body'    => wp_json_encode( [
-					'model'       => $model,
-					'messages'    => [
-						[
-							'role'    => 'system',
-							'content' => 'You are a helpful assistant that generates poll questions and voting options based on content. Always respond with valid JSON.',
-						],
-						[
-							'role'    => 'user',
-							'content' => $prompt,
-						],
-					],
-					'temperature' => 0.7,
-					'max_tokens'  => 200,
-				] ),
-				'timeout' => 10,
-			] );
-		}
-
-		if ( is_wp_error( $response ) ) {
-			error_log( 'ContentPoll AI OpenAI Error: ' . $response->get_error_message() );
-			return [];
-		}
-
-		$body = wp_remote_retrieve_body( $response );
-		$data = json_decode( $body, true );
-
-		// Check for API error responses (invalid model, auth issues, etc.)
-		if ( isset( $data[ 'error' ] ) ) {
-			$error_message = $data[ 'error' ][ 'message' ] ?? 'Unknown error';
-			error_log( 'ContentPoll AI OpenAI API Error: ' . $error_message );
-
-			// Store transient for admin notice
-			if ( current_user_can( 'manage_options' ) ) {
-				set_transient( 'content_poll_ai_error', $error_message, 300 );
-			}
-			return [];
-		}
-
-		if ( ! isset( $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ] ) ) {
-			return [];
-		}
-
-		$content_text = $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ];
-
-		$parsed = $this->parse_poll_json( $content_text );
-		if ( ! empty( $parsed ) ) {
-			return $parsed;
-		}
-
-		return [];
-	}
 
 	/**
 	 * Generate Anthropic Claude-based suggestion.

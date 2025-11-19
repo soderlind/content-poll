@@ -37,8 +37,8 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 ### AI-Powered Suggestions (7 Providers)
 AI reads your page content and generates contextually relevant poll questions:
 - **Heuristic** (Default) - Built-in keyword extraction from your content, no API required. Use it for tests and basic suggestions.
-- **OpenAI** - GPT models analyze your content for smart suggestions
-- **Azure OpenAI** - Enterprise Azure OpenAI Service
+- **OpenAI** - GPT models analyze your content using a multi-step PocketFlow pipeline (topics → poll draft → validation) for structured, topic-aware questions and options.
+- **Azure OpenAI** - Enterprise Azure OpenAI Service using the same PocketFlow multi-step flow as OpenAI.
 - **Anthropic Claude** - Claude 3.5 Sonnet analyzes content context
 - **Google Gemini** - Gemini 1.5 Flash (free tier available)
 - **Ollama** - Self-hosted local models process content privately
@@ -105,7 +105,7 @@ npm run start
 
 ### AI Suggestions (Content-Aware)
 1. Go to **Settings → ContentPoll AI**
-2. Select an AI provider (OpenAI, Anthropic, Gemini, Ollama, or Azure)
+2. Select an AI provider (OpenAI, Anthropic, Gemini, Ollama, Grok, or Azure)
 3. Enter your API key/endpoint
 4. **Write your post content first** (AI needs content to analyze)
 5. Add the ContentPoll AI block
@@ -347,5 +347,7 @@ You should have received a copy of the GNU Lesser General Public License along w
 ## 🙏 Credits
 
 Built with modern WordPress tools and best practices. Uses @wordpress/scripts for building, WordPress design system for styling, and follows WordPress coding standards.
+
+PocketFlow-inspired multi-step poll generation flow design is based on ideas and patterns from the PocketFlow project.
 
 

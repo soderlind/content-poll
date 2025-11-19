@@ -6,6 +6,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.9.0] - 2025-11-19
+
+### Changed
+- PocketFlow multi-step AI flow is now always used for OpenAI and Azure OpenAI providers; the separate PocketFlow checkbox and option have been removed from the settings UI.
+- OpenAI/Azure suggestions now consistently run through the topic-aware multi-step flow (keywords → poll draft → JSON validation), reusing the existing `LLMClient` and PocketFlow nodes.
+
+### Notes
+- Heuristic, Anthropic, Gemini, Ollama, and Grok providers are unchanged.
+- Heuristic fallback behavior remains: if any external provider (including PocketFlow/OpenAI) fails or returns an empty result, the built-in heuristic suggestion generator is used.
+
 ## [0.8.3] - 2025-11-16
 
 ### Changed
@@ -19,6 +29,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Notes
 - Dev tooling and audit-only changes; no runtime/plugin behavior or database schema modifications.
 - Safe upgrade; no action required for existing installs.
+
+
+## [0.8.4] - 2025-11-19
+
+### Added
+- Optional `PocketFlow` multi-step mode that uses your existing OpenAI/Azure configuration to run a topic-aware poll generation flow (keywords → poll draft → JSON validation). This is controlled via a checkbox in AI Settings and only affects the OpenAI provider.
+
+### Changed
+- Introduced an internal `LLMClient` wrapper and lightweight flow/nodes infrastructure to centralize OpenAI/Azure HTTP calls and make the AI suggestion pipeline more modular.
+- Updated AI settings so the AI Provider dropdown selects the backend (Heuristic, OpenAI, Anthropic, Gemini, Ollama, Grok), and PocketFlow is modeled as a separate on/off mode instead of its own provider.
+
+### Notes
+- This is an internal AI architecture and UX enhancement; no database or REST API changes.
+- Heuristic fallback behavior is unchanged: if PocketFlow or any external provider fails, suggestions fall back to the built-in heuristic generator.
 
 
 ## [0.8.2] - 2025-11-15
