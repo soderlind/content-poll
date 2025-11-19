@@ -112,6 +112,8 @@ npm run start
 6. Click **Generate Suggestions** - AI reads the page content and suggests a relevant question
 7. Review and adjust the AI-generated question and options
 
+For a step-by-step walkthrough, see the [tutorials](./tutorial/) folder.
+
 ### Results Display
 After voting, visitors see:
 - Their selected option marked with a checkmark
