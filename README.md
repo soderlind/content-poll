@@ -228,7 +228,7 @@ Hide total votes (if you prefer only percentages):
 
 ## 🔧 Development
 
-Start with the [tutorial](./tutorial/#chapters)
+Start with the [tutorial](./tutorial/#chapters).
 
 ### Available Scripts
 ```bash
