@@ -112,7 +112,6 @@ npm run start
 6. Click **Generate Suggestions** - AI reads the page content and suggests a relevant question
 7. Review and adjust the AI-generated question and options
 
-For a step-by-step walkthrough, see the [tutorials](./tutorial/) folder.
 
 ### Results Display
 After voting, visitors see:
@@ -228,6 +227,8 @@ Hide total votes (if you prefer only percentages):
 - Test focus outlines after customizations to retain keyboard accessibility.
 
 ## 🔧 Development
+
+Start with the [tutorial](./tutorial/#chapters)
 
 ### Available Scripts
 ```bash
