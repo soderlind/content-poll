@@ -9,8 +9,12 @@ Engage your audience by asking them to vote on aspects of the page they're readi
 **Perfect for**: Blog posts, product pages, documentation, news articles, tutorials, reviews – any content where you want to gauge reader opinions or preferences.
 
 <div align="center">
-  <video src="https://github.com/user-attachments/assets/5981267e-4573-4ac5-ae80-81b7c3f85156" width="100%" />
+  <video src="https://github.com/user-attachments/assets/eea7e195-6d57-4290-93b5-bb37d761be6f" width="100%" />
 </div>
+
+
+
+
 
 
 
