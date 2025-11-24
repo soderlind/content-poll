@@ -375,6 +375,6 @@ You should have received a copy of the GNU Lesser General Public License along w
 
 Built with modern WordPress tools and best practices. Uses @wordpress/scripts for building, WordPress design system for styling, and follows WordPress coding standards.
 
-PocketFlow-inspired multi-step poll generation flow design is based on ideas and patterns from the PocketFlow project.
+PocketFlow-inspired multi-step poll generation flow design is based on ideas and patterns from the [PocketFlow project](https://medium.com/@zh2408/i-built-an-llm-framework-in-just-100-lines-83ff1968014b).
 
 
