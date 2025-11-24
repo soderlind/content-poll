@@ -145,7 +145,7 @@ $flow->run($shared);
 **Step-by-step execution:**
 
 ```mermaid
-%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#003f87','primaryTextColor':'#fff','primaryBorderColor':'#003f87','lineColor':'#003f87','secondaryColor':'#fdb81e','tertiaryColor':'#fff'}}}%%
+
 sequenceDiagram
     participant Service as AISuggestionService
     participant Flow as Flow::run
