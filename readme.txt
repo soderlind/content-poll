@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.9.1
+Stable tag: 0.9.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,13 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
 
 == Changelog ==
+
+= 0.9.2 - 2025-11-24 =
+* Added: Environment variable and PHP constant support for all AI settings (provider, API keys, models, endpoints)
+* Added: Configuration priority: PHP constant → environment variable → database option → default value
+* Added: Admin settings fields show read-only state with source indicator when externally defined
+* Added: Comprehensive environment variable documentation with examples for wp-config.php, .env, and Docker
+* Notes: Enables deployment-friendly configuration (Docker, CI/CD) without database storage; see docs/AI-PROVIDERS.md
 
 = 0.9.1 - 2025-11-24 =
 * Changed: AI-generated poll options are now randomized to prevent bias toward the first option

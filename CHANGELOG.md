@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.9.2] - 2025-11-24
+
+### Added
+- Environment variable and PHP constant support for all AI settings (provider, API keys, models, endpoints).
+- Configuration priority: PHP constant → environment variable → database option → default value.
+- Admin settings fields show read-only state with source indicator when externally defined.
+- Comprehensive environment variable documentation with examples for wp-config.php, .env, and Docker.
+
+### Notes
+- Enables deployment-friendly configuration (Docker, CI/CD, wp-config.php) without database storage.
+- All 14 AI settings can be configured via `CONTENT_POLL_*` constants or environment variables.
+- See docs/AI-PROVIDERS.md for full configuration reference.
+
 ## [0.9.1] - 2025-11-24
 
 ### Changed
