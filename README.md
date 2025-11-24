@@ -234,6 +234,8 @@ Hide total votes (if you prefer only percentages):
 
 Start with the [tutorial](./tutorial/#chapters).
 
+**Architecture**: See [ContentPoll AI Flow Architecture](./docs/%23%20ContentPoll-AI-Flow-Architecture.md) for detailed documentation on the PocketFlow-inspired multi-step AI pipeline, including the Flow/Node pattern, sequence diagrams, and code examples.
+
 ### Available Scripts
 ```bash
 npm run build        # Production build (minified)
