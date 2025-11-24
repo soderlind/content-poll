@@ -127,14 +127,18 @@ function Edit( props ) {
 					setAttributes( { question: data.question } );
 				}
 				if ( Array.isArray( data.options ) ) {
+					// Randomize option order to avoid bias toward first option
+					const shuffled = [ ...data.options ].sort(
+						() => Math.random() - 0.5
+					);
 					setAttributes( {
 						options: expandOrTrimOptions(
-							data.options,
-							data.options.length,
+							shuffled,
+							shuffled.length,
 							__( 'Option', 'content-poll' )
 						),
 					} );
-					setCount( clampOptionCount( data.options.length ) );
+					setCount( clampOptionCount( shuffled.length ) );
 				}
 			} )
 			.catch( () => {

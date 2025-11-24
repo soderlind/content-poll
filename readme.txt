@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.9.0
+Stable tag: 0.9.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,11 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
 
 == Changelog ==
+
+= 0.9.1 - 2025-11-24 =
+* Changed: AI-generated poll options are now randomized to prevent bias toward the first option
+* Added: ContentPoll AI Flow Architecture documentation with sequence diagrams and detailed code examples
+* Notes: UX improvement; prevents primacy effect in AI-generated options; safe upgrade
 
 = 0.9.0 - 2025-11-19 =
 * Changed: PocketFlow multi-step AI flow is now always used for OpenAI and Azure OpenAI providers; the separate PocketFlow checkbox has been removed from settings.
