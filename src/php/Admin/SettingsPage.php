@@ -11,6 +11,28 @@ class SettingsPage {
 	private string $option_group = 'content_poll_settings';
 	private string $option_name = 'content_poll_options';
 
+	/**
+	 * Map of setting keys to their environment variable and constant names.
+	 *
+	 * @var array<string, array{env: string, const: string, default: mixed}>
+	 */
+	private static array $config_map = [
+		'ai_provider'       => [ 'env' => 'CONTENT_POLL_AI_PROVIDER', 'const' => 'CONTENT_POLL_AI_PROVIDER', 'default' => 'heuristic' ],
+		'openai_type'       => [ 'env' => 'CONTENT_POLL_OPENAI_TYPE', 'const' => 'CONTENT_POLL_OPENAI_TYPE', 'default' => 'openai' ],
+		'openai_key'        => [ 'env' => 'CONTENT_POLL_OPENAI_KEY', 'const' => 'CONTENT_POLL_OPENAI_KEY', 'default' => '' ],
+		'openai_model'      => [ 'env' => 'CONTENT_POLL_OPENAI_MODEL', 'const' => 'CONTENT_POLL_OPENAI_MODEL', 'default' => 'gpt-3.5-turbo' ],
+		'azure_endpoint'    => [ 'env' => 'CONTENT_POLL_AZURE_ENDPOINT', 'const' => 'CONTENT_POLL_AZURE_ENDPOINT', 'default' => '' ],
+		'azure_api_version' => [ 'env' => 'CONTENT_POLL_AZURE_API_VERSION', 'const' => 'CONTENT_POLL_AZURE_API_VERSION', 'default' => '2024-02-15-preview' ],
+		'anthropic_key'     => [ 'env' => 'CONTENT_POLL_ANTHROPIC_KEY', 'const' => 'CONTENT_POLL_ANTHROPIC_KEY', 'default' => '' ],
+		'anthropic_model'   => [ 'env' => 'CONTENT_POLL_ANTHROPIC_MODEL', 'const' => 'CONTENT_POLL_ANTHROPIC_MODEL', 'default' => 'claude-3-5-sonnet-20241022' ],
+		'gemini_key'        => [ 'env' => 'CONTENT_POLL_GEMINI_KEY', 'const' => 'CONTENT_POLL_GEMINI_KEY', 'default' => '' ],
+		'gemini_model'      => [ 'env' => 'CONTENT_POLL_GEMINI_MODEL', 'const' => 'CONTENT_POLL_GEMINI_MODEL', 'default' => 'gemini-1.5-flash' ],
+		'ollama_endpoint'   => [ 'env' => 'CONTENT_POLL_OLLAMA_ENDPOINT', 'const' => 'CONTENT_POLL_OLLAMA_ENDPOINT', 'default' => 'http://localhost:11434' ],
+		'ollama_model'      => [ 'env' => 'CONTENT_POLL_OLLAMA_MODEL', 'const' => 'CONTENT_POLL_OLLAMA_MODEL', 'default' => 'llama3.2' ],
+		'grok_key'          => [ 'env' => 'CONTENT_POLL_GROK_KEY', 'const' => 'CONTENT_POLL_GROK_KEY', 'default' => '' ],
+		'grok_model'        => [ 'env' => 'CONTENT_POLL_GROK_MODEL', 'const' => 'CONTENT_POLL_GROK_MODEL', 'default' => 'grok-2' ],
+	];
+
 	public function __construct() {
 		$this->option_group = 'content_poll_options_group';
 		$this->option_name  = 'content_poll_options';
@@ -61,21 +83,21 @@ class SettingsPage {
 			'type'              => 'array',
 			'sanitize_callback' => [ $this, 'sanitize_settings' ],
 			'default'           => [
-				'ai_provider'        => 'heuristic',
-				'openai_type'        => 'openai',
-				'openai_key'         => '',
-				'openai_model'       => 'gpt-3.5-turbo',
-				'azure_endpoint'     => '',
-				'azure_deployment'   => '',
-				'azure_api_version'  => '2024-02-15-preview',
-				'anthropic_key'      => '',
-				'anthropic_model'    => 'claude-3-5-sonnet-20241022',
-				'gemini_key'         => '',
-				'gemini_model'       => 'gemini-1.5-flash',
-				'ollama_endpoint'    => 'http://localhost:11434',
-				'ollama_model'       => 'llama3.2',
-				'grok_key'           => '',
-				'grok_model'         => 'grok-2',
+				'ai_provider'       => 'heuristic',
+				'openai_type'       => 'openai',
+				'openai_key'        => '',
+				'openai_model'      => 'gpt-3.5-turbo',
+				'azure_endpoint'    => '',
+				'azure_deployment'  => '',
+				'azure_api_version' => '2024-02-15-preview',
+				'anthropic_key'     => '',
+				'anthropic_model'   => 'claude-3-5-sonnet-20241022',
+				'gemini_key'        => '',
+				'gemini_model'      => 'gemini-1.5-flash',
+				'ollama_endpoint'   => 'http://localhost:11434',
+				'ollama_model'      => 'llama3.2',
+				'grok_key'          => '',
+				'grok_model'        => 'grok-2',
 			],
 		] );
 
@@ -141,8 +163,8 @@ class SettingsPage {
 		$sanitized[ 'ai_provider' ] = isset( $input[ 'ai_provider' ] ) && in_array( $input[ 'ai_provider' ], [ 'heuristic', 'openai', 'anthropic', 'gemini', 'ollama', 'grok' ], true )
 			? $input[ 'ai_provider' ]
 			: 'heuristic';
-		$sanitized[ 'grok_key' ]           = isset( $input[ 'grok_key' ] ) ? sanitize_text_field( $input[ 'grok_key' ] ) : '';
-		$sanitized[ 'grok_model' ]         = isset( $input[ 'grok_model' ] ) ? sanitize_text_field( $input[ 'grok_model' ] ) : 'grok-2';
+		$sanitized[ 'grok_key' ]    = isset( $input[ 'grok_key' ] ) ? sanitize_text_field( $input[ 'grok_key' ] ) : '';
+		$sanitized[ 'grok_model' ]  = isset( $input[ 'grok_model' ] ) ? sanitize_text_field( $input[ 'grok_model' ] ) : 'grok-2';
 
 		$sanitized[ 'openai_type' ] = isset( $input[ 'openai_type' ] ) && in_array( $input[ 'openai_type' ], [ 'openai', 'azure' ], true )
 			? $input[ 'openai_type' ]
@@ -831,12 +853,10 @@ class SettingsPage {
 	}
 
 	public function render_ai_provider_field(): void {
-		$options = get_option( $this->option_name, [
-			'ai_provider' => 'heuristic',
-		] );
-		$current = $options[ 'ai_provider' ] ?? 'heuristic';
+		$current     = self::get_ai_provider();
+		$is_external = self::is_externally_defined( 'ai_provider' );
 		?>
-		<select name="<?php echo esc_attr( $this->option_name ); ?>[ai_provider]" id="ai_provider">
+		<select name="<?php echo esc_attr( $this->option_name ); ?>[ai_provider]" id="ai_provider" <?php echo $is_external ? 'disabled' : ''; ?>>
 			<option value="heuristic" <?php selected( $current, 'heuristic' ); ?>>
 				<?php esc_html_e( 'Heuristic AI (Default)', 'content-poll' ); ?>
 			</option>
@@ -856,6 +876,11 @@ class SettingsPage {
 				<?php esc_html_e( 'Grok (xAI)', 'content-poll' ); ?>
 			</option>
 		</select>
+		<?php if ( $is_external ) : ?>
+			<input type="hidden" name="<?php echo esc_attr( $this->option_name ); ?>[ai_provider]"
+				value="<?php echo esc_attr( $current ); ?>" />
+		<?php endif; ?>
+		<?php $this->render_external_indicator( 'ai_provider' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'Heuristic AI uses built-in logic without API calls. Other options require API keys or local installation.', 'content-poll' ); ?>
 		</p>
@@ -863,12 +888,10 @@ class SettingsPage {
 	}
 
 	public function render_openai_type_field(): void {
-		$options = get_option( $this->option_name, [
-			'openai_type' => 'openai',
-		] );
-		$current = $options[ 'openai_type' ] ?? 'openai';
+		$current     = self::get_openai_type();
+		$is_external = self::is_externally_defined( 'openai_type' );
 		?>
-		<select name="<?php echo esc_attr( $this->option_name ); ?>[openai_type]" id="openai_type">
+		<select name="<?php echo esc_attr( $this->option_name ); ?>[openai_type]" id="openai_type" <?php echo $is_external ? 'disabled' : ''; ?>>
 			<option value="openai" <?php selected( $current, 'openai' ); ?>>
 				<?php esc_html_e( 'OpenAI', 'content-poll' ); ?>
 			</option>
@@ -876,6 +899,11 @@ class SettingsPage {
 				<?php esc_html_e( 'Azure OpenAI', 'content-poll' ); ?>
 			</option>
 		</select>
+		<?php if ( $is_external ) : ?>
+			<input type="hidden" name="<?php echo esc_attr( $this->option_name ); ?>[openai_type]"
+				value="<?php echo esc_attr( $current ); ?>" />
+		<?php endif; ?>
+		<?php $this->render_external_indicator( 'openai_type' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'Choose between standard OpenAI API or Azure OpenAI Service', 'content-poll' ); ?>
 		</p>
@@ -883,13 +911,13 @@ class SettingsPage {
 	}
 
 	public function render_openai_key_field(): void {
-		$options = get_option( $this->option_name, [
-			'openai_key' => '',
-		] );
-		$value   = $options[ 'openai_key' ] ?? '';
+		$value       = self::get_openai_key();
+		$is_external = self::is_externally_defined( 'openai_key' );
+		$display_val = $is_external && $value !== '' ? '••••••••••••••••' : $value;
 		?>
 		<input type="password" name="<?php echo esc_attr( $this->option_name ); ?>[openai_key]" id="openai_key"
-			value="<?php echo esc_attr( $value ); ?>" class="regular-text" />
+			value="<?php echo esc_attr( $is_external ? '' : $value ); ?>" class="regular-text" <?php echo $is_external ? 'readonly placeholder="' . esc_attr( $display_val ) . '"' : ''; ?> />
+		<?php $this->render_external_indicator( 'openai_key' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'API key from', 'content-poll' ); ?>
 			<a href="https://platform.openai.com/api-keys" target="_blank">OpenAI</a>,
@@ -901,13 +929,12 @@ class SettingsPage {
 	}
 
 	public function render_openai_model_field(): void {
-		$options = get_option( $this->option_name, [
-			'openai_model' => 'gpt-3.5-turbo',
-		] );
-		$value   = $options[ 'openai_model' ] ?? 'gpt-3.5-turbo';
+		$value       = self::get_openai_model();
+		$is_external = self::is_externally_defined( 'openai_model' );
 		?>
 		<input type="text" name="<?php echo esc_attr( $this->option_name ); ?>[openai_model]" id="openai_model"
-			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="gpt-3.5-turbo" />
+			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="gpt-3.5-turbo" <?php echo $is_external ? 'readonly' : ''; ?> />
+		<?php $this->render_external_indicator( 'openai_model' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'OpenAI: gpt-3.5-turbo, gpt-4, etc. Anthropic: claude-3-5-sonnet-20241022, etc. Gemini: gemini-1.5-flash, etc. Ollama: llama3.2, mistral, etc.', 'content-poll' ); ?>
 		</p>
@@ -915,14 +942,13 @@ class SettingsPage {
 	}
 
 	public function render_azure_endpoint_field(): void {
-		$options = get_option( $this->option_name, [
-			'azure_endpoint' => '',
-		] );
-		$value   = $options[ 'azure_endpoint' ] ?? '';
+		$value       = self::get_azure_endpoint();
+		$is_external = self::is_externally_defined( 'azure_endpoint' );
 		?>
 		<input type="url" name="<?php echo esc_attr( $this->option_name ); ?>[azure_endpoint]" id="azure_endpoint"
-			value="<?php echo esc_attr( $value ); ?>" class="regular-text"
-			placeholder="https://your-resource.openai.azure.com" />
+			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="https://your-resource.openai.azure.com"
+			<?php echo $is_external ? 'readonly' : ''; ?> />
+		<?php $this->render_external_indicator( 'azure_endpoint' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'Your Azure OpenAI resource endpoint URL', 'content-poll' ); ?>
 		</p>
@@ -930,87 +956,177 @@ class SettingsPage {
 	}
 
 	public function render_azure_api_version_field(): void {
-		$options = get_option( $this->option_name, [
-			'azure_api_version' => '2024-02-15-preview',
-		] );
-		$value   = $options[ 'azure_api_version' ] ?? '2024-02-15-preview';
+		$value       = self::get_azure_api_version();
+		$is_external = self::is_externally_defined( 'azure_api_version' );
 		?>
 		<input type="text" name="<?php echo esc_attr( $this->option_name ); ?>[azure_api_version]" id="azure_api_version"
-			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="2024-02-15-preview" />
+			value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="2024-02-15-preview" <?php echo $is_external ? 'readonly' : ''; ?> />
+		<?php $this->render_external_indicator( 'azure_api_version' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'Azure OpenAI API version (e.g., 2024-02-15-preview)', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
 
+	/**
+	 * Resolve a configuration value with priority: constant > env var > database > default.
+	 *
+	 * @param string $key The setting key (e.g., 'openai_key').
+	 * @return string The resolved value.
+	 */
+	private static function resolve_config( string $key ): string {
+		$config = self::$config_map[ $key ] ?? null;
+		if ( ! $config ) {
+			return '';
+		}
+
+		// Priority 1: PHP constant (wp-config.php)
+		if ( defined( $config[ 'const' ] ) ) {
+			return (string) constant( $config[ 'const' ] );
+		}
+
+		// Priority 2: Environment variable
+		$env_value = getenv( $config[ 'env' ] );
+		if ( $env_value !== false && $env_value !== '' ) {
+			return $env_value;
+		}
+
+		// Priority 3: Database option
+		$options = get_option( 'content_poll_options', [] );
+		if ( isset( $options[ $key ] ) && $options[ $key ] !== '' ) {
+			return (string) $options[ $key ];
+		}
+
+		// Priority 4: Default value
+		return (string) $config[ 'default' ];
+	}
+
+	/**
+	 * Check if a setting is defined via environment variable or constant.
+	 *
+	 * @param string $key The setting key.
+	 * @return bool True if externally defined.
+	 */
+	public static function is_externally_defined( string $key ): bool {
+		$config = self::$config_map[ $key ] ?? null;
+		if ( ! $config ) {
+			return false;
+		}
+
+		if ( defined( $config[ 'const' ] ) ) {
+			return true;
+		}
+
+		$env_value = getenv( $config[ 'env' ] );
+		return $env_value !== false && $env_value !== '';
+	}
+
+	/**
+	 * Get the source of a setting value.
+	 *
+	 * @param string $key The setting key.
+	 * @return string 'constant', 'env', 'database', or 'default'.
+	 */
+	public static function get_config_source( string $key ): string {
+		$config = self::$config_map[ $key ] ?? null;
+		if ( ! $config ) {
+			return 'default';
+		}
+
+		if ( defined( $config[ 'const' ] ) ) {
+			return 'constant';
+		}
+
+		$env_value = getenv( $config[ 'env' ] );
+		if ( $env_value !== false && $env_value !== '' ) {
+			return 'env';
+		}
+
+		$options = get_option( 'content_poll_options', [] );
+		if ( isset( $options[ $key ] ) && $options[ $key ] !== '' ) {
+			return 'database';
+		}
+
+		return 'default';
+	}
+
+	/**
+	 * Render the "set via" indicator for externally defined settings.
+	 *
+	 * @param string $key The setting key.
+	 */
+	private function render_external_indicator( string $key ): void {
+		if ( ! self::is_externally_defined( $key ) ) {
+			return;
+		}
+		$source = self::get_config_source( $key );
+		$label  = $source === 'constant'
+			? __( 'wp-config.php constant', 'content-poll' )
+			: __( 'environment variable', 'content-poll' );
+		?>
+		<span class="description" style="color: #2271b1; font-weight: 500; margin-left: 8px;">
+			<?php
+			/* translators: %s: source of the setting (constant or env) */
+			printf( esc_html__( '(Set via %s)', 'content-poll' ), esc_html( $label ) );
+			?>
+		</span>
+		<?php
+	}
+
 	public static function get_ai_provider(): string {
-		$options = get_option( 'content_poll_options', [ 'ai_provider' => 'heuristic' ] );
-		return $options[ 'ai_provider' ] ?? 'heuristic';
+		return self::resolve_config( 'ai_provider' );
 	}
 
 	public static function get_openai_type(): string {
-		$options = get_option( 'content_poll_options', [ 'openai_type' => 'openai' ] );
-		return $options[ 'openai_type' ] ?? 'openai';
+		return self::resolve_config( 'openai_type' );
 	}
 
 	public static function get_openai_key(): string {
-		$options = get_option( 'content_poll_options', [ 'openai_key' => '' ] );
-		return $options[ 'openai_key' ] ?? '';
+		return self::resolve_config( 'openai_key' );
 	}
 
 	public static function get_openai_model(): string {
-		$options = get_option( 'content_poll_options', [ 'openai_model' => 'gpt-3.5-turbo' ] );
-		return $options[ 'openai_model' ] ?? 'gpt-3.5-turbo';
+		return self::resolve_config( 'openai_model' );
 	}
 
 	public static function get_azure_endpoint(): string {
-		$options = get_option( 'content_poll_options', [ 'azure_endpoint' => '' ] );
-		return $options[ 'azure_endpoint' ] ?? '';
+		return self::resolve_config( 'azure_endpoint' );
 	}
 
 	public static function get_azure_api_version(): string {
-		$options = get_option( 'content_poll_options', [ 'azure_api_version' => '2024-02-15-preview' ] );
-		return $options[ 'azure_api_version' ] ?? '2024-02-15-preview';
+		return self::resolve_config( 'azure_api_version' );
 	}
 
 	public static function get_anthropic_key(): string {
-		$options = get_option( 'content_poll_options', [ 'anthropic_key' => '' ] );
-		return $options[ 'anthropic_key' ] ?? '';
+		return self::resolve_config( 'anthropic_key' );
 	}
 
 	public static function get_anthropic_model(): string {
-		$options = get_option( 'content_poll_options', [ 'anthropic_model' => 'claude-3-5-sonnet-20241022' ] );
-		return $options[ 'anthropic_model' ] ?? 'claude-3-5-sonnet-20241022';
+		return self::resolve_config( 'anthropic_model' );
 	}
 
 	public static function get_gemini_key(): string {
-		$options = get_option( 'content_poll_options', [ 'gemini_key' => '' ] );
-		return $options[ 'gemini_key' ] ?? '';
+		return self::resolve_config( 'gemini_key' );
 	}
 
 	public static function get_gemini_model(): string {
-		$options = get_option( 'content_poll_options', [ 'gemini_model' => 'gemini-1.5-flash' ] );
-		return $options[ 'gemini_model' ] ?? 'gemini-1.5-flash';
+		return self::resolve_config( 'gemini_model' );
 	}
 
 	public static function get_ollama_endpoint(): string {
-		$options = get_option( 'content_poll_options', [ 'ollama_endpoint' => 'http://localhost:11434' ] );
-		return $options[ 'ollama_endpoint' ] ?? 'http://localhost:11434';
+		return self::resolve_config( 'ollama_endpoint' );
 	}
 
 	public static function get_ollama_model(): string {
-		$options = get_option( 'content_poll_options', [ 'ollama_model' => 'llama3.2' ] );
-		return $options[ 'ollama_model' ] ?? 'llama3.2';
+		return self::resolve_config( 'ollama_model' );
 	}
 
 	public static function get_grok_key(): string {
-		$options = get_option( 'content_poll_options', [ 'grok_key' => '' ] );
-		return $options[ 'grok_key' ] ?? '';
+		return self::resolve_config( 'grok_key' );
 	}
 
 	public static function get_grok_model(): string {
-		$options = get_option( 'content_poll_options', [ 'grok_model' => 'grok-2' ] );
-		return $options[ 'grok_model' ] ?? 'grok-2';
+		return self::resolve_config( 'grok_model' );
 	}
 
 	/**

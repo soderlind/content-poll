@@ -80,6 +80,24 @@ AI reads your page content and generates contextually relevant poll questions:
 
 See [AI Provider Integration Guide](https://github.com/soderlind/content-poll/blob/main/docs/AI-PROVIDERS.md) for detailed setup instructions for each AI provider.
 
+**Environment Variables / Constants**
+
+For deployment automation (Docker, CI/CD), configure AI settings via environment variables or `wp-config.php` constants:
+
+```php
+// wp-config.php
+define( 'CONTENT_POLL_AI_PROVIDER', 'openai' );
+define( 'CONTENT_POLL_OPENAI_KEY', 'sk-your-api-key' );
+```
+
+```bash
+# Environment variables
+export CONTENT_POLL_AI_PROVIDER=openai
+export CONTENT_POLL_OPENAI_KEY=sk-your-api-key
+```
+
+See the [AI Provider Integration Guide](./docs/AI-PROVIDERS.md#environment-variables--constants) for the full list of configuration variables.
+
 
 **Updates**
    * Plugin [updates are handled automatically](https://github.com/soderlind/wordpress-plugin-github-updater#readme) via GitHub. No need to manually download and install updates.

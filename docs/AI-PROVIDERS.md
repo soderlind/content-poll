@@ -141,6 +141,86 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 - All API calls use `wp_remote_post()` for WordPress best practices
 - Ollama requires local network access (ensure firewall rules)
 
+## Environment Variables & Constants
+
+For deployment flexibility (Docker, CI/CD, wp-config.php), you can configure AI settings via environment variables or PHP constants instead of the database. Values are resolved in this priority order:
+
+1. **PHP Constant** (highest priority) - defined in `wp-config.php`
+2. **Environment Variable** - set in server environment
+3. **Database Option** - configured via Settings page
+4. **Default Value** - built-in fallback
+
+### Available Configuration Variables
+
+| Setting | Environment Variable | PHP Constant | Default |
+|---------|---------------------|--------------|---------|
+| AI Provider | `CONTENT_POLL_AI_PROVIDER` | `CONTENT_POLL_AI_PROVIDER` | `heuristic` |
+| OpenAI Type | `CONTENT_POLL_OPENAI_TYPE` | `CONTENT_POLL_OPENAI_TYPE` | `openai` |
+| OpenAI API Key | `CONTENT_POLL_OPENAI_KEY` | `CONTENT_POLL_OPENAI_KEY` | (empty) |
+| OpenAI Model | `CONTENT_POLL_OPENAI_MODEL` | `CONTENT_POLL_OPENAI_MODEL` | `gpt-3.5-turbo` |
+| Azure Endpoint | `CONTENT_POLL_AZURE_ENDPOINT` | `CONTENT_POLL_AZURE_ENDPOINT` | (empty) |
+| Azure API Version | `CONTENT_POLL_AZURE_API_VERSION` | `CONTENT_POLL_AZURE_API_VERSION` | `2024-02-15-preview` |
+| Anthropic API Key | `CONTENT_POLL_ANTHROPIC_KEY` | `CONTENT_POLL_ANTHROPIC_KEY` | (empty) |
+| Anthropic Model | `CONTENT_POLL_ANTHROPIC_MODEL` | `CONTENT_POLL_ANTHROPIC_MODEL` | `claude-3-5-sonnet-20241022` |
+| Gemini API Key | `CONTENT_POLL_GEMINI_KEY` | `CONTENT_POLL_GEMINI_KEY` | (empty) |
+| Gemini Model | `CONTENT_POLL_GEMINI_MODEL` | `CONTENT_POLL_GEMINI_MODEL` | `gemini-1.5-flash` |
+| Ollama Endpoint | `CONTENT_POLL_OLLAMA_ENDPOINT` | `CONTENT_POLL_OLLAMA_ENDPOINT` | `http://localhost:11434` |
+| Ollama Model | `CONTENT_POLL_OLLAMA_MODEL` | `CONTENT_POLL_OLLAMA_MODEL` | `llama3.2` |
+| Grok API Key | `CONTENT_POLL_GROK_KEY` | `CONTENT_POLL_GROK_KEY` | (empty) |
+| Grok Model | `CONTENT_POLL_GROK_MODEL` | `CONTENT_POLL_GROK_MODEL` | `grok-2` |
+
+### Example: wp-config.php Constants (OpenAI)
+
+```php
+// In wp-config.php - before "That's all, stop editing!"
+define( 'CONTENT_POLL_AI_PROVIDER', 'openai' );
+define( 'CONTENT_POLL_OPENAI_TYPE', 'openai' );
+define( 'CONTENT_POLL_OPENAI_KEY', 'sk-your-api-key-here' );
+define( 'CONTENT_POLL_OPENAI_MODEL', 'gpt-4' );
+```
+
+### Example: wp-config.php Constants (Azure OpenAI)
+
+```php
+// In wp-config.php - before "That's all, stop editing!"
+define( 'CONTENT_POLL_AI_PROVIDER', 'openai' );
+define( 'CONTENT_POLL_OPENAI_TYPE', 'azure' );
+define( 'CONTENT_POLL_OPENAI_KEY', 'your-azure-api-key-here' );
+define( 'CONTENT_POLL_OPENAI_MODEL', 'your-deployment-name' );
+define( 'CONTENT_POLL_AZURE_ENDPOINT', 'https://your-resource.openai.azure.com' );
+define( 'CONTENT_POLL_AZURE_API_VERSION', '2024-02-15-preview' );
+```
+
+### Example: Environment Variables (.env or server config)
+
+```bash
+# For Docker, .env files, or server environment
+export CONTENT_POLL_AI_PROVIDER=anthropic
+export CONTENT_POLL_ANTHROPIC_KEY=sk-ant-your-key-here
+export CONTENT_POLL_ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+```
+
+### Example: Docker Compose
+
+```yaml
+services:
+  wordpress:
+    environment:
+      CONTENT_POLL_AI_PROVIDER: openai
+      CONTENT_POLL_OPENAI_KEY: ${OPENAI_API_KEY}
+      CONTENT_POLL_OPENAI_MODEL: gpt-4
+```
+
+### Admin UI Behavior
+
+When a setting is defined via environment variable or constant:
+- The field appears as **read-only** in the Settings page
+- A "(Set via wp-config.php constant)" or "(Set via environment variable)" indicator is shown
+- The value cannot be changed from the admin UI
+- API keys are masked for security
+
+This allows developers to lock down production configurations while still allowing settings UI for testing or development environments.
+
 ## Troubleshooting
 
 ### AI Not Working
