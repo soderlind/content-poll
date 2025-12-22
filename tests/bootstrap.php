@@ -38,7 +38,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 if ( ! class_exists( 'WP_Error' ) ) {
 	class WP_Error { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals, PEAR.NamingConventions
-		public $errors     = [];
+		public $errors = [];
 		public $error_data = [];
 
 		public function __construct( $code = '', $message = '', $data = '' ) {
@@ -57,7 +57,7 @@ if ( ! class_exists( 'WP_Error' ) ) {
 
 		public function get_error_code() {
 			$codes = $this->get_error_codes();
-			return empty( $codes ) ? '' : $codes[0];
+			return empty( $codes ) ? '' : $codes[ 0 ];
 		}
 
 		public function get_error_messages( $code = '' ) {
@@ -72,7 +72,7 @@ if ( ! class_exists( 'WP_Error' ) ) {
 				$code = $this->get_error_code();
 			}
 			$messages = $this->get_error_messages( $code );
-			return empty( $messages ) ? '' : $messages[0];
+			return empty( $messages ) ? '' : $messages[ 0 ];
 		}
 
 		public function get_error_data( $code = '' ) {
@@ -217,11 +217,11 @@ if ( ! function_exists( 'get_transient' ) ) {
 			return false;
 		}
 		$entry = $content_poll_test_transients[ $key ];
-		if ( $entry['expires'] < time() ) {
+		if ( $entry[ 'expires' ] < time() ) {
 			unset( $content_poll_test_transients[ $key ] );
 			return false;
 		}
-		return $entry['value'];
+		return $entry[ 'value' ];
 	}
 }
 
@@ -244,7 +244,7 @@ if ( ! function_exists( 'current_user_can' ) ) {
 if ( ! function_exists( 'add_action' ) ) {
 	function add_action( $tag, $callback, $priority = 10, $accepted_args = 1 ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 		global $content_poll_test_hooks;
-		$content_poll_test_hooks['actions'][ $tag ][] = [
+		$content_poll_test_hooks[ 'actions' ][ $tag ][] = [
 			'callback'      => $callback,
 			'priority'      => $priority,
 			'accepted_args' => $accepted_args,
@@ -256,7 +256,7 @@ if ( ! function_exists( 'add_action' ) ) {
 if ( ! function_exists( 'add_filter' ) ) {
 	function add_filter( $tag, $callback, $priority = 10, $accepted_args = 1 ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 		global $content_poll_test_hooks;
-		$content_poll_test_hooks['filters'][ $tag ][] = [
+		$content_poll_test_hooks[ 'filters' ][ $tag ][] = [
 			'callback'      => $callback,
 			'priority'      => $priority,
 			'accepted_args' => $accepted_args,
@@ -268,15 +268,15 @@ if ( ! function_exists( 'add_filter' ) ) {
 if ( ! function_exists( 'has_action' ) ) {
 	function has_action( $tag, $callback = false ) { // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals
 		global $content_poll_test_hooks;
-		if ( ! isset( $content_poll_test_hooks['actions'][ $tag ] ) ) {
+		if ( ! isset( $content_poll_test_hooks[ 'actions' ][ $tag ] ) ) {
 			return false;
 		}
 		if ( $callback === false ) {
 			return true;
 		}
-		foreach ( $content_poll_test_hooks['actions'][ $tag ] as $hook ) {
-			if ( $hook['callback'] === $callback ) {
-				return $hook['priority'];
+		foreach ( $content_poll_test_hooks[ 'actions' ][ $tag ] as $hook ) {
+			if ( $hook[ 'callback' ] === $callback ) {
+				return $hook[ 'priority' ];
 			}
 		}
 		return false;
@@ -301,7 +301,7 @@ if ( ! function_exists( 'wp_remote_retrieve_response_code' ) ) {
 		if ( is_wp_error( $response ) ) {
 			return '';
 		}
-		return $response['response']['code'] ?? '';
+		return $response[ 'response' ][ 'code' ] ?? '';
 	}
 }
 
@@ -310,7 +310,7 @@ if ( ! function_exists( 'wp_remote_retrieve_body' ) ) {
 		if ( is_wp_error( $response ) ) {
 			return '';
 		}
-		return $response['body'] ?? '';
+		return $response[ 'body' ] ?? '';
 	}
 }
 

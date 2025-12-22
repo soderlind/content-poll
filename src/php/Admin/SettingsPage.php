@@ -1148,9 +1148,9 @@ class SettingsPage {
 		?>
 		<div style="display: flex; align-items: center; gap: 8px;">
 			<input type="url" name="<?php echo esc_attr( $this->option_name ); ?>[exo_endpoint]" id="exo_endpoint"
-				value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="http://localhost:8000"
-				<?php echo $is_external ? 'readonly' : ''; ?> />
-			<span id="exo-health-indicator" style="font-size: 18px;" title="<?php esc_attr_e( 'Connection status', 'content-poll' ); ?>"></span>
+				value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="http://localhost:8000" <?php echo $is_external ? 'readonly' : ''; ?> />
+			<span id="exo-health-indicator" style="font-size: 18px;"
+				title="<?php esc_attr_e( 'Connection status', 'content-poll' ); ?>"></span>
 			<button type="button" id="exo-check-connection" class="button button-secondary" style="margin-left: 4px;">
 				<?php esc_html_e( 'Check Connection', 'content-poll' ); ?>
 			</button>

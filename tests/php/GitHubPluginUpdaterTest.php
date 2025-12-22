@@ -36,7 +36,7 @@ final class GitHubPluginUpdaterTest extends TestCase {
 		] );
 
 		// Check if 'init' action was registered
-		$initHookRegistered = isset( $content_poll_test_hooks['actions']['init'] );
+		$initHookRegistered = isset( $content_poll_test_hooks[ 'actions' ][ 'init' ] );
 		$this->assertTrue( $initHookRegistered, 'Expected init hook to be registered.' );
 		$this->assertTrue( method_exists( $updater, 'setup_updater' ), 'setup_updater method should exist.' );
 	}

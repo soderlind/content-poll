@@ -21,7 +21,7 @@ final class GrokFallbackTest extends TestCase {
 	public function testGrokWithoutKeyFallsBackToHeuristic(): void {
 		global $content_poll_test_options;
 		// Simulate settings selecting Grok provider with no API key provided.
-		$content_poll_test_options['content_poll_options'] = [
+		$content_poll_test_options[ 'content_poll_options' ] = [
 			'ai_provider' => 'grok',
 			'grok_key'    => '',
 			'grok_model'  => 'grok-2',

@@ -133,10 +133,10 @@ class ExoController {
 		if ( ! is_wp_error( $models_response ) ) {
 			$models_body = wp_remote_retrieve_body( $models_response );
 			$models_data = json_decode( $models_body, true );
-			if ( is_array( $models_data ) && isset( $models_data['data'] ) ) {
-				foreach ( $models_data['data'] as $model ) {
-					$hf_id    = $model['hugging_face_id'] ?? '';
-					$short_id = $model['id'] ?? '';
+			if ( is_array( $models_data ) && isset( $models_data[ 'data' ] ) ) {
+				foreach ( $models_data[ 'data' ] as $model ) {
+					$hf_id    = $model[ 'hugging_face_id' ] ?? '';
+					$short_id = $model[ 'id' ] ?? '';
 					if ( ! empty( $hf_id ) && ! empty( $short_id ) ) {
 						$model_id_map[ $hf_id ] = $short_id;
 					}
@@ -170,7 +170,7 @@ class ExoController {
 		$body = wp_remote_retrieve_body( $response );
 		$data = json_decode( $body, true );
 
-		if ( ! is_array( $data ) || ! isset( $data['instances'] ) ) {
+		if ( ! is_array( $data ) || ! isset( $data[ 'instances' ] ) ) {
 			return [
 				'models' => [],
 				'error'  => 'Invalid response from Exo state endpoint',
@@ -180,27 +180,27 @@ class ExoController {
 		// Extract running models from instances
 		$models    = [];
 		$seen_ids  = [];
-		$instances = $data['instances'] ?? [];
+		$instances = $data[ 'instances' ] ?? [];
 
 		foreach ( $instances as $instance ) {
 			// Handle MlxRingInstance format
-			$ring_instance = $instance['MlxRingInstance'] ?? $instance;
-			$assignments   = $ring_instance['shardAssignments'] ?? [];
+			$ring_instance = $instance[ 'MlxRingInstance' ] ?? $instance;
+			$assignments   = $ring_instance[ 'shardAssignments' ] ?? [];
 
 			// Get model info from shard metadata
-			$runner_to_shard = $assignments['runnerToShard'] ?? [];
+			$runner_to_shard = $assignments[ 'runnerToShard' ] ?? [];
 			foreach ( $runner_to_shard as $runner_data ) {
-				$shard_meta = $runner_data['PipelineShardMetadata'] ?? $runner_data;
-				$model_meta = $shard_meta['modelMeta'] ?? [];
+				$shard_meta = $runner_data[ 'PipelineShardMetadata' ] ?? $runner_data;
+				$model_meta = $shard_meta[ 'modelMeta' ] ?? [];
 
-				$full_model_id = $model_meta['modelId'] ?? '';
-				$model_name    = $model_meta['prettyName'] ?? $full_model_id;
+				$full_model_id = $model_meta[ 'modelId' ] ?? '';
+				$model_name    = $model_meta[ 'prettyName' ] ?? $full_model_id;
 
 				if ( ! empty( $full_model_id ) && ! isset( $seen_ids[ $full_model_id ] ) ) {
 					// Look up short ID from model mapping
 					$short_id = $model_id_map[ $full_model_id ] ?? $this->fallback_short_id( $full_model_id );
 
-					$models[] = [
+					$models[]                   = [
 						'id'   => $short_id,
 						'name' => $model_name,
 					];

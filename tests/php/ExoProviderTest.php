@@ -31,7 +31,7 @@ final class ExoProviderTest extends TestCase {
 	public function testExoWithoutEndpointFallsBackToHeuristic(): void {
 		global $content_poll_test_options;
 		// Set options via global to control get_option() behavior
-		$content_poll_test_options['content_poll_options'] = [
+		$content_poll_test_options[ 'content_poll_options' ] = [
 			'ai_provider'  => 'exo',
 			'exo_endpoint' => '',
 			'exo_model'    => '',
@@ -44,9 +44,9 @@ final class ExoProviderTest extends TestCase {
 		// Expect a normalized heuristic-like structure (question + >=2 options)
 		$this->assertArrayHasKey( 'question', $res );
 		$this->assertArrayHasKey( 'options', $res );
-		$this->assertIsString( $res['question'] );
-		$this->assertIsArray( $res['options'] );
-		$this->assertGreaterThanOrEqual( 2, count( $res['options'] ) );
+		$this->assertIsString( $res[ 'question' ] );
+		$this->assertIsArray( $res[ 'options' ] );
+		$this->assertGreaterThanOrEqual( 2, count( $res[ 'options' ] ) );
 	}
 
 	/**
@@ -55,7 +55,7 @@ final class ExoProviderTest extends TestCase {
 	public function testExoWithoutModelFallsBackToHeuristic(): void {
 		global $content_poll_test_options;
 		// Set options via global with endpoint but no model
-		$content_poll_test_options['content_poll_options'] = [
+		$content_poll_test_options[ 'content_poll_options' ] = [
 			'ai_provider'  => 'exo',
 			'exo_endpoint' => 'http://localhost:8000',
 			'exo_model'    => '',
@@ -68,9 +68,9 @@ final class ExoProviderTest extends TestCase {
 		// Should fall back to heuristic since model is empty
 		$this->assertArrayHasKey( 'question', $res );
 		$this->assertArrayHasKey( 'options', $res );
-		$this->assertIsString( $res['question'] );
-		$this->assertIsArray( $res['options'] );
-		$this->assertGreaterThanOrEqual( 2, count( $res['options'] ) );
+		$this->assertIsString( $res[ 'question' ] );
+		$this->assertIsArray( $res[ 'options' ] );
+		$this->assertGreaterThanOrEqual( 2, count( $res[ 'options' ] ) );
 	}
 
 	/**
