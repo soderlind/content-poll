@@ -31,6 +31,8 @@ class SettingsPage {
 		'ollama_model'      => [ 'env' => 'CONTENT_POLL_OLLAMA_MODEL', 'const' => 'CONTENT_POLL_OLLAMA_MODEL', 'default' => 'llama3.2' ],
 		'grok_key'          => [ 'env' => 'CONTENT_POLL_GROK_KEY', 'const' => 'CONTENT_POLL_GROK_KEY', 'default' => '' ],
 		'grok_model'        => [ 'env' => 'CONTENT_POLL_GROK_MODEL', 'const' => 'CONTENT_POLL_GROK_MODEL', 'default' => 'grok-2' ],
+		'exo_endpoint'      => [ 'env' => 'CONTENT_POLL_EXO_ENDPOINT', 'const' => 'CONTENT_POLL_EXO_ENDPOINT', 'default' => '' ],
+		'exo_model'         => [ 'env' => 'CONTENT_POLL_EXO_MODEL', 'const' => 'CONTENT_POLL_EXO_MODEL', 'default' => '' ],
 	];
 
 	public function __construct() {
@@ -98,6 +100,8 @@ class SettingsPage {
 				'ollama_model'      => 'llama3.2',
 				'grok_key'          => '',
 				'grok_model'        => 'grok-2',
+				'exo_endpoint'      => '',
+				'exo_model'         => '',
 			],
 		] );
 
@@ -155,16 +159,35 @@ class SettingsPage {
 			'content-poll-settings',
 			'content_poll_ai_section'
 		);
+
+		add_settings_field(
+			'exo_endpoint',
+			__( 'Exo Endpoint', 'content-poll' ),
+			[ $this, 'render_exo_endpoint_field' ],
+			'content-poll-settings',
+			'content_poll_ai_section'
+		);
+
+		add_settings_field(
+			'exo_model',
+			__( 'Exo Model', 'content-poll' ),
+			[ $this, 'render_exo_model_field' ],
+			'content-poll-settings',
+			'content_poll_ai_section'
+		);
 	}
 
 	public function sanitize_settings( $input ): array {
 		$sanitized = [];
 
-		$sanitized[ 'ai_provider' ] = isset( $input[ 'ai_provider' ] ) && in_array( $input[ 'ai_provider' ], [ 'heuristic', 'openai', 'anthropic', 'gemini', 'ollama', 'grok' ], true )
+		$sanitized[ 'ai_provider' ] = isset( $input[ 'ai_provider' ] ) && in_array( $input[ 'ai_provider' ], [ 'heuristic', 'openai', 'anthropic', 'gemini', 'ollama', 'grok', 'exo' ], true )
 			? $input[ 'ai_provider' ]
 			: 'heuristic';
 		$sanitized[ 'grok_key' ]    = isset( $input[ 'grok_key' ] ) ? sanitize_text_field( $input[ 'grok_key' ] ) : '';
 		$sanitized[ 'grok_model' ]  = isset( $input[ 'grok_model' ] ) ? sanitize_text_field( $input[ 'grok_model' ] ) : 'grok-2';
+
+		$sanitized[ 'exo_endpoint' ] = isset( $input[ 'exo_endpoint' ] ) ? esc_url_raw( $input[ 'exo_endpoint' ] ) : '';
+		$sanitized[ 'exo_model' ]    = isset( $input[ 'exo_model' ] ) ? sanitize_text_field( $input[ 'exo_model' ] ) : '';
 
 		$sanitized[ 'openai_type' ] = isset( $input[ 'openai_type' ] ) && in_array( $input[ 'openai_type' ], [ 'openai', 'azure' ], true )
 			? $input[ 'openai_type' ]
@@ -224,6 +247,9 @@ class SettingsPage {
 				break;
 			case 'grok':
 				$error = $this->test_grok( $settings );
+				break;
+			case 'exo':
+				$error = $this->test_exo( $settings );
 				break;
 		}
 
@@ -432,6 +458,45 @@ class SettingsPage {
 
 		if ( isset( $data[ 'error' ] ) ) {
 			return $data[ 'error' ][ 'message' ] ?? 'Unknown error';
+		}
+
+		return null;
+	}
+
+	/**
+	 * Test Exo connection by fetching the models list.
+	 *
+	 * @param array $settings The settings array.
+	 * @return string|null Error message or null on success.
+	 */
+	private function test_exo( array $settings ): ?string {
+		$endpoint = $settings[ 'exo_endpoint' ] ?? '';
+
+		if ( empty( $endpoint ) ) {
+			return null; // Don't validate if endpoint not provided
+		}
+
+		$url = rtrim( $endpoint, '/' ) . '/v1/models';
+
+		$response = wp_remote_get( $url, [
+			'headers' => [ 'Content-Type' => 'application/json' ],
+			'timeout' => 10,
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			return $response->get_error_message();
+		}
+
+		$code = wp_remote_retrieve_response_code( $response );
+		if ( $code < 200 || $code >= 300 ) {
+			return sprintf( 'HTTP %d: Unable to connect to Exo', $code );
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+		$data = json_decode( $body, true );
+
+		if ( isset( $data[ 'error' ] ) ) {
+			return is_string( $data[ 'error' ] ) ? $data[ 'error' ] : ( $data[ 'error' ][ 'message' ] ?? 'Unknown error' );
 		}
 
 		return null;
@@ -786,6 +851,11 @@ class SettingsPage {
 				const apiKeyField = document.getElementById('openai_key');
 				const modelField = document.getElementById('openai_model');
 				const modelLabel = modelField ? modelField.closest('tr').querySelector('th label') : null;
+				const exoEndpointField = document.getElementById('exo_endpoint');
+				const exoModelField = document.getElementById('exo_model');
+				const exoHealthIndicator = document.getElementById('exo-health-indicator');
+				const exoCheckBtn = document.getElementById('exo-check-connection');
+				const exoRefreshBtn = document.getElementById('exo-refresh-models');
 
 				function updateFieldVisibility() {
 					const provider = providerSelect.value;
@@ -795,6 +865,7 @@ class SettingsPage {
 					const isGemini = provider === 'gemini';
 					const isOllama = provider === 'ollama';
 					const isGrok = provider === 'grok';
+					const isExo = provider === 'exo';
 
 					// Show/hide OpenAI type selector
 					if (typeSelect) {
@@ -804,7 +875,7 @@ class SettingsPage {
 					// Show/hide API Key field based on provider
 					if (apiKeyField) {
 						const keyLabel = apiKeyField.closest('tr').querySelector('th label');
-						apiKeyField.closest('tr').style.display = (provider !== 'heuristic' && provider !== 'ollama') ? '' : 'none';
+						apiKeyField.closest('tr').style.display = (provider !== 'heuristic' && provider !== 'ollama' && provider !== 'exo') ? '' : 'none';
 
 						// Update API key label and description
 						if (keyLabel) {
@@ -820,15 +891,23 @@ class SettingsPage {
 						}
 					}
 
-					// Show/hide Model field
+					// Show/hide Model field (hide for Exo as it has its own model dropdown)
 					if (modelField) {
-						modelField.closest('tr').style.display = (provider !== 'heuristic') ? '' : 'none';
+						modelField.closest('tr').style.display = (provider !== 'heuristic' && provider !== 'exo') ? '' : 'none';
 					}
 
 					// Show/hide Azure-specific fields
 					azureFields.forEach(field => {
 						field.closest('tr').style.display = (isOpenAI && isAzure) ? '' : 'none';
 					});
+
+					// Show/hide Exo-specific fields
+					if (exoEndpointField) {
+						exoEndpointField.closest('tr').style.display = isExo ? '' : 'none';
+					}
+					if (exoModelField) {
+						exoModelField.closest('tr').style.display = isExo ? '' : 'none';
+					}
 
 					// Update model label based on provider
 					if (modelLabel) {
@@ -840,6 +919,98 @@ class SettingsPage {
 							modelLabel.textContent = 'Model';
 						}
 					}
+				}
+
+				// Exo health check function
+				async function checkExoHealth() {
+					const endpoint = exoEndpointField ? exoEndpointField.value.trim() : '';
+					if (!endpoint) {
+						if (exoHealthIndicator) exoHealthIndicator.textContent = '';
+						return;
+					}
+
+					if (exoHealthIndicator) exoHealthIndicator.textContent = '⏳';
+
+					try {
+						const response = await fetch('<?php echo esc_url( rest_url( 'content-poll/v1/exo-health' ) ); ?>', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'X-WP-Nonce': '<?php echo esc_js( wp_create_nonce( 'wp_rest' ) ); ?>'
+							},
+							body: JSON.stringify({ endpoint: endpoint })
+						});
+						const data = await response.json();
+						if (exoHealthIndicator) {
+							exoHealthIndicator.textContent = data.status === 'ok' ? '✅' : '❌';
+							exoHealthIndicator.title = data.status === 'ok' ? 'Connected' : (data.message || 'Connection failed');
+						}
+					} catch (e) {
+						if (exoHealthIndicator) {
+							exoHealthIndicator.textContent = '❌';
+							exoHealthIndicator.title = 'Connection failed: ' + e.message;
+						}
+					}
+				}
+
+				// Exo refresh models function
+				async function refreshExoModels() {
+					const endpoint = exoEndpointField ? exoEndpointField.value.trim() : '';
+					if (!endpoint) {
+						alert('Please enter the Exo endpoint first.');
+						return;
+					}
+
+					if (exoRefreshBtn) exoRefreshBtn.disabled = true;
+
+					try {
+						const response = await fetch('<?php echo esc_url( rest_url( 'content-poll/v1/exo-models' ) ); ?>', {
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+								'X-WP-Nonce': '<?php echo esc_js( wp_create_nonce( 'wp_rest' ) ); ?>'
+							},
+							body: JSON.stringify({ endpoint: endpoint })
+						});
+						const data = await response.json();
+
+						if (data.models && Array.isArray(data.models) && exoModelField) {
+							const currentValue = exoModelField.value;
+							exoModelField.innerHTML = '';
+
+							if (data.models.length === 0) {
+								const opt = document.createElement('option');
+								opt.value = '';
+								opt.textContent = '— No models available —';
+								exoModelField.appendChild(opt);
+							} else {
+								data.models.forEach(model => {
+									const opt = document.createElement('option');
+									opt.value = model.id || model;
+									opt.textContent = model.name || model.id || model;
+									if (opt.value === currentValue) opt.selected = true;
+									exoModelField.appendChild(opt);
+								});
+							}
+
+							// Also check health after refreshing models
+							checkExoHealth();
+						} else if (data.error) {
+							alert('Failed to fetch models: ' + data.error);
+						}
+					} catch (e) {
+						alert('Failed to fetch models: ' + e.message);
+					} finally {
+						if (exoRefreshBtn) exoRefreshBtn.disabled = false;
+					}
+				}
+
+				// Event listeners for Exo
+				if (exoCheckBtn) {
+					exoCheckBtn.addEventListener('click', checkExoHealth);
+				}
+				if (exoRefreshBtn) {
+					exoRefreshBtn.addEventListener('click', refreshExoModels);
 				}
 
 				providerSelect.addEventListener('change', updateFieldVisibility);
@@ -874,6 +1045,9 @@ class SettingsPage {
 			</option>
 			<option value="grok" <?php selected( $current, 'grok' ); ?>>
 				<?php esc_html_e( 'Grok (xAI)', 'content-poll' ); ?>
+			</option>
+			<option value="exo" <?php selected( $current, 'exo' ); ?>>
+				<?php esc_html_e( 'Exo (Local Cluster)', 'content-poll' ); ?>
 			</option>
 		</select>
 		<?php if ( $is_external ) : ?>
@@ -964,6 +1138,51 @@ class SettingsPage {
 		<?php $this->render_external_indicator( 'azure_api_version' ); ?>
 		<p class="description">
 			<?php esc_html_e( 'Azure OpenAI API version (e.g., 2024-02-15-preview)', 'content-poll' ); ?>
+		</p>
+		<?php
+	}
+
+	public function render_exo_endpoint_field(): void {
+		$value       = self::get_exo_endpoint();
+		$is_external = self::is_externally_defined( 'exo_endpoint' );
+		?>
+		<div style="display: flex; align-items: center; gap: 8px;">
+			<input type="url" name="<?php echo esc_attr( $this->option_name ); ?>[exo_endpoint]" id="exo_endpoint"
+				value="<?php echo esc_attr( $value ); ?>" class="regular-text" placeholder="http://localhost:8000" <?php echo $is_external ? 'readonly' : ''; ?> />
+			<span id="exo-health-indicator" style="font-size: 18px;"
+				title="<?php esc_attr_e( 'Connection status', 'content-poll' ); ?>"></span>
+			<button type="button" id="exo-check-connection" class="button button-secondary" style="margin-left: 4px;">
+				<?php esc_html_e( 'Check Connection', 'content-poll' ); ?>
+			</button>
+		</div>
+		<?php $this->render_external_indicator( 'exo_endpoint' ); ?>
+		<p class="description">
+			<?php esc_html_e( 'Your Exo cluster endpoint URL (e.g., http://localhost:8000). Exo is a self-hosted local LLM cluster.', 'content-poll' ); ?>
+		</p>
+		<?php
+	}
+
+	public function render_exo_model_field(): void {
+		$value       = self::get_exo_model();
+		$is_external = self::is_externally_defined( 'exo_model' );
+		?>
+		<select name="<?php echo esc_attr( $this->option_name ); ?>[exo_model]" id="exo_model" <?php echo $is_external ? 'disabled' : ''; ?>>
+			<?php if ( ! empty( $value ) ) : ?>
+				<option value="<?php echo esc_attr( $value ); ?>" selected><?php echo esc_html( $value ); ?></option>
+			<?php else : ?>
+				<option value=""><?php esc_html_e( '— Select a model —', 'content-poll' ); ?></option>
+			<?php endif; ?>
+		</select>
+		<button type="button" id="exo-refresh-models" class="button button-secondary" style="margin-left: 4px;">
+			<?php esc_html_e( 'Refresh Models', 'content-poll' ); ?>
+		</button>
+		<?php if ( $is_external ) : ?>
+			<input type="hidden" name="<?php echo esc_attr( $this->option_name ); ?>[exo_model]"
+				value="<?php echo esc_attr( $value ); ?>" />
+		<?php endif; ?>
+		<?php $this->render_external_indicator( 'exo_model' ); ?>
+		<p class="description">
+			<?php esc_html_e( 'Select a model from your running Exo cluster. Click "Refresh Models" after entering the endpoint.', 'content-poll' ); ?>
 		</p>
 		<?php
 	}
@@ -1127,6 +1346,14 @@ class SettingsPage {
 
 	public static function get_grok_model(): string {
 		return self::resolve_config( 'grok_model' );
+	}
+
+	public static function get_exo_endpoint(): string {
+		return self::resolve_config( 'exo_endpoint' );
+	}
+
+	public static function get_exo_model(): string {
+		return self::resolve_config( 'exo_model' );
 	}
 
 	/**

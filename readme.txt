@@ -3,7 +3,7 @@ Contributors: PerS
 Tags: voting, polls, gutenberg, block, survey
 Requires at least: 6.8
 Tested up to: 6.8
-Stable tag: 0.9.2
+Stable tag: 0.10.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -167,6 +167,13 @@ Vote data is stored in a custom database table (`wp_vote_block_submissions`). Ex
 No. The block is lightweight (~7KB JavaScript gzipped) and results are loaded asynchronously. No impact on page load times.
 
 == Changelog ==
+
+= 0.10.0 - 2025-12-22 =
+* Added: Exo AI provider support for local LLM inference using Apple MLX hardware acceleration
+* Added: ExoController REST endpoint for Exo settings with automatic detection of running models
+* Added: ExoProvider class for chat completions via Exo's OpenAI-compatible API
+* Added: Documentation for Exo setup and configuration in docs/AI-PROVIDERS.md
+* Notes: Exo enables high-performance local AI on Apple Silicon without external API keys; requires Exo running locally
 
 = 0.9.2 - 2025-11-24 =
 * Added: Environment variable and PHP constant support for all AI settings (provider, API keys, models, endpoints)

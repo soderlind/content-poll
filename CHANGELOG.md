@@ -6,6 +6,19 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 
+## [0.10.0] - 2025-12-22
+
+### Added
+- Exo AI provider support for local LLM inference using Apple MLX hardware acceleration.
+- ExoController REST endpoint for Exo settings with automatic detection of running models via `/state` endpoint.
+- ExoProvider class for chat completions via Exo's OpenAI-compatible API.
+- Documentation for Exo setup and configuration in docs/AI-PROVIDERS.md.
+
+### Notes
+- Exo enables high-performance local AI on Apple Silicon without external API keys.
+- Requires Exo running locally (default: http://localhost:8000).
+- Settings UI shows only currently running/loaded models.
+
 ## [0.9.2] - 2025-11-24
 
 ### Added

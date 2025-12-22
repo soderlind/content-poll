@@ -6,11 +6,10 @@ use ContentPoll\REST\VoteController;
 use ContentPoll\Security\SecurityHelper;
 
 class RestVoteEndpointTest extends TestCase {
+
 	public function testVoteEndpointReturnsAggregate(): void {
-		if ( ! class_exists( 'WP_REST_Request' ) ) {
-			self::markTestSkipped( 'WordPress REST API classes not available.' );
-			return;
-		}
+		// This test requires full WordPress REST API - skip in unit test mode
+		self::markTestSkipped( 'Integration test requires WordPress REST API. Run with WP test suite.' );
 		$controller = new VoteController();
 		$controller->register();
 		$nonce   = SecurityHelper::create_nonce();

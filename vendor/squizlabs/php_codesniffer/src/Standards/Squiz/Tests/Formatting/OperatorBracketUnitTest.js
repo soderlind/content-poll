@@ -73,7 +73,7 @@ four = -0.25;
 id = id.replace(/row\/:/gi, '');
 return /MSIE/.test(navigator.userAgent);
 
-var re = new RegExp(/<\/?(\w+)((\s+\w+(\s*=\s*(?:"[^"]*"|'[^']*'|[^'">\s]+))?)+\s*|\s*)\/?>/gim);
+var re = new RegExp(/<\/?(\w+)((\s+\w+(\s*=\s*(?:".*?"|'.*?'|[^'">\s]+))?)+\s*|\s*)\/?>/gim);
 
 var options = {
     minVal: -1,
@@ -95,10 +95,10 @@ var pathSplit = ipt.value.split(/\/|\\/);
 if (pairs[i].search(/=/) !== -1) {
 }
 
-if (urlValue.search(/[a-zA-Z]+:\/\//) !== 0) {
+if (urlValue.search(/[a-zA-z]+:\/\//) !== 0) {
 }
 
-if (urlValue.search(/[a-zA-Z]+:\/\/*/) !== 0) {
+if (urlValue.search(/[a-zA-z]+:\/\/*/) !== 0) {
 }
 
 if (!value || /^\s*$/.test(value)) {
