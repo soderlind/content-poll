@@ -9,25 +9,36 @@ use PHPUnit\Framework\TestCase;
 
 final class GitHubPluginUpdaterTest extends TestCase {
 
+	protected function setUp(): void {
+		parent::setUp();
+		global $content_poll_test_hooks;
+		$content_poll_test_hooks = [ 'actions' => [], 'filters' => [] ];
+	}
+
+	protected function tearDown(): void {
+		global $content_poll_test_hooks;
+		$content_poll_test_hooks = [];
+		parent::tearDown();
+	}
+
 	public function test_missing_required_parameters_throws_exception(): void {
 		$this->expectException( \InvalidArgumentException::class);
 		new GitHubPluginUpdater( [] );
 	}
 
 	public function test_constructor_registers_init_hook(): void {
+		global $content_poll_test_hooks;
+
 		$updater = new GitHubPluginUpdater( [
 			'github_url'  => 'https://github.com/example/content-poll',
 			'plugin_file' => __DIR__ . '/../../content-poll.php',
 			'plugin_slug' => 'content-poll',
 		] );
 
-		// has_action returns priority or false.
-		if ( function_exists( 'has_action' ) ) {
-			$priority = has_action( 'init', [ $updater, 'setup_updater' ] );
-			$this->assertNotFalse( $priority, 'Expected init hook to be registered.' );
-		} else {
-			$this->assertTrue( method_exists( $updater, 'setup_updater' ), 'Fallback assertion without WP.' );
-		}
+		// Check if 'init' action was registered
+		$initHookRegistered = isset( $content_poll_test_hooks['actions']['init'] );
+		$this->assertTrue( $initHookRegistered, 'Expected init hook to be registered.' );
+		$this->assertTrue( method_exists( $updater, 'setup_updater' ), 'setup_updater method should exist.' );
 	}
 
 	public function test_create_with_assets_sets_release_assets_flag(): void {

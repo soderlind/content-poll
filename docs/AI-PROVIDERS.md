@@ -87,7 +87,24 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
   - API Key: Your xAI API key
   - Model: `grok-2` (default) or updated released model
 
-### 8. PocketFlow Mode (Multi-Step, OpenAI/Azure)
+### 8. Exo (Local Cluster)
+- **API Key Required**: No
+- **Cost**: Free (self-hosted hardware costs only)
+- **Models**: Any models supported by your Exo cluster (e.g., `llama-3.2-3b`, `deepseek-r1`)
+- **Description**: Exo is a distributed inference cluster that allows running large AI models across multiple consumer devices. It exposes an OpenAI-compatible API locally.
+- **Best For**: Running large models locally across multiple machines, full privacy, no cloud dependencies.
+- **Setup**: Install [Exo](https://github.com/exo-explore/exo) and start the cluster.
+- **Configuration**:
+  - Provider: Exo (Local Cluster)
+  - Endpoint: `http://localhost:8000` (or your Exo cluster URL)
+  - Model: Select from running models via the "Refresh Models" button
+- **Features**:
+  - ✅ Dynamic model list fetched from your cluster
+  - ✅ Health check indicator shows connection status
+  - ✅ No API key required (local network only)
+  - ✅ Streaming SSE response handling
+
+### 9. PocketFlow Mode (Multi-Step, OpenAI/Azure)
 - **API Key Required**: Yes (uses your OpenAI/Azure credentials)
 - **Cost**: Same as your configured OpenAI/Azure usage
 - **Models**: Any chat-capable OpenAI or Azure OpenAI deployment you have configured
@@ -113,9 +130,10 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 | Gemini | $/Free | Good | Fast | External | Budget-conscious |
 | Ollama | Free* | Good | Medium | Full | Privacy-first |
 | Grok (xAI) | $$ | Good/Emerging | Fast | External | Real-time reasoning |
+| Exo | Free* | Excellent | Medium | Full | Distributed local LLM |
 | OpenAI + PocketFlow mode | $$ | Excellent | Medium | External | Topic-aware, robust polls |
 
-*Infrastructure costs only
+*Infrastructure/hardware costs only
 
 ## Implementation Details
 
@@ -134,6 +152,7 @@ The Content Vote plugin supports multiple AI providers for generating intelligen
 - **Gemini**: `https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={key}`
 - **Ollama**: `{endpoint}/api/generate`
 - **Grok (xAI)**: `https://api.x.ai/v1/chat/completions`
+- **Exo**: `{endpoint}/v1/chat/completions` (OpenAI-compatible)
 
 ### Security Notes
 - API keys are stored in WordPress options (encrypted by WordPress)
@@ -168,6 +187,8 @@ For deployment flexibility (Docker, CI/CD, wp-config.php), you can configure AI 
 | Ollama Model | `CONTENT_POLL_OLLAMA_MODEL` | `CONTENT_POLL_OLLAMA_MODEL` | `llama3.2` |
 | Grok API Key | `CONTENT_POLL_GROK_KEY` | `CONTENT_POLL_GROK_KEY` | (empty) |
 | Grok Model | `CONTENT_POLL_GROK_MODEL` | `CONTENT_POLL_GROK_MODEL` | `grok-2` |
+| Exo Endpoint | `CONTENT_POLL_EXO_ENDPOINT` | `CONTENT_POLL_EXO_ENDPOINT` | (empty) |
+| Exo Model | `CONTENT_POLL_EXO_MODEL` | `CONTENT_POLL_EXO_MODEL` | (empty) |
 
 ### Example: wp-config.php Constants (OpenAI)
 
@@ -236,6 +257,14 @@ This allows developers to lock down production configurations while still allowi
 3. Pull model first: `ollama pull llama3.2`
 4. Check firewall allows local connections
 5. Test endpoint: `curl http://localhost:11434/api/version`
+
+### Exo Connection Issues
+1. Ensure Exo cluster is running: check with `curl http://localhost:8000/v1/models`
+2. Verify endpoint URL matches your Exo configuration (default port is 8000 or 52415)
+3. Use the "Check Connection" button in settings to verify connectivity
+4. Click "Refresh Models" to see available models from your cluster
+5. Ensure at least one model is loaded in your Exo cluster
+6. Check firewall allows local connections on the configured port
 
 ## Future Enhancements
 - Support for custom system prompts

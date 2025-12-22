@@ -5,6 +5,20 @@ use PHPUnit\Framework\TestCase;
 use ContentPoll\Services\AISuggestionService;
 
 final class AISuggestionServiceTest extends TestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		// Reset test options before each test
+		global $content_poll_test_options;
+		$content_poll_test_options = [];
+	}
+
+	protected function tearDown(): void {
+		global $content_poll_test_options;
+		$content_poll_test_options = [];
+		parent::tearDown();
+	}
+
 	public function testSuggestReturnsFallbackOnEmptyContent(): void {
 		$svc = new AISuggestionService();
 		$res = $svc->suggest( '' );

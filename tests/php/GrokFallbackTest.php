@@ -5,15 +5,26 @@ use PHPUnit\Framework\TestCase;
 use ContentPoll\Services\AISuggestionService;
 
 final class GrokFallbackTest extends TestCase {
+
+	protected function setUp(): void {
+		parent::setUp();
+		global $content_poll_test_options;
+		$content_poll_test_options = [];
+	}
+
+	protected function tearDown(): void {
+		global $content_poll_test_options;
+		$content_poll_test_options = [];
+		parent::tearDown();
+	}
+
 	public function testGrokWithoutKeyFallsBackToHeuristic(): void {
 		global $content_poll_test_options;
 		// Simulate settings selecting Grok provider with no API key provided.
-		$content_poll_test_options = [
-			'content_poll_options' => [
-				'ai_provider' => 'grok',
-				'grok_key'    => '',
-				'grok_model'  => 'grok-2',
-			],
+		$content_poll_test_options['content_poll_options'] = [
+			'ai_provider' => 'grok',
+			'grok_key'    => '',
+			'grok_model'  => 'grok-2',
 		];
 
 		$svc     = new AISuggestionService();

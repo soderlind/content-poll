@@ -36,6 +36,9 @@ class AISuggestionService {
 			case 'grok':
 				$result = $this->suggest_grok( $text );
 				break;
+			case 'exo':
+				$result = $this->suggest_exo( $text );
+				break;
 			default:
 				$result = [];
 		}
@@ -379,6 +382,124 @@ class AISuggestionService {
 		}
 
 		return [];
+	}
+
+	/**
+	 * Generate Exo (local cluster) based suggestion.
+	 *
+	 * Exo uses OpenAI-compatible API but returns streaming SSE responses.
+	 * We buffer the full response and extract the content.
+	 *
+	 * @param string $text Content excerpt.
+	 * @return array{question:string,options:array<int,string>}|array Empty array on failure.
+	 */
+	private function suggest_exo( string $text ): array {
+		$endpoint = SettingsPage::get_exo_endpoint();
+		$model    = SettingsPage::get_exo_model();
+
+		if ( empty( $endpoint ) || empty( $model ) ) {
+			return [];
+		}
+
+		$prompt = sprintf( self::PROMPT_TEMPLATE, $text );
+
+		$url = rtrim( $endpoint, '/' ) . '/v1/chat/completions';
+
+		$response = wp_remote_post( $url, [
+			'headers' => [
+				'Content-Type' => 'application/json',
+			],
+			'body'    => wp_json_encode( [
+				'model'       => $model,
+				'messages'    => [
+					[ 'role' => 'system', 'content' => 'You generate poll questions and voting options. Always respond with valid JSON.' ],
+					[ 'role' => 'user', 'content' => $prompt ],
+				],
+				'temperature' => 0.7,
+				'max_tokens'  => 500,
+			] ),
+			'timeout' => 60, // Exo local models can be slower
+		] );
+
+		if ( is_wp_error( $response ) ) {
+			error_log( 'ContentPoll AI Exo Error: ' . $response->get_error_message() );
+			return [];
+		}
+
+		$body = wp_remote_retrieve_body( $response );
+
+		// Exo returns SSE streaming format. Parse all chunks and concatenate content.
+		$content_text = $this->parse_exo_sse_response( $body );
+
+		if ( empty( $content_text ) ) {
+			// Try parsing as regular JSON response (in case Exo returns non-streaming)
+			$data = json_decode( $body, true );
+			if ( isset( $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ] ) ) {
+				$content_text = $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ];
+			}
+		}
+
+		if ( empty( $content_text ) ) {
+			error_log( 'ContentPoll AI Exo: Empty response' );
+			return [];
+		}
+
+		$parsed = $this->parse_poll_json( $content_text );
+		if ( ! empty( $parsed ) ) {
+			return $parsed;
+		}
+
+		return [];
+	}
+
+	/**
+	 * Parse SSE (Server-Sent Events) streaming response from Exo.
+	 *
+	 * Exo streams responses in SSE format with lines like:
+	 * data: {"choices":[{"delta":{"content":"text"}}]}
+	 *
+	 * @param string $body Raw response body.
+	 * @return string Concatenated content from all delta chunks.
+	 */
+	private function parse_exo_sse_response( string $body ): string {
+		$content = '';
+		$lines   = explode( "\n", $body );
+
+		foreach ( $lines as $line ) {
+			$line = trim( $line );
+
+			// Skip empty lines and comments
+			if ( empty( $line ) || strpos( $line, ':' ) === 0 ) {
+				continue;
+			}
+
+			// Parse "data: {...}" lines
+			if ( strpos( $line, 'data: ' ) === 0 ) {
+				$json_str = substr( $line, 6 ); // Remove "data: " prefix
+
+				// Skip [DONE] marker
+				if ( $json_str === '[DONE]' ) {
+					continue;
+				}
+
+				$data = json_decode( $json_str, true );
+				if ( ! is_array( $data ) ) {
+					continue;
+				}
+
+				// Extract delta content (streaming format)
+				if ( isset( $data[ 'choices' ][ 0 ][ 'delta' ][ 'content' ] ) ) {
+					$content .= $data[ 'choices' ][ 0 ][ 'delta' ][ 'content' ];
+				}
+
+				// Also handle full message format (non-streaming)
+				if ( isset( $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ] ) ) {
+					$content .= $data[ 'choices' ][ 0 ][ 'message' ][ 'content' ];
+				}
+			}
+		}
+
+		return $content;
 	}
 
 	/**
