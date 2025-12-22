@@ -1,4 +1,10 @@
 <?php
+/**
+ * LLM Client for OpenAI and Azure OpenAI API communication.
+ *
+ * @package ContentPoll\AI
+ * @since   0.8.4
+ */
 
 declare(strict_types=1);
 
@@ -7,10 +13,32 @@ namespace ContentPoll\AI;
 use ContentPoll\Admin\SettingsPage;
 use RuntimeException;
 
+/**
+ * Client wrapper for sending chat completions to OpenAI or Azure OpenAI.
+ *
+ * Abstracts the differences between OpenAI and Azure OpenAI APIs,
+ * providing a unified interface for the PocketFlow nodes to call LLMs.
+ *
+ * @since 0.8.4
+ */
 class LLMClient {
 	/**
-	 * @param array<int,array{role:string,content:string}> $messages
-	 * @param array<string,mixed> $options
+	 * Send a chat completion request to the configured LLM provider.
+	 *
+	 * Supports both OpenAI and Azure OpenAI endpoints. The provider type
+	 * is determined by the plugin settings (openai_type).
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param array<int,array{role:string,content:string}> $messages Array of message objects with role and content.
+	 * @param array<string,mixed>                          $options  Optional settings:
+	 *                                                               - 'model': Override the configured model/deployment.
+	 *                                                               - 'temperature': Sampling temperature (default: 0.7).
+	 *                                                               - 'max_tokens': Maximum tokens in response (default: 200).
+	 *
+	 * @return string The assistant's response content.
+	 *
+	 * @throws RuntimeException If configuration is incomplete or API returns an error.
 	 */
 	public function chat( array $messages, array $options = [] ): string {
 		$type  = SettingsPage::get_openai_type();

@@ -1,4 +1,10 @@
 <?php
+/**
+ * Node for extracting keywords/topics from content.
+ *
+ * @package ContentPoll\AI\PocketFlow
+ * @since   0.8.4
+ */
 
 declare(strict_types=1);
 
@@ -8,9 +14,49 @@ use ContentPoll\AI\Flow\AbstractNode;
 use ContentPoll\AI\Flow\NodeInterface;
 use ContentPoll\AI\LLMClient;
 
+/**
+ * Extracts key topics from post content using an LLM.
+ *
+ * This is the first node in the PocketFlow poll generation pipeline.
+ * It analyzes content and extracts 3-5 concise topics that summarize
+ * what the content is about, enabling topic-aware poll generation.
+ *
+ * Input (shared):
+ * - content_excerpt: string - The post content to analyze.
+ *
+ * Output (shared):
+ * - topics: array - Array of extracted topic strings (3-5 items).
+ *
+ * @since 0.8.4
+ */
 final class ExtractKeywordsNode extends AbstractNode {
-	public function __construct( private LLMClient $client ) {}
+	/**
+	 * LLM client for API calls.
+	 *
+	 * @var LLMClient
+	 */
+	private LLMClient $client;
 
+	/**
+	 * Create the node with an LLM client.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param LLMClient $client The LLM client for API communication.
+	 */
+	public function __construct( LLMClient $client ) {
+		$this->client = $client;
+	}
+
+	/**
+	 * Extract topics from content using the LLM.
+	 *
+	 * @since 0.8.4
+	 *
+	 * @param \stdClass $shared Shared state with content_excerpt input.
+	 *
+	 * @return NodeInterface|null The next node in the chain.
+	 */
 	public function run( \stdClass $shared ): ?NodeInterface {
 		$content = (string) ( $shared->content_excerpt ?? '' );
 
