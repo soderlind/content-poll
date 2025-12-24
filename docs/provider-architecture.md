@@ -987,24 +987,24 @@ All providers use a common JSON parser that handles various response formats.
 
 ```mermaid
 flowchart TD
-    Input[Raw AI response] --> Direct{Direct JSON<br>decode?}
-    Direct -->|Valid| Check1{Has question<br>& options?}
-    Check1 -->|Yes| Sanitize1[Sanitize fields]
+    Input["Raw AI response"] --> Direct{"Direct JSON decode?"}
+    Direct -->|Valid| Check1{"Has question and options?"}
+    Check1 -->|Yes| Sanitize1["Sanitize fields"]
     Check1 -->|No| FindBraces
     Direct -->|Invalid| FindBraces
     
-    FindBraces[Find first { to last }] --> Extract[Extract substring]
-    Extract --> Decode2{JSON decode?}
-    Decode2 -->|Valid| Check2{Has question<br>& options?}
-    Check2 -->|Yes| Sanitize2[Sanitize fields]
+    FindBraces["Find first and last braces"] --> Extract["Extract substring"]
+    Extract --> Decode2{"JSON decode?"}
+    Decode2 -->|Valid| Check2{"Has question and options?"}
+    Check2 -->|Yes| Sanitize2["Sanitize fields"]
     Check2 -->|No| Regex
     Decode2 -->|Invalid| Regex
     
-    Regex[Regex: find all {...}] --> Loop{Try each match}
-    Loop -->|Found valid| Sanitize3[Sanitize fields]
-    Loop -->|None valid| Empty([Return empty])
+    Regex["Regex: find all objects"] --> Loop{"Try each match"}
+    Loop -->|Found valid| Sanitize3["Sanitize fields"]
+    Loop -->|None valid| Empty(["Return empty"])
     
-    Sanitize1 --> Return([Return {question, options}])
+    Sanitize1 --> Return(["Return result"])
     Sanitize2 --> Return
     Sanitize3 --> Return
 ```
