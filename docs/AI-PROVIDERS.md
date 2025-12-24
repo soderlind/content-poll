@@ -2,6 +2,8 @@
 
 The Content Vote plugin supports multiple AI providers for generating intelligent vote suggestions. This document describes each provider and how to configure them.
 
+> **See also:** [Provider Architecture](provider-architecture.md) for detailed implementation diagrams and code examples.
+
 ## Available Providers
 
 ### 1. Heuristic AI (Default)

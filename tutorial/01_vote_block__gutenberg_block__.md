@@ -1,238 +1,237 @@
 # Chapter 1: Vote Block (Gutenberg Block)
 
-Welcome to the very first chapter of the **content-poll** guide! Here, you’ll learn about the heart of the project: the **Vote Block**, which lets anyone add simple, interactive polls to a WordPress page (using the Gutenberg editor). Don’t worry if this all sounds new—this chapter walks you through everything step-by-step!
+Welcome to your journey with `content-poll`! In this chapter, we’ll explore the heart of the project: the **Vote Block**. This magic block is what brings live, interactive polls to your WordPress site—all with just a few clicks.
 
 ---
 
-## Why Use a Vote Block?
+## Why Would I Use the Vote Block?
 
-Imagine you run a travel blog and want to know your readers’ experiences—like if they’ve ever hiked a famous mountain. You’d love to ask:
+Imagine you’re writing a blog post and want to ask your readers:  
+**“What's your favorite ice cream flavor?”**  
+With the Vote Block, you can drag and drop a poll into your post, let readers vote, and see the results appear instantly!
 
-> **“Have you visited Reinebringen in Lofoten?”**  
-> - A) Yes, every Norwegian should!  
-> - B) No, but it’s on my bucket list  
-> - C) No, tough hikes aren’t my thing  
-> - D) No, afraid of heights—so not for me
-
-Wouldn’t it be cool if visitors could vote on your poll, see instant results, and you’d know, at-a-glance, what your audience thinks?
-
-That’s exactly what the Vote Block does—and you don’t need to know code to use it!
+**Problem Solved:**  
+You no longer need a separate plugin or coding skills to run a poll. Just use the block!
 
 ---
 
-## Key Concepts: What Is a Vote Block?
+## What Exactly Is the Vote Block?
 
-Let’s break it down:
+Think of the Vote Block as a “poll widget” you can insert anywhere on your site using the WordPress block editor (also called “Gutenberg”).
 
-- **Gutenberg Block:** A piece of content you can drag/drop anywhere on your WordPress page or post.
-- **Poll/Survey:** A question with 2–6 possible answers; users pick one and vote.
-- **Instant Results:** Once a visitor votes, they see all votes (as counts or percentages).
+**Key Features:**
 
-**Analogy:**  
-Think of the Vote Block like a *mini ballot box* you can place anywhere on your website. Readers “drop in” their choice, and the platform instantly tallies the community answers!
-
----
-
-## How Does It Work for Editors and Visitors?
-
-### For Editors  
-1. **Add the Vote Block to a page/post using Gutenberg.**
-2. **Write your question and 2–6 answer options.**
-3. **Publish!** Now visitors can see and vote.
-
-### For Visitors  
-1. **See the question and options.**
-2. **Pick one answer—vote!**
-3. **Get instant results showing the community’s votes.**
+- Lets you ask a question and provide multiple answer choices.
+- Lets you write your own poll options — or have AI suggest some for you!
+- Keeps poll options locked once voting starts (so things stay fair).
+- On your public site, shows an interactive interface for voting.
+- Reveals live poll results with fancy progress bars.
 
 ---
 
-## Adding a Vote Block (Step-by-Step)
+## Main Pieces of the Vote Block
 
-Let’s walk through adding a poll.
+Let’s break the Vote Block into easy-to-understand parts:
 
-### 1. Insert the Block
+1. **Question:**  
+   The main poll question (e.g., "What's your favorite ice cream flavor?").
 
-Open the WordPress editor, click “+” to add a block, search for “Vote Block,” and add it.
+2. **Options:**  
+   The answers voters can pick (e.g., Vanilla, Chocolate, Strawberry).
 
-**No code needed!**
+3. **Poll Controls:**  
+   Buttons and settings to adjust the poll.
 
-### 2. Write Your Poll
-
-You’ll see fields for:
-
-- **Question:**  
-  ```
-  Enter question…             // Example: "Have you visited Reinebringen?"
-  ```
-
-- **Options:**  
-  ```
-  Option 1                    // Example: "Yes, every Norwegian should!"
-  Option 2                    // Example: "No, but it’s on my bucket list"
-  Option 3                    // Example: "No, tough hikes aren’t my thing"
-  Option 4                    // Example: "No, afraid of heights"
-  ```
-
-Want more or fewer options? Use the built-in slider!  
-You can select **2 to 6 options**.
-
-### 3. Save and Publish
-
-Just hit “Save” or “Publish”—your poll goes live!
+4. **Live Results:**  
+   Progress bars and numbers showing how people voted.
 
 ---
 
-### Example: What Visitors See
+## How Do I Use the Vote Block?
 
-Suppose you published a question and options. On your page, visitors see:
+### 1. Adding a Vote Block
 
-```
-Have you visited Reinebringen?
-[ ] Yes, every Norwegian should!
-[ ] No, but it’s on my bucket list
-[ ] No, tough hikes aren’t my thing
-[ ] No, afraid of heights
-```
+In the WordPress editor:
 
-When a visitor clicks an option, a message appears:
+- Click the **Add Block** (+) button.
+- Search for "**Vote**" and insert the `Vote Block`.
+
+You’ll see an interface like this:
 
 ```
-Thank you for voting!
+[ What’s your question? _____________ ]
+[ Option 1: ___________ ]
+[ Option 2: ___________ ]
+[ + Add More Options   ]
+[ Generate Suggestions ]
 ```
 
-And instant results display, like:
+#### Example:
+
+Suppose you want to poll readers on their favorite ice cream:
+
+- Question: `What's your favorite ice cream flavor?`
+- Options: `Vanilla`, `Chocolate`, `Strawberry`
+
+Now, your block shows:
 
 ```
-A. Yes, every Norwegian should!   54%
-B. No, but it’s on my bucket list 21%
-C. No, tough hikes aren’t my thing 15%
-D. No, afraid of heights           10%
-74 votes total
+What's your favorite ice cream flavor?
+  [ ] Vanilla
+  [ ] Chocolate
+  [ ] Strawberry
+```
+
+### 2. Customizing the Poll
+
+- Change the number of options (2-6) in the poll settings.
+- Click "**Generate Suggestions**" to let AI help with question and options.
+- Once votes are in, the poll “locks,” so options can’t be changed.
+
+### 3. What Site Visitors See
+
+On your public site, people see an interactive poll like:
+
+```
+What's your favorite ice cream flavor?
+(  ) Vanilla
+(  ) Chocolate
+(  ) Strawberry
+[Vote]
+
+(Once people vote, progress bars and percentages appear!)
 ```
 
 ---
 
-## How Does It Work Internally? (Beginner-Friendly Walkthrough)
+## How Does It Work Internally?
 
-Think of the Vote Block as a little voting machine on your page.
+Let’s walk through what happens **step-by-step**!
 
-### Sequence of Steps (From Adding Block to Viewing Results)
-
-Let’s look at the simple path:
+**Sequence Diagram:**  
+Here’s a high-level view of what’s going on behind the scenes:
 
 ```mermaid
 sequenceDiagram
-participant Editor
-participant VoteBlock
-participant Visitor
-participant Server
-participant Results
+    participant Editor as WordPress Editor
+    participant Block as Vote Block
+    participant API as REST API
+    participant DB as Database
 
-Editor->>VoteBlock: Adds vote block & sets question/options
-Visitor->>VoteBlock: Picks option, clicks vote
-VoteBlock->>Server: Sends vote request
-Server->>Results: Stores and updates the tally
-Results->>VoteBlock: Returns updated results
-VoteBlock->>Visitor: Displays results
+    Editor->>Block: Insert & configure the poll
+    Editor->>Block: Publish the post
+    Viewer->>Block: Sees poll on site
+    Viewer->>API: Casts a vote
+    API->>DB: Store the vote
+    API->>Viewer: Return updated results
+    Block->>Viewer: Show real-time results
 ```
 
-**Explanation:**
-- The editor places the block and writes the poll.
-- Visitors vote—the block quietly talks to the server to record and update votes.
-- Results instantly show on the page!
+**Simple Workflow Example:**
+
+1. **Insert Block:**  
+   You add the block in the editor.
+
+2. **Configure Question & Options:**  
+   You type your own, or ask AI for help.
+
+3. **Publish:**  
+   The poll goes live in your post.
+
+4. **Users Vote:**  
+   Readers click a choice; their vote is sent (secured!) to the server.
+
+5. **See Results:**  
+   The poll updates instantly with progress bars showing live votes.
 
 ---
 
-## What Happens When You Add a Vote Block? (A Tiny Peek Under the Hood)
+## Super-Simplified Code Snippets
 
-When the editor adds the block:
+Let’s peek at tiny slices of the code (no worries if you’re not a JS wiz!).
 
-- The block automatically creates a **unique ID** for your poll (so votes don’t get mixed up across different questions).
-- You set the question and answers. When published, the server safely stores them.
+### 1. Registering the Block
 
-**Behind the scenes, a snippet creates the unique poll ID:**
-
-```js
-function generateId() {
-  return window.crypto.randomUUID(); // Safely create unique ID
-}
-```
-
-When the block is added, it ensures every poll is unique!
-
----
-
-When a visitor votes, the block gently handles everything for you:
+`src/block/vote-block/index.js`:
 
 ```js
-fetch('/wp-json/content-poll/v1/block/.../vote', {
-  method: 'POST',
-  body: JSON.stringify({ optionIndex: ..., postId: ... }),
+import { registerBlockType } from '@wordpress/blocks';
+// ...
+
+registerBlockType('content-poll/vote-block', {
+  edit: Edit,   // What you see in the editor
+  save: () => null // Rendered by PHP (see below)
 });
 ```
 
-- The vote is safely sent to the server.  
-- After voting, the block fetches new results and shows them!
+**What’s Happening?**  
+This tells WordPress a new block exists: your Vote Block!
 
 ---
 
-## How About Results?
-
-To fetch and display results:
+### 2. Showing the Poll in the Editor
 
 ```js
-fetch('/wp-json/content-poll/v1/block/.../results')
-  .then(res => res.json())
-  .then(data => displayResults(data));
+function Edit(props) {
+  // Show question and option fields
+  // Provide a button to generate options
+  // Lock the poll when voting starts
+}
 ```
 
-- The block asks for updated results after every vote.
-- The results are recalculated as counts and percentages.
-- Everyone sees the latest tally!
+**What’s Happening?**  
+This defines how the block looks and behaves while editing.
 
 ---
 
-## Important Features and Safeguards
+### 3. Rendering on the Public Site
 
-- **One Vote Per Visitor:** The block tries its best (with browser tools) to limit each visitor to a single vote, without collecting personal data.
-- **Options “Lock” After Votes:** Once your poll gets a vote, you can’t change the options (so previous votes remain meaningful).
-- **Multiple Vote Blocks:** You can add several polls to a page—each one tracks votes separately!
+`src/php/Blocks/VoteBlock.php`:
 
----
+```php
+public function render(array $attributes, string $content): string {
+  // Build poll HTML: show question and all options as buttons
+  // Add data attributes for poll ID and security
+  return '<div class="content-poll" ...> ... </div>';
+}
+```
 
-## What Files Do These Features Live In?
-
-Here’s where to look as you explore deeper:
-
-- **Block Editor (Where you set up your poll):**  
-  `src/block/vote-block/index.js`
-- **Handling Voting in the Browser:**  
-  `src/block/vote-block/vote-submit.js`
-- **Server-Side Rendering (HTML for the block on your site):**  
-  `src/php/Blocks/VoteBlock.php`
-
-Each file helps make the magic happen!
+**What’s Happening?**  
+When someone loads the page, PHP generates poll HTML with security in mind. No chance for sneaky hackers!
 
 ---
 
-## Summary: What Did You Learn?
+### 4. Handling a Vote (Simplified)
 
-- The **Vote Block** lets WordPress editors add polls anywhere—no coding!
-- Visitors see the poll, vote, and get instant community results.
-- The block uses clever internals to keep votes safe, results fresh, and editing simple.
-- Everything runs securely and privately—no personal data needed.
+When someone votes, JavaScript sends the choice to the server, which:
 
-Ready to get even smarter?  
-The Vote Block also supports **AI-powered suggestions** for polls—helping editors auto-generate great questions and answer options.
-
-**Let’s explore this in [AI Suggestion System (AISuggestionService & AI/LLMClient)](02_ai_suggestion_system__aisuggestionservice___ai_llmclient__.md)!**
+- Validates the request.
+- Stores the vote.
+- Responds with updated vote counts.
 
 ---
 
-**Continue learning: [Chapter 2: AI Suggestion System (AISuggestionService & AI/LLMClient)](02_ai_suggestion_system__aisuggestionservice___ai_llmclient__.md)**
+## Common Questions
 
-Let’s make your polls even smarter and easier to set up! 🚀
+**Q: Can I use more than two options?**  
+A: Yes! You can pick between 2 and 6 options per poll.
+
+**Q: What happens if I change my mind after people start voting?**  
+A: Poll options “lock” to keep things fair. You can make a new poll if needed.
+
+---
+
+## Recap
+
+You now know how the Vote Block works:
+
+- Add a poll to any post or page, **no coding needed**
+- Customize questions and options, or get suggestions
+- See live results, safely and instantly
+
+Next, you'll discover how the block handles all its buttons, helpers, and interactive logic. Curious? Dive right in:
+
+👉 [Block Editor Front-End Helpers & UI Logic](02_block_editor_front_end_helpers___ui_logic_.md)
 
 ---
 

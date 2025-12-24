@@ -1,10 +1,7 @@
 # Tutorial: content-poll
 
-**ContentPoll AI** is a WordPress plugin that lets editors easily add interactive polls to posts and pages.  
-Site visitors can vote anonymously—choosing from *custom questions and options*—and instantly view aggregated results.  
-Editors can use built-in or *AI-assisted suggestion tools* (supporting providers like OpenAI, Gemini, Anthropic, & more) to generate poll questions and options based on page content.  
-Everything is stored securely & privately, with **real-time analytics**, privacy-first vote tracking (no personal data), and a modern Gutenberg block UI.  
-The system is built to be *secure, extensible, and testable*, following WordPress coding standards.
+**ContentPoll AI** is a WordPress plugin that lets editors easily insert *interactive voting polls* into posts and pages, helping site visitors share their opinions or answer questions. It features **AI-assisted suggestions** to generate relevant poll questions and options based on your content, supports multiple AI providers (like OpenAI, Gemini, Anthropic, Ollama, Exo), and keeps voting results up-to-date in a visually clear format. 
+The plugin comes with robust security, analytics, and admin controls so site owners can manage polls, track performance, and keep user data safe.
 
 
 **Source Repository:** [https://github.com/soderlind/content-poll](https://github.com/soderlind/content-poll)
@@ -13,75 +10,66 @@ The system is built to be *secure, extensible, and testable*, following WordPres
 flowchart TD
     A0["Vote Block (Gutenberg Block)
 "]
-    A1["Vote Storage & Aggregation (VoteStorageService)
+    A1["AI Suggestion Service & Providers
 "]
-    A2["REST API Controllers (Vote, Results, Suggestion, Nonce)
+    A2["Flow/Node Pattern (PocketFlow)
 "]
-    A3["AI Suggestion System (AISuggestionService & AI/LLMClient)
+    A3["Database Manager (Vote Storage & Migrations)
 "]
-    A4["PocketFlow Multi-Step AI Flow
+    A4["REST API Controllers
 "]
-    A5["Analytics & Admin Dashboard (VoteAnalyticsService & SettingsPage)
+    A5["Admin Settings Page & Analytics
 "]
-    A6["Security & Privacy Helper (SecurityHelper)
+    A6["Security Helper (Nonces, Tokenization, and Capability Checks)
 "]
-    A7["Database Schema Management (DatabaseManager)
+    A7["Analytics & Orphan Data Detection
 "]
-    A8["Code Standards & Project Constitution
+    A8["Block Editor Front-End Helpers & UI Logic
 "]
-    A9["Testing Infrastructure and Utilities
+    A9["Project Constitution & Coding Standards
 "]
-    A0 -- "Records votes" --> A1
-    A0 -- "Calls endpoints" --> A2
-    A0 -- "Uses for suggestions" --> A3
-    A2 -- "Delegates vote handling" --> A1
-    A2 -- "Validates nonces" --> A6
-    A2 -- "Provides suggestion endpoint" --> A3
-    A3 -- "Runs multi-step flows" --> A4
-    A4 -- "Implements suggestion logic" --> A3
-    A1 -- "Persists votes" --> A7
-    A5 -- "Reads aggregated data" --> A1
-    A5 -- "Queries database" --> A7
-    A0 -- "Follows coding standards" --> A8
-    A1 -- "Follows coding standards" --> A8
-    A2 -- "Follows coding standards" --> A8
-    A3 -- "Follows coding standards" --> A8
-    A4 -- "Follows coding standards" --> A8
-    A5 -- "Follows coding standards" --> A8
-    A6 -- "Follows coding standards" --> A8
-    A7 -- "Follows coding standards" --> A8
-    A9 -- "Tests block UI/logic" --> A0
-    A9 -- "Tests storage logic" --> A1
-    A9 -- "Tests API endpoints" --> A2
-    A9 -- "Tests AI suggestions" --> A3
-    A9 -- "Tests analytics" --> A5
-    A9 -- "Enforces standards/tests" --> A8
-    A7 -- "Provides test DB setup" --> A9
-    A6 -- "Tested for security flows" --> A9
+    A0 -- "Requests suggestions" --> A1
+    A0 -- "Interacts via REST" --> A4
+    A0 -- "Uses helpers/UI" --> A8
+    A1 -- "Uses for pipelines" --> A2
+    A1 -- "Reads config" --> A5
+    A2 -- "Implements workflow" --> A1
+    A3 -- "Provides data" --> A5
+    A3 -- "Used for data storage" --> A4
+    A4 -- "Persists/retrieves votes" --> A3
+    A4 -- "Checks security" --> A6
+    A4 -- "Calls for suggestions" --> A1
+    A5 -- "Displays analytics" --> A7
+    A5 -- "Sets provider config" --> A1
+    A6 -- "Protects endpoints" --> A4
+    A7 -- "Queries vote data" --> A3
+    A8 -- "Enhances UI experience" --> A0
+    A9 -- "Defines standards" --> A0
+    A9 -- "Enforces design/security" --> A1
 ```
 
 ## Chapters
 
 1. [Vote Block (Gutenberg Block)
 ](01_vote_block__gutenberg_block__.md)
-2. [AI Suggestion System (AISuggestionService & AI/LLMClient)
-](02_ai_suggestion_system__aisuggestionservice___ai_llmclient__.md)
-3. [PocketFlow Multi-Step AI Flow
-](03_pocketflow_multi_step_ai_flow_.md)
-4. [REST API Controllers (Vote, Results, Suggestion, Nonce)
-](04_rest_api_controllers__vote__results__suggestion__nonce__.md)
-5. [Vote Storage & Aggregation (VoteStorageService)
-](05_vote_storage___aggregation__votestorageservice__.md)
-6. [Database Schema Management (DatabaseManager)
-](06_database_schema_management__databasemanager__.md)
-7. [Analytics & Admin Dashboard (VoteAnalyticsService & SettingsPage)
-](07_analytics___admin_dashboard__voteanalyticsservice___settingspage__.md)
-8. [Security & Privacy Helper (SecurityHelper)
-](08_security___privacy_helper__securityhelper__.md)
-9. [Testing Infrastructure and Utilities
-](09_testing_infrastructure_and_utilities_.md)
-10. [Code Standards & Project Constitution
-](10_code_standards___project_constitution_.md)
+2. [Block Editor Front-End Helpers & UI Logic
+](02_block_editor_front_end_helpers___ui_logic_.md)
+3. [AI Suggestion Service & Providers
+](03_ai_suggestion_service___providers_.md)
+4. [Flow/Node Pattern (PocketFlow)
+](04_flow_node_pattern__pocketflow__.md)
+5. [REST API Controllers
+](05_rest_api_controllers_.md)
+6. [Security Helper (Nonces, Tokenization, and Capability Checks)
+](06_security_helper__nonces__tokenization__and_capability_checks__.md)
+7. [Database Manager (Vote Storage & Migrations)
+](07_database_manager__vote_storage___migrations__.md)
+8. [Admin Settings Page & Analytics
+](08_admin_settings_page___analytics_.md)
+9. [Analytics & Orphan Data Detection
+](09_analytics___orphan_data_detection_.md)
+10. [Project Constitution & Coding Standards
+](10_project_constitution___coding_standards_.md)
 
 
 ---
